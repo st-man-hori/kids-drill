@@ -1,3 +1,13 @@
+<!-- BEGIN:nextjs-agent-rules -->
+
+# This is NOT the Next.js you know
+
+This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
+
+This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
+
+<!-- END:nextjs-agent-rules -->
+
 # AGENTS.md
 
 このリポジトリで作業するAIコーディングツール（Claude Code、Cursor、GitHub Copilot、Codexなど）向けのガイダンスです。
@@ -15,11 +25,18 @@ kids-drillは学習Webアプリ。小学1年生のたし算・ひき算から始
 
 ## 現在の状態
 
-アプリケーションコードはまだ存在せず、現時点では`docs/`のみ。プロジェクトがスキャフォールドされたら、このファイルに実際のbuild/lint/test/devコマンドを追記すること。
+`create-next-app`でスキャフォールド済み。テストはまだセットアップされていない（コミットルールの`npm test`はテスト追加後から適用）。
+
+```
+npm run dev      # 開発サーバー起動
+npm run build    # 本番ビルド
+npm run start    # 本番ビルドを起動
+npm run lint     # ESLint
+```
 
 ## 技術スタック（要約。詳細は`docs/architecture.md`）
 
-Next.js (App Router) + TypeScript / Tailwind CSS / Framer Motion / Vercel / Neon Postgres (Drizzle ORM) / NextAuth Credentials Provider
+Next.js 16 (App Router) + TypeScript / Tailwind CSS v4 / Framer Motion / Vercel / Neon Postgres (Drizzle ORM) / NextAuth Credentials Provider
 
 ## コミットルール
 - Conventional Commits形式を使う (feat:, fix:, refactor:, docs: など)
