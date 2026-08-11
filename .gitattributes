@@ -1,0 +1,2 @@
+# サードパーティ製Skills（AGENTS.md参照）はvendored扱いにし、GitHubの言語統計から除外する
+.claude/skills/** linguist-vendored
