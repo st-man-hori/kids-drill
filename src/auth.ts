@@ -13,7 +13,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     Credentials({
       credentials: {
         loginId: { label: "ID" },
-        pin: { label: "ひみつのことば" },
+        pin: { label: "ひみつのばんごう" },
       },
       authorize: async (credentials) => {
         const loginId = credentials?.loginId as string | undefined;

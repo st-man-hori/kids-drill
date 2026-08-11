@@ -43,7 +43,7 @@ export default function LoginPage() {
 
     if (!result || result.error) {
       // ID・PINどちらが違うかは区別しないメッセージ（docs/architecture.md参照）
-      setError("IDかひみつのことばが ちがうみたい。もういちどためしてね");
+      setError("IDかひみつのばんごうが ちがうみたい。もういちどためしてね");
       setPin("");
       return;
     }
@@ -76,7 +76,7 @@ export default function LoginPage() {
   return (
     <div className="flex flex-1 flex-col items-center justify-center gap-8 px-6 py-12">
       <h1 className="text-2xl font-bold text-foreground">
-        {step === "id" ? "IDを おしてね" : "ひみつのことばを おしてね"}
+        {step === "id" ? "IDを おしてね" : "ひみつのばんごうを おしてね"}
       </h1>
 
       {step === "id" ? (
