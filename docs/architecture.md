@@ -13,10 +13,10 @@ kids-drill は算数ドリル学習サービス。現時点のスコープは「
 
 | 領域 | 採用技術 | 補足 |
 |---|---|---|
-| フロントエンド/フルスタック | Next.js (App Router) + TypeScript | |
+| フロントエンド/フルスタック | Next.js v16 (App Router) + TypeScript | |
 | スタイリング | Tailwind CSS | |
-| アニメーション | Framer Motion | 正解演出・キャラ成長演出など |
-| ホスティング | Vercel (Hobbyプラン) | 非営利利用の間はHobbyでOK。将来公開・収益化するならProへ移行検討 |
+| アニメーション | Framer Motion | 正解演出など |
+| ホスティング | Vercel (Hobbyプラン) | 非営利利用の間はHobbyでOK。 |
 | DB | Neon (Postgres) ※Vercel Postgres経由 | スケールtoゼロだが自動復帰するため無料枠の一時停止問題を回避できる |
 | ORM | Drizzle（想定） | Neonとの相性が良い |
 | 認証 | NextAuth (Auth.js) Credentials Provider | 下記「認証設計」参照 |
