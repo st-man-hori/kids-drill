@@ -3,7 +3,8 @@
 kids-drillの設計ドキュメント置き場。決定事項ができるたびにここを更新していく。
 
 - [architecture.md](./architecture.md) — 技術スタック・インフラ・認証まわりの設計
-- [game-design.md](./game-design.md) — ドリルのゲーム性・出題ロジック・キャラクター育成などの設計（検討中）
+- [game-design.md](./game-design.md) — ドリルのゲーム性・出題ロジック・着せ替えアバターなどの設計
+- [data-model.md](./data-model.md) — DBテーブル設計
 
 ## 方針
 
