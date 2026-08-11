@@ -21,6 +21,13 @@ kids-drillは学習Webアプリ。小学1年生のたし算・ひき算から始
 
 Next.js (App Router) + TypeScript / Tailwind CSS / Framer Motion / Vercel / Neon Postgres (Drizzle ORM) / NextAuth Credentials Provider
 
+## コミットルール
+- Conventional Commits形式を使う (feat:, fix:, refactor:, docs: など)
+- 1コミット = 1つの論理的変更。無関係な変更は分割する
+- コミット前に `npm test` と `npm run lint` を実行し、通ったことを確認する
+- コミットメッセージ本文で「なぜ」を説明する(「何を」は差分でわかる)
+- コミット前に必ず `git diff --staged` でレビューする
+
 ## 導入済みSkills
 
 `skills` CLI（[vercel-labs/agent-skills](https://github.com/vercel-labs/agent-skills)、Claude Code純正のプラグイン機構とは別のサードパーティ製ツール）で取得し、`.claude/skills/`に実体を置いている（現時点でClaude Code以外のツールを併用していないため、ベンダー非依存ディレクトリ経由にはせず直接配置）。
