@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "kids-drill",
+  title: "さんすうチャレンジ",
   description: "算数ドリルアプリ",
 };
 
