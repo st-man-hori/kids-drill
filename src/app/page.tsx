@@ -10,18 +10,18 @@ export const metadata: Metadata = {
 const FEATURES = [
   {
     emoji: "🔢",
-    title: "たし算・ひき算からかけ算・わり算まで",
-    body: "学年が上がるにつれて、かけ算・わり算までレベルアップしていくよ",
+    title: "たしざん・ひきざんから かけざん・わりざんまで",
+    body: "がくねんが あがるにつれて、かけざん・わりざんまで レベルアップしていくよ",
   },
   {
     emoji: "⏱️",
     title: "タイムアタックにちょうせん",
-    body: "60びょうで なんもんとける？じぶんのベストきろくを目指そう",
+    body: "60びょうで なんもんとける？じぶんのベストきろくを めざそう",
   },
   {
     emoji: "👕",
     title: "きせかえで キャラをそだてよう",
-    body: "もんだいに正解してポイントをためて、アイテムをゲットしよう",
+    body: "もんだいに せいかいして ポイントをためて、アイテムをゲットしよう",
   },
 ] as const;
 
@@ -31,17 +31,18 @@ export default function TopPage() {
       <main className="flex flex-1 flex-col items-center gap-16 px-6 pb-20">
         <section className="flex flex-col items-center gap-6 text-center pt-8">
           <h1 className="text-3xl font-bold text-foreground sm:text-4xl">
-            楽しく解いて、
+            たのしくといて、
             <br />
-            キャラクターを育てよう！
+            キャラクターをそだてよう！
           </h1>
           <p className="max-w-md text-lg text-foreground/80">
-            小学1年生の算数（たし算・ひき算）からはじめる、
-            タブレット・スマホ・パソコン対応の計算ドリルアプリです。
+            しょうがく1ねんせいの さんすう（たしざん・ひきざん）から
+            はじめられる、けいさんれんしゅうアプリです。
+            タブレット・スマホ・パソコンで つかえます。
           </p>
           <div className="flex flex-col items-center gap-4 sm:flex-row">
             <CtaButton href="/signup" variant="primary">
-              はじめる（新規登録）
+              はじめる
             </CtaButton>
             <CtaButton href="/login" variant="secondary">
               ログイン

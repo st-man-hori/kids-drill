@@ -14,10 +14,10 @@ export default function SignupPage() {
         🚧
       </p>
       <h1 className="text-2xl font-bold text-foreground">
-        新規登録は準備中です
+        しんきとうろくは じゅんびちゅうです
       </h1>
       <p className="max-w-sm text-foreground/70">
-        もうしばらくお待ちください。
+        もうしばらく おまちください。
       </p>
       <Link
         href="/"

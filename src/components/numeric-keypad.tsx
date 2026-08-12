@@ -26,7 +26,7 @@ export function NumericKeypad({
               whileTap={{ scale: 0.9 }}
               disabled={disabled}
               onClick={onBackspace}
-              aria-label="1文字けす"
+              aria-label="いちもじ けす"
               className="aspect-square rounded-md bg-black/5 text-2xl font-bold text-foreground disabled:opacity-40"
             >
               ⌫
