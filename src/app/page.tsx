@@ -28,13 +28,6 @@ const FEATURES = [
 export default function TopPage() {
   return (
     <div className="flex flex-1 flex-col">
-      <header className="flex items-center justify-center py-6">
-        {/* ロゴは仮。実データができたら差し替える */}
-        <div className="rounded-full bg-brand px-5 py-2 text-lg font-bold text-brand-foreground">
-          さんすうチャレンジゲーム
-        </div>
-      </header>
-
       <main className="flex flex-1 flex-col items-center gap-16 px-6 pb-20">
         <section className="flex flex-col items-center gap-6 text-center pt-8">
           <h1 className="text-3xl font-bold text-foreground sm:text-4xl">
@@ -71,10 +64,6 @@ export default function TopPage() {
           ))}
         </section>
       </main>
-
-      <footer className="py-6 text-center text-sm text-foreground/50">
-        © 2026 さんすうチャレンジゲーム
-      </footer>
     </div>
   );
 }
