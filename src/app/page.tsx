@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { CtaButton } from "@/components/cta-button";
 
 export const metadata: Metadata = {
-  title: "さんすうチャレンジ | 楽しく学べる算数ドリル",
+  title: "さんすうチャレンジゲーム | 楽しく学べる算数ドリル",
   description:
     "小学1年生から算数の計算練習ができる無料ドリルアプリ。タイムアタックやキャラクターの着せ替えで、楽しく続けられます。",
 };
@@ -31,7 +31,7 @@ export default function TopPage() {
       <header className="flex items-center justify-center py-6">
         {/* ロゴは仮。実データができたら差し替える */}
         <div className="rounded-full bg-brand px-5 py-2 text-lg font-bold text-brand-foreground">
-          さんすうチャレンジ
+          さんすうチャレンジゲーム
         </div>
       </header>
 
@@ -73,7 +73,7 @@ export default function TopPage() {
       </main>
 
       <footer className="py-6 text-center text-sm text-foreground/50">
-        © 2026 さんすうチャレンジ
+        © 2026 さんすうチャレンジゲーム
       </footer>
     </div>
   );

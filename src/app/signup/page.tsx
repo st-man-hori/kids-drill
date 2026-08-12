@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "新規登録（準備中） | さんすうチャレンジ",
+  title: "新規登録（準備中） | さんすうチャレンジゲーム",
 };
 
 // TODO: 本実装。親子一緒に行う登録フロー（ID自動発行・6桁PIN設定・
