@@ -1,69 +1,80 @@
-import Image from "next/image";
+import type { Metadata } from "next";
+import { CtaButton } from "@/components/cta-button";
 
-export default function Home() {
+export const metadata: Metadata = {
+  title: "さんすうチャレンジ | 楽しく学べる算数ドリル",
+  description:
+    "小学1年生から算数の計算練習ができる無料ドリルアプリ。タイムアタックやキャラクターの着せ替えで、楽しく続けられます。",
+};
+
+const FEATURES = [
+  {
+    emoji: "⏱️",
+    title: "タイムアタックにちょうせん",
+    body: "60びょうで なんもんとける？じぶんのベストきろくを目指そう",
+  },
+  {
+    emoji: "👕",
+    title: "きせかえで キャラをそだてよう",
+    body: "もんだいに正解してポイントをためて、アイテムをゲットしよう",
+  },
+  {
+    emoji: "📈",
+    title: "ぴったりのレベルで出題",
+    body: "くり上がり・くり下がりに合わせて、むりなくレベルアップ",
+  },
+] as const;
+
+export default function TopPage() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
+    <div className="flex flex-1 flex-col">
+      <header className="flex items-center justify-center py-6">
+        {/* ロゴは仮。実データができたら差し替える */}
+        <div className="rounded-full bg-brand px-5 py-2 text-lg font-bold text-brand-foreground">
+          さんすうチャレンジ
+        </div>
+      </header>
+
+      <main className="flex flex-1 flex-col items-center gap-16 px-6 pb-20">
+        <section className="flex flex-col items-center gap-6 text-center pt-8">
+          <h1 className="text-3xl font-bold text-foreground sm:text-4xl">
+            楽しく解いて、
+            <br />
+            キャラクターを育てよう！
           </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+          <p className="max-w-md text-lg text-foreground/80">
+            小学1年生の算数（たし算・ひき算）からはじめる、
+            タブレット・スマホ・パソコン対応の計算ドリルアプリです。
           </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
+          <div className="flex flex-col items-center gap-4 sm:flex-row">
+            <CtaButton href="/signup" variant="primary">
+              はじめる（新規登録）
+            </CtaButton>
+            <CtaButton href="/login" variant="secondary">
+              ログイン
+            </CtaButton>
+          </div>
+        </section>
+
+        <section className="grid w-full max-w-4xl gap-6 sm:grid-cols-3">
+          {FEATURES.map((f) => (
+            <div
+              key={f.title}
+              className="flex flex-col items-center gap-3 rounded-md bg-white/60 p-6 text-center shadow-sm"
+            >
+              <span className="text-4xl" aria-hidden>
+                {f.emoji}
+              </span>
+              <h2 className="text-lg font-bold text-foreground">{f.title}</h2>
+              <p className="text-sm text-foreground/70">{f.body}</p>
+            </div>
+          ))}
+        </section>
       </main>
+
+      <footer className="py-6 text-center text-sm text-foreground/50">
+        © 2026 さんすうチャレンジ
+      </footer>
     </div>
   );
 }
