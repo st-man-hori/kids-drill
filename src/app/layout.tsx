@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
@@ -33,6 +34,9 @@ const RootLayout = ({ children }: LayoutProps<"/">) => {
         <SiteHeader />
         {children}
         <SiteFooter />
+        {/* Vercel Web Analytics。Cookieを使わず訪問者を個人として追跡しない方式のため、
+            子どもが対象のサービスでも使える（docs/architecture.md の公開・プライバシー方針） */}
+        <Analytics />
       </body>
     </html>
   );
