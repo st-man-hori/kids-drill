@@ -15,16 +15,20 @@ const SignupPage = () => {
   const router = useRouter();
   const [credentials, setCredentials] = useState<Credentials | null>(null);
   const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleStart = async () => {
     setSubmitting(true);
-    setError(false);
+    setError(null);
     const result = await registerChild();
     setSubmitting(false);
 
     if (!result.success) {
-      setError(true);
+      setError(
+        result.reason === "rate_limited"
+          ? "すこし じかんを おいてから、もういちど ためしてね"
+          : "うまく とうろく できなかったよ。もういちど ためしてね",
+      );
       return;
     }
     setCredentials(result);
@@ -94,7 +98,7 @@ const SignupPage = () => {
             transition={{ duration: 0.4 }}
             className="rounded-md bg-warning/20 px-4 py-2 text-center font-bold text-foreground"
           >
-            うまく とうろく できなかったよ。もういちど ためしてね
+            {error}
           </motion.p>
         )}
       </AnimatePresence>

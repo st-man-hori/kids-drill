@@ -4,10 +4,11 @@ import bcrypt from "bcryptjs";
 import { eq } from "drizzle-orm";
 import { db } from "@/db";
 import { childProfiles } from "@/db/schema";
+import { loginRateLimit } from "@/lib/rate-limit";
 
 // docs/architecture.md の認証設計を参照。ログインはID + 6桁PIN（子どもごとの唯一のアカウント、親アカウント層はない）。
-// TODO: 本番投入前に、ブルートフォース対策（Upstash Ratelimit）と
-// タイミング攻撃対策（ID不在時もダミーハッシュと比較して所要時間を揃える）を追加する。
+// TODO: 本番投入前に、タイミング攻撃対策（ID不在時もダミーハッシュと
+// 比較して所要時間を揃える）を追加する。
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
     Credentials({
@@ -15,7 +16,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         loginId: { label: "ID" },
         pin: { label: "ひみつのばんごう" },
       },
-      authorize: async (credentials) => {
+      authorize: async (credentials, request) => {
+        const ip = request.headers.get("x-forwarded-for") ?? "unknown";
+        const { success: withinLimit } = await loginRateLimit.limit(ip);
+        if (!withinLimit) return null;
+
         const loginId = credentials?.loginId as string | undefined;
         const pin = credentials?.pin as string | undefined;
         if (!loginId || !pin) return null;

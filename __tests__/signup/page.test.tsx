@@ -52,7 +52,7 @@ test("confirming after reveal navigates to the login page", async () => {
 });
 
 test("shows an error message and stays on the start screen when registration fails", async () => {
-  vi.mocked(registerChild).mockResolvedValue({ success: false });
+  vi.mocked(registerChild).mockResolvedValue({ success: false, reason: "unknown" });
   const user = userEvent.setup();
   render(<SignupPage />);
 
@@ -60,5 +60,17 @@ test("shows an error message and stays on the start screen when registration fai
 
   expect(
     await screen.findByText("うまく とうろく できなかったよ。もういちど ためしてね"),
+  ).toBeInTheDocument();
+});
+
+test("shows a wait-and-retry message when the signup rate limit is hit", async () => {
+  vi.mocked(registerChild).mockResolvedValue({ success: false, reason: "rate_limited" });
+  const user = userEvent.setup();
+  render(<SignupPage />);
+
+  await user.click(screen.getByRole("button", { name: "はじめる" }));
+
+  expect(
+    await screen.findByText("すこし じかんを おいてから、もういちど ためしてね"),
   ).toBeInTheDocument();
 });
