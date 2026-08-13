@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
@@ -6,6 +6,14 @@ import { SiteFooter } from "@/components/site-footer";
 export const metadata: Metadata = {
   title: "さんすうチャレンジゲーム",
   description: "算数ドリルアプリ",
+};
+
+// スクロールなしで画面に収める設計のため、実ビューポート高さ（アドレスバー分の
+// 増減を含む）に追従させる。viewportFitはノッチ端末での余白確保用
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
@@ -21,7 +29,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           rel="stylesheet"
         />
       </head>
-      <body className="min-h-full flex flex-col">
+      <body className="h-dvh flex flex-col overflow-hidden overscroll-none">
         <SiteHeader />
         {children}
         <SiteFooter />

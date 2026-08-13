@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 // display_nicknameの自動生成）を作る。docs/architecture.md, docs/game-design.md参照。
 export default function SignupPage() {
   return (
-    <div className="flex flex-1 flex-col items-center justify-center gap-6 px-6 text-center">
+    <div className="flex min-h-0 flex-1 flex-col items-center justify-center gap-[clamp(0.75rem,3vh,1.5rem)] overflow-y-auto px-6 py-4 text-center">
       <p className="text-3xl" aria-hidden>
         🚧
       </p>

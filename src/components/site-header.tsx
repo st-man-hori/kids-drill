@@ -3,7 +3,7 @@ import Image from "next/image";
 
 export function SiteHeader() {
   return (
-    <header className="flex items-center justify-center py-6">
+    <header className="flex shrink-0 items-center justify-center py-[clamp(0.5rem,2vh,1.5rem)]">
       <Link href="/">
         <Image
           src="/images/header-logo.png"

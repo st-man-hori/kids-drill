@@ -27,20 +27,20 @@ const FEATURES = [
 
 export default function TopPage() {
   return (
-    <div className="flex flex-1 flex-col">
-      <main className="flex flex-1 flex-col items-center gap-16 px-6 pb-20">
-        <section className="flex flex-col items-center gap-6 text-center pt-8">
-          <h1 className="text-3xl font-bold text-foreground sm:text-4xl">
+    <div className="flex min-h-0 flex-1 flex-col overflow-y-auto">
+      <main className="flex flex-1 flex-col items-center justify-center gap-[clamp(1rem,4vh,2.5rem)] px-6 py-[clamp(0.5rem,2vh,1rem)]">
+        <section className="flex flex-col items-center gap-[clamp(0.75rem,2vh,1.5rem)] text-center">
+          <h1 className="text-[clamp(1.375rem,3vh+1rem,2.25rem)] font-bold leading-tight text-foreground">
             たのしくといて、
             <br />
             キャラクターをそだてよう！
           </h1>
-          <p className="max-w-md text-lg text-foreground/80">
+          <p className="max-w-md text-[clamp(0.875rem,1.5vh+0.5rem,1.125rem)] text-foreground/80">
             しょうがく1ねんせいの さんすう（たしざん・ひきざん）から
             はじめられる、けいさんれんしゅうアプリです。
             タブレット・スマホ・パソコンで つかえます。
           </p>
-          <div className="flex flex-col items-center gap-4 sm:flex-row">
+          <div className="flex flex-col items-center gap-3 sm:flex-row">
             <CtaButton href="/signup" variant="primary">
               はじめる
             </CtaButton>
@@ -50,17 +50,19 @@ export default function TopPage() {
           </div>
         </section>
 
-        <section className="grid w-full max-w-4xl gap-6 sm:grid-cols-3">
+        <section className="grid w-full max-w-4xl grid-cols-3 gap-[clamp(0.5rem,1.5vw,1.5rem)]">
           {FEATURES.map((f) => (
             <div
               key={f.title}
-              className="flex flex-col items-center gap-3 rounded-md bg-white/60 p-6 text-center shadow-sm"
+              className="flex flex-col items-center gap-[clamp(0.25rem,1vh,0.75rem)] rounded-md bg-white/60 p-[clamp(0.5rem,1.5vh,1.5rem)] text-center shadow-sm"
             >
-              <span className="text-4xl" aria-hidden>
+              <span className="text-[clamp(1.25rem,2.5vh+0.5rem,2.25rem)]" aria-hidden>
                 {f.emoji}
               </span>
-              <h2 className="text-lg font-bold text-foreground">{f.title}</h2>
-              <p className="text-sm text-foreground/70">{f.body}</p>
+              <h2 className="text-[clamp(0.6875rem,1vh+0.4rem,1.125rem)] font-bold leading-snug text-foreground">
+                {f.title}
+              </h2>
+              <p className="hidden text-sm text-foreground/70 sm:block">{f.body}</p>
             </div>
           ))}
         </section>

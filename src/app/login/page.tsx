@@ -74,8 +74,8 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex flex-1 flex-col items-center justify-center gap-8 px-6 py-12">
-      <h1 className="text-2xl font-bold text-foreground">
+    <div className="flex min-h-0 flex-1 flex-col items-center justify-center gap-[clamp(0.75rem,2.5vh,2rem)] overflow-y-auto px-6 py-[clamp(0.5rem,2vh,2.5rem)]">
+      <h1 className="text-[clamp(1.125rem,2vh+0.75rem,1.5rem)] font-bold text-foreground">
         {step === "id" ? "ID（あいでぃー）を おしてね" : "ひみつのばんごうを おしてね"}
       </h1>
 

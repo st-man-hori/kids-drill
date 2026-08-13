@@ -1,6 +1,6 @@
 export function SiteFooter() {
   return (
-    <footer className="py-6 text-center text-sm text-foreground/50">
+    <footer className="shrink-0 py-[clamp(0.375rem,1.5vh,1rem)] text-center text-xs text-foreground/50 sm:text-sm">
       © 2026 さんすうチャレンジゲーム
     </footer>
   );
