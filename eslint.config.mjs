@@ -7,13 +7,12 @@ const eslintConfig = defineConfig([
   ...nextTs,
   {
     rules: {
-      // ローカル関数はアロー関数に統一する。ページ/レイアウトのdefault export
-      // （このルールが自動で対象外にする）とコンポーネントのnamed exportは対象外
-      // （`function`宣言のままでよい）。
+      // アロー関数に統一する。ページ/レイアウトのdefault exportだけは
+      // ルール仕様上つねに対象外（App Routerの規約でfunction宣言のまま）。
       "func-style": [
         "error",
         "expression",
-        { allowArrowFunctions: true, overrides: { namedExports: "ignore" } },
+        { allowArrowFunctions: true, overrides: { namedExports: "expression" } },
       ],
     },
   },

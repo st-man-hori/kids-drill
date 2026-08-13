@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
 
-export function CtaButton({
+export const CtaButton = ({
   href,
   variant = "primary",
   children,
@@ -11,7 +11,7 @@ export function CtaButton({
   href: string;
   variant?: "primary" | "secondary";
   children: React.ReactNode;
-}) {
+}) => {
   const base =
     "flex h-14 items-center justify-center rounded-full px-8 text-xl font-bold w-full sm:w-auto";
   const styles =
@@ -26,4 +26,4 @@ export function CtaButton({
       </Link>
     </motion.div>
   );
-}
+};

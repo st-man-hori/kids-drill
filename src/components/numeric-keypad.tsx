@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 
 const KEYS = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "", "0", "back"] as const;
 
-export function NumericKeypad({
+export const NumericKeypad = ({
   onDigit,
   onBackspace,
   disabled,
@@ -12,7 +12,7 @@ export function NumericKeypad({
   onDigit: (digit: string) => void;
   onBackspace: () => void;
   disabled?: boolean;
-}) {
+}) => {
   return (
     <div className="grid w-full max-w-[min(20rem,85vw,34vh)] grid-cols-3 gap-[min(0.75rem,1.5vh)]">
       {KEYS.map((key, i) => {
@@ -49,4 +49,4 @@ export function NumericKeypad({
       })}
     </div>
   );
-}
+};
