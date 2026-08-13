@@ -25,7 +25,7 @@ const FEATURES = [
   },
 ] as const;
 
-export default function TopPage() {
+const TopPage = () => {
   return (
     <div className="flex min-h-0 flex-1 flex-col overflow-y-auto">
       <main className="flex flex-1 flex-col items-center justify-center gap-[clamp(1rem,4vh,2.5rem)] px-6 py-[clamp(0.5rem,2vh,1rem)]">
@@ -69,4 +69,6 @@ export default function TopPage() {
       </main>
     </div>
   );
-}
+};
+
+export default TopPage;

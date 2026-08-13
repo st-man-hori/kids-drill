@@ -23,7 +23,7 @@ const DigitBoxes = ({ length, value }: { length: number; value: string }) => {
   );
 };
 
-export default function LoginPage() {
+const LoginPage = () => {
   const router = useRouter();
   const [step, setStep] = useState<"id" | "pin">("id");
   const [loginId, setLoginId] = useState("");
@@ -115,4 +115,6 @@ export default function LoginPage() {
       )}
     </div>
   );
-}
+};
+
+export default LoginPage;
