@@ -17,7 +17,7 @@ export const signupRateLimit = new Ratelimit({
   prefix: `ratelimit:${ENV}:signup`,
 });
 
-// ログインのブルートフォース対策（docs/architecture.md参照）。
+// ログインのブルートフォース対策（docs/architecture.md参照）。IPベース。
 // 10分間に10回まで。PINは6桁(100万通り)なので、この制限下では
 // 総当たりが現実的な時間で終わらない
 export const loginRateLimit = new Ratelimit({
@@ -25,3 +25,29 @@ export const loginRateLimit = new Ratelimit({
   limiter: Ratelimit.slidingWindow(10, "10 m"),
   prefix: `ratelimit:${ENV}:login`,
 });
+
+// ログインIDごとの連続失敗ロック。IPを変えて特定の1アカウントだけを
+// 狙い撃ちされるケースはIPベースのloginRateLimitでは防げないため、
+// アカウント単位でも別途制限する。5回連続で失敗したら15分ロックし、
+// 1回でも成功したらカウントをリセットする。
+const MAX_CONSECUTIVE_FAILURES = 5;
+const LOCKOUT_SECONDS = 15 * 60;
+
+const loginAttemptsKey = (loginId: string) => `lockout:${ENV}:login:${loginId}`;
+
+export const isLoginLocked = async (loginId: string): Promise<boolean> => {
+  const count = await redis.get<number>(loginAttemptsKey(loginId));
+  return (count ?? 0) >= MAX_CONSECUTIVE_FAILURES;
+};
+
+export const recordFailedLogin = async (loginId: string): Promise<void> => {
+  const key = loginAttemptsKey(loginId);
+  const count = await redis.incr(key);
+  if (count === 1) {
+    await redis.expire(key, LOCKOUT_SECONDS);
+  }
+};
+
+export const resetLoginAttempts = async (loginId: string): Promise<void> => {
+  await redis.del(loginAttemptsKey(loginId));
+};
