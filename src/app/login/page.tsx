@@ -34,7 +34,7 @@ const LoginPage = () => {
       return;
     }
 
-    router.push("/");
+    router.push("/mypage");
   };
 
   const handleDigit = (digit: string) => {
