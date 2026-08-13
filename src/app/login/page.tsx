@@ -28,8 +28,11 @@ const LoginPage = () => {
     setSubmitting(false);
 
     if (!result || result.error) {
-      // ID・PINどちらが違うかは区別しないメッセージ（docs/architecture.md参照）
+      // ID・PINどちらが違うかは区別しないメッセージ（docs/architecture.md参照）。
+      // どちらが原因か分からない以上、ID入力からやり直させる
       setError("ID（あいでぃー）か ひみつのばんごうが ちがうみたい。もういちどためしてね");
+      setStep("id");
+      setLoginId("");
       setPin("");
       return;
     }
