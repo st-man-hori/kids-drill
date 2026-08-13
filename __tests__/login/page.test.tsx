@@ -7,19 +7,20 @@ vi.mock("next/navigation", () => ({
   useRouter: () => ({ push: vi.fn() }),
 }));
 
-test("typing digits builds up the login ID and enables the next button", async () => {
+test("typing fewer than 6 digits keeps the user on the ID step", async () => {
   const user = userEvent.setup();
   render(<LoginPage />);
-
-  const nextButton = screen.getByRole("button", { name: "つぎへ" });
-  expect(nextButton).toBeDisabled();
 
   await user.click(screen.getByRole("button", { name: "1" }));
   await user.click(screen.getByRole("button", { name: "2" }));
   await user.click(screen.getByRole("button", { name: "3" }));
 
-  expect(screen.getByText("123", { selector: "div" })).toBeInTheDocument();
-  expect(nextButton).toBeEnabled();
+  expect(screen.getByText("1", { selector: "div" })).toBeInTheDocument();
+  expect(screen.getByText("2", { selector: "div" })).toBeInTheDocument();
+  expect(screen.getByText("3", { selector: "div" })).toBeInTheDocument();
+  expect(
+    screen.getByRole("heading", { name: "ID（あいでぃー）を おしてね" }),
+  ).toBeInTheDocument();
 });
 
 test("backspace removes the last digit of the login ID", async () => {
@@ -33,12 +34,13 @@ test("backspace removes the last digit of the login ID", async () => {
   expect(screen.getByText("1", { selector: "div" })).toBeInTheDocument();
 });
 
-test("moving to the pin step shows the secret-number heading", async () => {
+test("typing 6 digits auto-advances to the pin step", async () => {
   const user = userEvent.setup();
   render(<LoginPage />);
 
-  await user.click(screen.getByRole("button", { name: "1" }));
-  await user.click(screen.getByRole("button", { name: "つぎへ" }));
+  for (const digit of ["1", "2", "3", "4", "5", "6"]) {
+    await user.click(screen.getByRole("button", { name: digit }));
+  }
 
   expect(
     screen.getByRole("heading", { name: "ひみつのばんごうを おしてね" }),

@@ -7,7 +7,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { NumericKeypad } from "@/components/numeric-keypad";
 import { DigitBoxes } from "@/components/digit-boxes";
 
-const PIN_LENGTH = 6;
+const CODE_LENGTH = 6;
 
 const LoginPage = () => {
   const router = useRouter();
@@ -40,12 +40,16 @@ const LoginPage = () => {
   const handleDigit = (digit: string) => {
     if (submitting) return;
     if (step === "id") {
-      setLoginId((v) => v + digit);
+      const next = loginId + digit;
+      setLoginId(next);
+      if (next.length === CODE_LENGTH) {
+        setStep("pin");
+      }
       return;
     }
     const next = pin + digit;
     setPin(next);
-    if (next.length === PIN_LENGTH) {
+    if (next.length === CODE_LENGTH) {
       submit(next);
     }
   };
@@ -65,13 +69,7 @@ const LoginPage = () => {
         {step === "id" ? "ID（あいでぃー）を おしてね" : "ひみつのばんごうを おしてね"}
       </h1>
 
-      {step === "id" ? (
-        <div className="min-h-12 text-3xl font-bold tracking-widest text-foreground">
-          {loginId || " "}
-        </div>
-      ) : (
-        <DigitBoxes length={PIN_LENGTH} value={pin} />
-      )}
+      <DigitBoxes length={CODE_LENGTH} value={step === "id" ? loginId : pin} />
 
       <AnimatePresence>
         {error && (
@@ -87,18 +85,6 @@ const LoginPage = () => {
       </AnimatePresence>
 
       <NumericKeypad onDigit={handleDigit} onBackspace={handleBackspace} disabled={submitting} />
-
-      {step === "id" && (
-        <motion.button
-          type="button"
-          whileTap={{ scale: 0.95 }}
-          disabled={loginId.length === 0}
-          onClick={() => setStep("pin")}
-          className="rounded-full bg-brand px-10 py-3 text-xl font-bold text-brand-foreground disabled:opacity-40"
-        >
-          つぎへ
-        </motion.button>
-      )}
     </div>
   );
 };
