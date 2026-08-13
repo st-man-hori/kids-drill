@@ -1,11 +1,16 @@
 import { expect, test, vi } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { signIn } from "next-auth/react";
 import LoginPage from "@/app/login/page";
 
+const { pushMock, refreshMock } = vi.hoisted(() => ({
+  pushMock: vi.fn(),
+  refreshMock: vi.fn(),
+}));
+
 vi.mock("next/navigation", () => ({
-  useRouter: () => ({ push: vi.fn() }),
+  useRouter: () => ({ push: pushMock, refresh: refreshMock }),
 }));
 
 vi.mock("next-auth/react", () => ({
@@ -75,4 +80,29 @@ test("a failed sign-in sends the user back to the ID step with both fields clear
     await screen.findByRole("heading", { name: "ID（あいでぃー）を おしてね" }),
   ).toBeInTheDocument();
   expect(screen.queryByText("1", { selector: "div" })).not.toBeInTheDocument();
+});
+
+test("a successful sign-in navigates to mypage and refreshes the router", async () => {
+  vi.mocked(signIn).mockResolvedValue({
+    error: undefined,
+    code: undefined,
+    ok: true,
+    status: 200,
+    url: "/mypage",
+  } as Awaited<ReturnType<typeof signIn>>);
+
+  const user = userEvent.setup();
+  render(<LoginPage />);
+
+  for (const digit of ["1", "2", "3", "4", "5", "6"]) {
+    await user.click(screen.getByRole("button", { name: digit }));
+  }
+  for (const digit of ["6", "5", "4", "3", "2", "1"]) {
+    await user.click(screen.getByRole("button", { name: digit }));
+  }
+
+  await waitFor(() => {
+    expect(pushMock).toHaveBeenCalledWith("/mypage");
+  });
+  expect(refreshMock).toHaveBeenCalledOnce();
 });

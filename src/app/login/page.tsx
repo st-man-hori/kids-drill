@@ -38,6 +38,9 @@ const LoginPage = () => {
     }
 
     router.push("/mypage");
+    // ヘッダーなどRoot Layout配下のServer Componentがキャッシュされた
+    // （ログイン前の）レンダリング結果を使い回さないよう再取得させる
+    router.refresh();
   };
 
   const handleDigit = (digit: string) => {

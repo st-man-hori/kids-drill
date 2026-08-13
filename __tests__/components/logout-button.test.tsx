@@ -4,10 +4,13 @@ import userEvent from "@testing-library/user-event";
 import { signOut } from "next-auth/react";
 import { LogoutButton } from "@/components/logout-button";
 
-const { pushMock } = vi.hoisted(() => ({ pushMock: vi.fn() }));
+const { pushMock, refreshMock } = vi.hoisted(() => ({
+  pushMock: vi.fn(),
+  refreshMock: vi.fn(),
+}));
 
 vi.mock("next/navigation", () => ({
-  useRouter: () => ({ push: pushMock }),
+  useRouter: () => ({ push: pushMock, refresh: refreshMock }),
 }));
 
 vi.mock("next-auth/react", () => ({
@@ -23,4 +26,5 @@ test("signs out and navigates to the top page when pressed", async () => {
 
   expect(signOut).toHaveBeenCalledWith({ redirect: false });
   expect(pushMock).toHaveBeenCalledWith("/");
+  expect(refreshMock).toHaveBeenCalledOnce();
 });

@@ -10,6 +10,10 @@ export const LogoutButton = ({ size = "default" }: { size?: "default" | "compact
   const handleLogout = async () => {
     await signOut({ redirect: false });
     router.push("/");
+    // ヘッダーはRoot Layout配下のServer Componentなので、pushだけだと
+    // キャッシュされた（ログイン中の）レンダリング結果が再利用され、
+    // ログアウトボタンが残り続けることがある。refreshで再取得させる。
+    router.refresh();
   };
 
   const sizeStyles = size === "compact" ? "px-4 py-1.5 text-sm" : "px-8 py-3 text-lg";
