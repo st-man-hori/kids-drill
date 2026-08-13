@@ -8,12 +8,12 @@ type Db = ReturnType<typeof drizzle<typeof schema>>;
 // 実際にクエリが実行されるまで neon() の呼び出しを遅延させる。
 let cached: Db | undefined;
 
-function getDb(): Db {
+const getDb = (): Db => {
   if (!cached) {
     cached = drizzle(neon(process.env.DATABASE_URL!), { schema });
   }
   return cached;
-}
+};
 
 export const db: Db = new Proxy({} as Db, {
   get(_target, prop, receiver) {

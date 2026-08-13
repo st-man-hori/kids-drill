@@ -8,7 +8,7 @@ import { NumericKeypad } from "@/components/numeric-keypad";
 
 const PIN_LENGTH = 6;
 
-function DigitBoxes({ length, value }: { length: number; value: string }) {
+const DigitBoxes = ({ length, value }: { length: number; value: string }) => {
   return (
     <div className="flex gap-2 justify-center" aria-hidden>
       {Array.from({ length }).map((_, i) => (
@@ -21,7 +21,7 @@ function DigitBoxes({ length, value }: { length: number; value: string }) {
       ))}
     </div>
   );
-}
+};
 
 export default function LoginPage() {
   const router = useRouter();
@@ -31,7 +31,7 @@ export default function LoginPage() {
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
-  async function submit(finishedPin: string) {
+  const submit = async (finishedPin: string) => {
     setSubmitting(true);
     setError(null);
     const result = await signIn("credentials", {
@@ -49,9 +49,9 @@ export default function LoginPage() {
     }
 
     router.push("/");
-  }
+  };
 
-  function handleDigit(digit: string) {
+  const handleDigit = (digit: string) => {
     if (submitting) return;
     if (step === "id") {
       setLoginId((v) => v + digit);
@@ -62,16 +62,16 @@ export default function LoginPage() {
     if (next.length === PIN_LENGTH) {
       submit(next);
     }
-  }
+  };
 
-  function handleBackspace() {
+  const handleBackspace = () => {
     if (submitting) return;
     if (step === "id") {
       setLoginId((v) => v.slice(0, -1));
     } else {
       setPin((v) => v.slice(0, -1));
     }
-  }
+  };
 
   return (
     <div className="flex min-h-0 flex-1 flex-col items-center justify-center gap-[clamp(0.75rem,2.5vh,2rem)] overflow-y-auto px-6 py-[clamp(0.5rem,2vh,2.5rem)]">
