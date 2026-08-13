@@ -17,6 +17,10 @@ const getDb = (): Db => {
 
 export const db: Db = new Proxy({} as Db, {
   get(_target, prop, receiver) {
-    return Reflect.get(getDb(), prop, receiver);
+    const value = Reflect.get(getDb(), prop, receiver);
+    // メソッドはインスタンス本体にbindして返す。bindしないとdb.insert(...)のような
+    // 呼び出し時のthisがProxy自身になり、drizzle内部が状態をthisに書き込む場合に
+    // 実体ではなく空のProxyターゲットへ書き込まれて消えてしまう。
+    return typeof value === "function" ? value.bind(getDb()) : value;
   },
 });

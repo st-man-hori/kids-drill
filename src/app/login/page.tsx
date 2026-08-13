@@ -5,23 +5,9 @@ import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
 import { motion, AnimatePresence } from "framer-motion";
 import { NumericKeypad } from "@/components/numeric-keypad";
+import { DigitBoxes } from "@/components/digit-boxes";
 
 const PIN_LENGTH = 6;
-
-const DigitBoxes = ({ length, value }: { length: number; value: string }) => {
-  return (
-    <div className="flex gap-2 justify-center" aria-hidden>
-      {Array.from({ length }).map((_, i) => (
-        <div
-          key={i}
-          className="flex h-12 w-9 items-center justify-center rounded-sm bg-black/5 text-2xl font-bold text-foreground"
-        >
-          {value[i] ?? ""}
-        </div>
-      ))}
-    </div>
-  );
-};
 
 const LoginPage = () => {
   const router = useRouter();
