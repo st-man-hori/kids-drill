@@ -1,0 +1,331 @@
+"use client";
+
+import { useCallback, useEffect, useRef, useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
+import { motion } from "framer-motion";
+import { NumericKeypad } from "@/components/numeric-keypad";
+import {
+  submitPracticeSession,
+  type PracticeSessionResult,
+} from "@/app/practice/add/actions";
+import {
+  COMBO_THRESHOLD,
+  TOTAL_QUESTIONS,
+  answerMaxLength,
+  generateQuestions,
+  type LevelConfig,
+  type Question,
+} from "@/lib/practice";
+
+// 記録が返ってきたのが今の10問（batch）の分かどうかを見分けるために持つ。
+// 「もっとやる」で次の10問に進んだ後に前の結果が届いても表示しないため。
+type Summary = PracticeSessionResult & { batch: number };
+
+const buttonClass =
+  "rounded-full px-10 py-3 text-xl font-bold disabled:opacity-40";
+const primaryButtonClass = `${buttonClass} bg-brand text-brand-foreground shadow-sm`;
+const secondaryButtonClass = `${buttonClass} border-2 border-brand bg-white text-brand`;
+
+export const PracticeSession = ({
+  levelNumber,
+  config,
+  questions: initialQuestions,
+}: {
+  levelNumber: number;
+  config: LevelConfig;
+  questions: Question[];
+}) => {
+  const router = useRouter();
+  const [, startTransition] = useTransition();
+
+  // 現在のレベルはレベルアップすると次の10問から切り替わるので状態として持つ
+  const [level, setLevel] = useState({ levelNumber, config });
+  const [questions, setQuestions] = useState(initialQuestions);
+  const [batch, setBatch] = useState(0);
+  const [startedAt, setStartedAt] = useState(() => new Date().toISOString());
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [input, setInput] = useState("");
+  const [feedback, setFeedback] = useState<"correct" | "incorrect" | null>(null);
+  const [results, setResults] = useState<boolean[]>([]);
+  const [combo, setCombo] = useState({ current: 0, best: 0 });
+  const [summary, setSummary] = useState<Summary | null>(null);
+
+  // finishedはcurrentIndexで判定する（results.length基準だと最後の設問の
+  // フィードバックを表示する前に結果画面へ切り替わってしまうため）
+  const finished = currentIndex >= questions.length;
+  const current = questions[currentIndex];
+  const correctCount = results.filter(Boolean).length;
+  const maxLength = answerMaxLength(level.config);
+  const currentSummary = summary?.batch === batch ? summary : null;
+
+  // 10問終わって結果画面に来た時点で記録する。「マイページへ もどる」を
+  // 押すまで待つと、結果画面を見たまま離脱した子どもの10問が丸ごと消える。
+  // StrictModeでeffectが2回走っても二重送信しないようbatch番号で見張る。
+  const submittedBatch = useRef(-1);
+  useEffect(() => {
+    if (!finished || submittedBatch.current === batch) return;
+    submittedBatch.current = batch;
+
+    const submittedFor = batch;
+    startTransition(async () => {
+      try {
+        const result = await submitPracticeSession({ results, startedAt });
+        if (result) setSummary({ ...result, batch: submittedFor });
+      } catch (error) {
+        // 記録に失敗してもゲーム自体は続けられるようにする。子どもに
+        // エラーを見せても対処できないため画面には出さない
+        console.error(error);
+      }
+    });
+  }, [finished, batch, results, startedAt, startTransition]);
+
+  const handleDigit = useCallback(
+    (digit: string) => {
+      if (feedback) return;
+      setInput((value) => (value.length >= maxLength ? value : value + digit));
+    },
+    [feedback, maxLength],
+  );
+
+  const handleBackspace = useCallback(() => {
+    if (feedback) return;
+    setInput((value) => value.slice(0, -1));
+  }, [feedback]);
+
+  const handleCheck = useCallback(() => {
+    if (feedback || input.length === 0 || !current) return;
+    const isCorrect = Number(input) === current.answer;
+    setFeedback(isCorrect ? "correct" : "incorrect");
+    setResults((prev) => [...prev, isCorrect]);
+    setCombo((prev) => {
+      const next = isCorrect ? prev.current + 1 : 0;
+      return { current: next, best: Math.max(prev.best, next) };
+    });
+  }, [feedback, input, current]);
+
+  const handleNext = useCallback(() => {
+    setCurrentIndex((index) => index + 1);
+    setInput("");
+    setFeedback(null);
+  }, []);
+
+  // PCでは物理キーボードでも答えられるようにする（メインのiPadでは
+  // 画面のキーパッドを使うため、こちらは補助的な入力手段）
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (finished) return;
+
+      if (event.key.length === 1 && event.key >= "0" && event.key <= "9") {
+        handleDigit(event.key);
+        return;
+      }
+      if (event.key === "Backspace") {
+        event.preventDefault();
+        handleBackspace();
+        return;
+      }
+      if (event.key === "Enter") {
+        // ボタンにフォーカスがある間は、同じEnterでブラウザがクリックも
+        // 発火させるため二重処理になる。その場合はクリック側に任せる
+        if (document.activeElement instanceof HTMLButtonElement) return;
+        if (feedback) handleNext();
+        else handleCheck();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [finished, feedback, handleDigit, handleBackspace, handleCheck, handleNext]);
+
+  const handleMore = () => {
+    // レベルアップしていれば次の10問から新しいレベルの問題になる。
+    // 記録が返ってきていない場合は今のレベルのまま続ける
+    const nextLevel = currentSummary
+      ? { levelNumber: currentSummary.levelNumber, config: currentSummary.config }
+      : level;
+
+    setLevel(nextLevel);
+    setQuestions(generateQuestions(nextLevel.config, TOTAL_QUESTIONS));
+    setBatch((value) => value + 1);
+    setStartedAt(new Date().toISOString());
+    setCurrentIndex(0);
+    setInput("");
+    setFeedback(null);
+    setResults([]);
+    setCombo({ current: 0, best: 0 });
+  };
+
+  const handleFinish = () => {
+    router.push("/mypage");
+    router.refresh();
+  };
+
+  if (finished) {
+    return (
+      <div className="flex min-h-0 flex-1 flex-col items-center justify-center gap-[clamp(0.75rem,3vh,1.75rem)] overflow-y-auto px-6 py-[clamp(0.5rem,2vh,1rem)] text-center">
+        <h1 className="text-[clamp(1.375rem,3vh+1rem,2.25rem)] font-bold text-foreground">
+          おつかれさま！
+        </h1>
+        <p className="text-[clamp(1.125rem,2vh+0.75rem,1.5rem)] font-bold text-foreground">
+          {questions.length}もんちゅう {correctCount}もん せいかい！
+        </p>
+
+        {combo.best >= COMBO_THRESHOLD && (
+          <p className="rounded-sm bg-brand/15 px-4 py-2 font-bold text-foreground">
+            さいこう {combo.best}れんぞく！
+          </p>
+        )}
+
+        {/* ポイントとレベルアップは記録が返ってきてから出す（サーバー側が
+            正としているため）。少し遅れて弾んで出てくるのが演出も兼ねる */}
+        {currentSummary && (
+          <motion.p
+            initial={{ scale: 0.6, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ type: "spring", stiffness: 300, damping: 14 }}
+            className="rounded-sm bg-success/20 px-5 py-2 text-xl font-bold text-foreground"
+          >
+            {currentSummary.pointsEarned} ポイント ゲット！
+          </motion.p>
+        )}
+        {currentSummary?.leveledUp && (
+          <motion.p
+            initial={{ scale: 0.6, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ type: "spring", stiffness: 300, damping: 12, delay: 0.2 }}
+            className="rounded-sm bg-warning/25 px-5 py-2 text-xl font-bold text-foreground"
+          >
+            レベルアップ！ つぎは レベル{currentSummary.levelNumber} だよ
+          </motion.p>
+        )}
+
+        <div className="flex flex-col items-center gap-3 sm:flex-row">
+          <motion.button
+            type="button"
+            whileTap={{ scale: 0.95 }}
+            onClick={handleMore}
+            className={primaryButtonClass}
+          >
+            もっと やる
+          </motion.button>
+          <motion.button
+            type="button"
+            whileTap={{ scale: 0.95 }}
+            onClick={handleFinish}
+            className={secondaryButtonClass}
+          >
+            マイページへ もどる
+          </motion.button>
+        </div>
+      </div>
+    );
+  }
+
+  const segmentClass = (index: number) => {
+    if (index < results.length) return results[index] ? "bg-success" : "bg-warning";
+    if (index === currentIndex) return "bg-brand/40";
+    return "bg-black/10";
+  };
+
+  return (
+    <div className="flex min-h-0 flex-1 flex-col items-center justify-center gap-[clamp(0.75rem,2.5vh,2rem)] overflow-y-auto px-6 py-[clamp(0.5rem,2vh,2.5rem)]">
+      <div className="flex w-full max-w-[min(20rem,85vw,34vh)] flex-col gap-2">
+        <div className="flex items-baseline justify-between text-sm font-bold text-foreground/60">
+          <p>レベル{level.levelNumber}</p>
+          <p>
+            {currentIndex + 1} もんめ ／ {questions.length}もん
+          </p>
+        </div>
+        {/* 何問目まで来たか・どれが正解だったかを一目で分かるようにする帯 */}
+        <div className="flex gap-1" aria-hidden>
+          {questions.map((_, index) => (
+            <div key={index} className={`h-2 flex-1 rounded-full ${segmentClass(index)}`} />
+          ))}
+        </div>
+      </div>
+
+      <h1 className="text-[clamp(1.75rem,4vh+1rem,3rem)] font-bold tracking-wide text-foreground">
+        {current.a} ＋ {current.b} ＝
+      </h1>
+
+      <div
+        role="status"
+        aria-live="polite"
+        className="flex min-h-12 min-w-24 items-center justify-center border-b-4 border-foreground/15 px-4 text-3xl font-bold tracking-widest text-foreground"
+      >
+        {input || (
+          <span className="text-foreground/20" aria-hidden>
+            ?
+          </span>
+        )}
+      </div>
+
+      {/* フィードバックはキーパッドに重ねて出す。キーパッドを消したり
+          メッセージ用の余白を空けたりすると画面全体が動いて押し間違いを誘うため */}
+      <div className="relative flex w-full justify-center">
+        <div className="flex w-full justify-center">
+          <NumericKeypad
+            onDigit={handleDigit}
+            onBackspace={handleBackspace}
+            disabled={feedback !== null}
+          />
+        </div>
+        {/* AnimatePresenceは使わない。退場アニメーション中の要素がDOMに残り、
+            前の設問のフィードバックが重なって見えてしまうため */}
+        {feedback && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.15 }}
+            role="status"
+            aria-live="polite"
+            className="pointer-events-none absolute inset-0 flex items-center justify-center rounded-md bg-background/85 px-2"
+          >
+            {feedback === "correct" ? (
+              <motion.p
+                initial={{ scale: 0.5 }}
+                animate={{ scale: 1 }}
+                transition={{ type: "spring", stiffness: 300, damping: 12 }}
+                className="rounded-sm bg-success/25 px-5 py-3 text-center text-xl font-bold text-foreground"
+              >
+                {combo.current >= COMBO_THRESHOLD
+                  ? `${combo.current}れんぞく せいかい！`
+                  : "せいかい！"}
+              </motion.p>
+            ) : (
+              <motion.p
+                initial={{ x: 0 }}
+                animate={{ x: [0, -8, 8, -8, 8, 0] }}
+                transition={{ duration: 0.4 }}
+                className="rounded-sm bg-warning/25 px-5 py-3 text-center font-bold text-foreground"
+              >
+                ざんねん…こたえは {current.answer} だよ
+              </motion.p>
+            )}
+          </motion.div>
+        )}
+      </div>
+
+      {feedback ? (
+        <motion.button
+          type="button"
+          whileTap={{ scale: 0.95 }}
+          onClick={handleNext}
+          className={primaryButtonClass}
+        >
+          つぎへ
+        </motion.button>
+      ) : (
+        <motion.button
+          type="button"
+          whileTap={{ scale: 0.95 }}
+          disabled={input.length === 0}
+          onClick={handleCheck}
+          className={primaryButtonClass}
+        >
+          こたえる
+        </motion.button>
+      )}
+    </div>
+  );
+};

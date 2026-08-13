@@ -25,13 +25,15 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 ## 現在の状態
 
-`create-next-app`でスキャフォールド済み。テストはまだセットアップされていない（コミットルールの`npm test`はテスト追加後から適用）。
+認証（サインアップ・ログイン）と、算数の練習モード（たしざん）が動く状態。テストはVitest + Testing Libraryでセットアップ済み。
 
 ```
 npm run dev      # 開発サーバー起動
 npm run build    # 本番ビルド
 npm run start    # 本番ビルドを起動
 npm run lint     # ESLint
+npm test         # Vitest（watch。CI的に1回だけ回すなら npx vitest run）
+npm run db:seed  # 教科・難易度レベルの投入（冪等。docs/data-model.md の運用方針）
 ```
 
 ## 技術スタック（要約。詳細は`docs/architecture.md`）
