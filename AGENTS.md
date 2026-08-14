@@ -33,7 +33,10 @@ npm run build    # 本番ビルド
 npm run start    # 本番ビルドを起動
 npm run lint     # ESLint
 npm test         # Vitest（watch。CI的に1回だけ回すなら npx vitest run）
-npm run db:seed  # 教科・難易度レベルの投入（冪等。docs/data-model.md の運用方針）
+npm run db:generate  # スキーマ変更からマイグレーション生成（マスタデータ追加時は --custom）
+npm run db:migrate   # マイグレーション適用。教科・難易度レベルの投入もこれに含まれる
+# Vercelのデプロイ時は vercel.json の buildCommand から db:migrate が走る
+# → docs/architecture.md の「デプロイとマイグレーション」
 ```
 
 ## 技術スタック（要約。詳細は`docs/architecture.md`）

@@ -35,6 +35,10 @@ export const ADD_SKILL_TYPE = "add";
 // 同じ式で扱える。docsの「和≤10 / 和11〜18」という表現とは、和がちょうど
 // 10のときの扱いが1問分だけ異なりうるが、docs自体が「たたき台」と
 // 明記している範囲の調整として、carryの数学的な定義に忠実にした。
+//
+// 注意: 実行時にアプリが読むのはDBの difficulty_levels.config であって、この配列
+// ではない（practice-progress.ts）。ここはレベル設計の原稿とテスト用の値であり、
+// 変更してもマイグレーションを追加しない限り本番の出題は変わらない。
 export const ADD_LEVELS: readonly LevelConfig[] = [
   { minA: 1, maxA: 9, minB: 1, maxB: 9, carry: false }, // Lv1: 1桁+1桁、繰り上がりなし
   { minA: 1, maxA: 9, minB: 1, maxB: 9, carry: true }, // Lv2: 1桁+1桁、繰り上がりあり
