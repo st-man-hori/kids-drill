@@ -135,6 +135,21 @@ export const isStrugglingSession = (session: {
   session.totalQuestions >= TOTAL_QUESTIONS &&
   session.correctCount <= LEVEL_DOWN_CORRECT_COUNT;
 
+// 結果画面の祝い方の段階。しきい値はレベルの昇降とわざと揃えてある
+// （紙吹雪が出る＝レベルアップ圏、いちばん静かな段階＝降級圏）。
+// 演出と難易度の手応えがズレないようにするため。
+export type CelebrationTier = "perfect" | "great" | "good" | "gentle";
+
+export const celebrationTier = (
+  correctCount: number,
+  totalQuestions: number,
+): CelebrationTier => {
+  if (totalQuestions > 0 && correctCount === totalQuestions) return "perfect";
+  if (correctCount >= LEVEL_UP_CORRECT_COUNT) return "great";
+  if (correctCount > LEVEL_DOWN_CORRECT_COUNT) return "good";
+  return "gentle";
+};
+
 export const calculatePoints = (results: readonly boolean[]): number => {
   const correctCount = results.filter(Boolean).length;
   const perfect = results.length > 0 && correctCount === results.length;

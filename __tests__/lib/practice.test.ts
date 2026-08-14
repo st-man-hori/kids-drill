@@ -8,6 +8,7 @@ import {
   TOTAL_QUESTIONS,
   answerMaxLength,
   calculatePoints,
+  celebrationTier,
   generateQuestion,
   generateQuestions,
   isStrugglingSession,
@@ -106,4 +107,21 @@ test("a session shorter than one full set never counts as struggling", () => {
   expect(
     isStrugglingSession({ correctCount: 0, totalQuestions: TOTAL_QUESTIONS - 1 }),
   ).toBe(false);
+});
+
+// 祝い方の段階はレベルの昇降のしきい値と揃っている
+test.each([
+  [TOTAL_QUESTIONS, "perfect"],
+  [LEVEL_UP_CORRECT_COUNT + 1, "great"],
+  [LEVEL_UP_CORRECT_COUNT, "great"],
+  [LEVEL_UP_CORRECT_COUNT - 1, "good"],
+  [LEVEL_DOWN_CORRECT_COUNT + 1, "good"],
+  [LEVEL_DOWN_CORRECT_COUNT, "gentle"],
+  [0, "gentle"],
+])("%i correct answers gets the %s celebration", (correctCount, expected) => {
+  expect(celebrationTier(correctCount, TOTAL_QUESTIONS)).toBe(expected);
+});
+
+test("an empty set is not treated as a perfect run", () => {
+  expect(celebrationTier(0, 0)).toBe("gentle");
 });

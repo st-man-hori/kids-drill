@@ -156,6 +156,27 @@ test("lets an impatient child tap through a correct answer early", async () => {
   });
 });
 
+// 正解は「2」、不正解は「5」（出題はすべて 1＋1）
+test.each([
+  [TOTAL_QUESTIONS, "ぜんもん せいかい！"],
+  [8, "すごい！ その ちょうし！"],
+  [6, "よく がんばったね！"],
+  // 成績が振るわなくても否定的な見出しは出さない（docs/design.md）
+  [0, "さいごまで やりきったね！"],
+])(
+  "the results headline celebrates %i correct answers appropriately",
+  async (correct, headline) => {
+    const user = userEvent.setup();
+    renderSession();
+
+    for (let i = 0; i < TOTAL_QUESTIONS; i++) {
+      await answerOnce(user, i < correct ? "2" : "5");
+    }
+
+    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(headline);
+  },
+);
+
 test("celebrates a streak once three answers in a row are correct", async () => {
   const user = userEvent.setup();
   renderSession();

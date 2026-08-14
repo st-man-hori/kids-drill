@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { NumericKeypad } from "@/components/numeric-keypad";
+import { Celebration } from "@/components/celebration";
 import {
   submitPracticeSession,
   type PracticeSessionResult,
@@ -14,10 +15,21 @@ import {
   INCORRECT_ADVANCE_DELAY_MS,
   TOTAL_QUESTIONS,
   answerMaxLength,
+  celebrationTier,
   generateQuestions,
+  type CelebrationTier,
   type LevelConfig,
   type Question,
 } from "@/lib/practice";
+
+// 成績に応じた見出し。どの段階でも否定的な言葉は使わない
+// （docs/design.md: 恐怖感を与える演出は避ける）
+const CELEBRATION_MESSAGE: Record<CelebrationTier, string> = {
+  perfect: "ぜんもん せいかい！",
+  great: "すごい！ その ちょうし！",
+  good: "よく がんばったね！",
+  gentle: "さいごまで やりきったね！",
+};
 
 // 記録が返ってきたのが今の10問（batch）の分かどうかを見分けるために持つ。
 // 「もっとやる」で次の10問に進んだ後に前の結果が届いても表示しないため。
@@ -173,11 +185,27 @@ export const PracticeSession = ({
   };
 
   if (finished) {
+    const tier = celebrationTier(correctCount, questions.length);
+
     return (
-      <div className="flex min-h-0 flex-1 flex-col items-center justify-center gap-[clamp(0.75rem,3vh,1.75rem)] overflow-y-auto px-6 py-[clamp(0.5rem,2vh,1rem)] text-center">
-        <h1 className="text-[clamp(1.375rem,3vh+1rem,2.25rem)] font-bold text-foreground">
-          おつかれさま！
-        </h1>
+      <div className="relative flex min-h-0 flex-1 flex-col items-center justify-center gap-[clamp(0.75rem,3vh,1.75rem)] overflow-y-auto px-6 py-[clamp(0.5rem,2vh,1rem)] text-center">
+        <Celebration key={batch} tier={tier} />
+        {/* 見出し自体を成績で出し分ける。行を増やすと画面が伸びてスクロールが
+            必要になるため（docs/design.md「スクロールなし方針」）、
+            「おつかれさま！」を置き換える形にしている */}
+        <motion.h1
+          key={`${batch}-${tier}`}
+          initial={{ scale: 0.6, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{
+            type: "spring",
+            stiffness: 300,
+            damping: tier === "perfect" ? 9 : 14,
+          }}
+          className="text-[clamp(1.375rem,3vh+1rem,2.25rem)] font-bold text-foreground"
+        >
+          {CELEBRATION_MESSAGE[tier]}
+        </motion.h1>
         <p className="text-[clamp(1.125rem,2vh+0.75rem,1.5rem)] font-bold text-foreground">
           {questions.length}もんちゅう {correctCount}もん せいかい！
         </p>
