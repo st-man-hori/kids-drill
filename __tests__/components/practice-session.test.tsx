@@ -3,7 +3,11 @@ import { act, fireEvent, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { submitPracticeSession } from "@/app/practice/add/actions";
 import { PracticeSession } from "@/components/practice-session";
-import { CORRECT_ADVANCE_DELAY_MS, TOTAL_QUESTIONS } from "@/lib/practice";
+import {
+  CORRECT_ADVANCE_DELAY_MS,
+  INCORRECT_ADVANCE_DELAY_MS,
+  TOTAL_QUESTIONS,
+} from "@/lib/practice";
 
 const { pushMock, refreshMock } = vi.hoisted(() => ({
   pushMock: vi.fn(),
@@ -109,18 +113,30 @@ test("moves on to the next question by itself after a correct answer", async () 
   });
 });
 
-test("waits for a tap after an incorrect answer instead of moving on", async () => {
+test("gives more time to read the answer after an incorrect one", async () => {
   await withFakeTimers(async () => {
     renderSession();
     answerWith("5");
 
-    elapse(CORRECT_ADVANCE_DELAY_MS * 10);
-
-    // 正しい答えを読む時間が要るので、勝手には進めない
+    // 正解と同じ間隔ではまだ進まない。正しい答えに目をやる時間を取る
+    elapse(CORRECT_ADVANCE_DELAY_MS);
     expect(screen.getByText("ざんねん…こたえは 2 だよ")).toBeInTheDocument();
     expect(screen.getByText("1 もんめ ／ 10もん")).toBeInTheDocument();
 
+    elapse(INCORRECT_ADVANCE_DELAY_MS - CORRECT_ADVANCE_DELAY_MS);
+    expect(screen.getByText("2 もんめ ／ 10もん")).toBeInTheDocument();
+  });
+});
+
+test("lets an impatient child tap through an incorrect answer early", async () => {
+  await withFakeTimers(async () => {
+    renderSession();
+    answerWith("5");
     tap("つぎへ");
+
+    expect(screen.getByText("2 もんめ ／ 10もん")).toBeInTheDocument();
+
+    elapse(INCORRECT_ADVANCE_DELAY_MS * 2);
     expect(screen.getByText("2 もんめ ／ 10もん")).toBeInTheDocument();
   });
 });
