@@ -52,13 +52,25 @@ test.each(["down", "cheer"] as const)("has two arms in the %s pose", (armPose) =
   expect(container.querySelectorAll("[data-arm]").length).toBe(2);
 });
 
-// うでは肩を軸に回す。ここがずれると、うでが胴から離れて回ってしまう
-test("pivots the arms at the shoulder", () => {
+// うでは肩（＝rectの上端中央）を軸に回す。ここが真ん中になっていると、
+// 肩から腕が上がらず、腕の中央を中心にくるっと回るだけの不自然な動きになる。
+//
+// Framer MotionはSVGにtransformを書くとき transform-origin を自前で組み立て直す。
+// CSSの transform-origin で書くとアニメーション開始時に "50% 50%" へ化けるため、
+// originX/originY 経由で渡っていること（＝Motionが認識していること）を確かめる
+test("pivots the arms at the shoulder, not at their middle", () => {
   const { container } = render(<Avatar equipped={{}} armPose="cheer" />);
+  const arms = [...container.querySelectorAll<SVGElement>("[data-arm]")];
 
-  for (const arm of container.querySelectorAll<SVGElement>("[data-arm]")) {
-    // 要素自身のバウンディングボックス基準で、上端中央あたりを軸にする
-    expect(arm.style.transformBox).toBe("fill-box");
-    expect(arm.style.transformOrigin).toBe("50% 8%");
+  expect(arms).toHaveLength(2);
+
+  for (const arm of arms) {
+    const [x, y] = arm.style.transformOrigin.split(/\s+/);
+    expect(x).toBe("50%");
+
+    // 上端寄り＝肩。真ん中(50%)ではないこと
+    const yPercent = Number.parseFloat(y);
+    expect(Number.isNaN(yPercent)).toBe(false);
+    expect(yPercent).toBeLessThan(25);
   }
 });

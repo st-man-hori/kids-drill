@@ -154,9 +154,15 @@ const ARM_MOTION: Record<
   },
 };
 
-// 肩（rectの上端中央）を回転の軸にする。fill-boxで要素自身の
-// バウンディングボックス基準になる
-const ARM_PIVOT = { transformBox: "fill-box", transformOrigin: "50% 8%" } as const;
+// 肩（rectの上端中央）を回転の軸にする。
+//
+// **CSSの transform-origin では効かない**。Framer MotionはSVG要素にtransformを
+// 書き込むとき、transform-origin を自前で組み立て直し、originX/originY を
+// 渡していないと "50% 50%" で上書きしてしまう
+// （motion-dom の render/svg/utils/build-attrs.mjs）。初期描画では指定が残るが、
+// アニメーションが走った瞬間に中心回転に化ける。
+// Motion自身の originX / originY（0〜1の割合）で渡すこと。
+const ARM_PIVOT = { originX: 0.5, originY: 0.08 } as const;
 
 // 素体。着ているものが何も無くても、これだけで人の形に見えるようにしておく
 const BaseBody = ({ armPose }: { armPose: ArmPose }) => (
