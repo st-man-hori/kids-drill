@@ -23,6 +23,7 @@
 | ORM | Drizzle（想定） | Neonとの相性が良い |
 | 認証 | NextAuth (Auth.js) Credentials Provider | 下記「認証設計」参照 |
 | PWA | next-pwa | iPadホーム画面への追加に対応 |
+| アクセス解析 | Vercel Web Analytics | Cookieレス。下記「公開・プライバシー方針」参照 |
 
 ## 認証設計
 
@@ -40,6 +41,7 @@
 
 - リポジトリはパブリック公開予定
 - 秘密情報（APIキー、DB接続文字列、NextAuthのシークレット等）は`.env.local`に置き`.gitignore`で除外し、ドキュメントにも記載しない
+- アクセス解析にVercel Web Analyticsを使う。Cookieを使わず、訪問者を個人として識別・追跡しない方式のため、子どもが対象のサービスでも採用できると判断した。ルートlayoutに`<Analytics />`を置くだけの構成で、**アプリ側からユーザーを識別できる情報（ログインID・ニックネーム等）をイベントとして送らない**こと
 
 ## 未決定・TODO
 
