@@ -143,6 +143,30 @@ export const itemStatus = ({
   return pointsBalance >= pricePoints ? "affordable" : "tooExpensive";
 };
 
+// 持っているアイテムかどうか。きせかえ画面とおみせ画面の振り分けに使う
+export const isOwnedStatus = (status: ItemStatus): boolean =>
+  status === "equipped" || status === "owned";
+
+// 一覧の並び順。前から順に「今の状態 → もうすぐ手が届くもの」になるようにして、
+// 一覧そのものが進み具合を語るようにする
+const STATUS_ORDER: Record<ItemStatus, number> = {
+  equipped: 0,
+  owned: 1,
+  affordable: 2,
+  tooExpensive: 3,
+  locked: 4,
+};
+
+// 同じ状態のなかでは安いものから並べる。おみせでは「つぎの目標」が
+// 上に来るほうが分かりやすいため。無料（null）はいちばん前
+export const compareItems = <T extends { status: ItemStatus; pricePoints: number | null; name: string }>(
+  a: T,
+  b: T,
+): number =>
+  STATUS_ORDER[a.status] - STATUS_ORDER[b.status] ||
+  (a.pricePoints ?? -1) - (b.pricePoints ?? -1) ||
+  a.name.localeCompare(b.name, "ja");
+
 // ダミーのアセット表現。実画像を用意するまでの暫定で、asset_refに
 // 「バリアント名 色」を入れておき、図形はコード側のバリアントで描く。
 // この形式なら、同じバリアントで色違いのアイテムを足すのはレコード追加だけで済む

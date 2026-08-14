@@ -3,12 +3,15 @@ import {
   SLOT_DRAW_ORDER,
   SLOT_TYPES,
   isSlotType,
+  compareItems,
+  isOwnedStatus,
   isUnlocked,
   itemStatus,
   parseAssetRef,
   parseUnlockCondition,
   unlockConditionLabel,
   type ChildAchievement,
+  type ItemStatus,
 } from "@/lib/wardrobe";
 
 const achievement = (over: Partial<ChildAchievement> = {}): ChildAchievement => ({
@@ -161,3 +164,36 @@ test.each(["", "a", "a notacolor", "#ffd166"])(
     expect(asset.variant).not.toBe("");
   },
 );
+
+test.each([
+  ["equipped", true],
+  ["owned", true],
+  ["affordable", false],
+  ["tooExpensive", false],
+  ["locked", false],
+] as const)("isOwnedStatus(%s) is %s", (status, expected) => {
+  expect(isOwnedStatus(status)).toBe(expected);
+});
+
+test("sorts from what is worn now towards what is still out of reach", () => {
+  const of = (status: ItemStatus, name: string) => ({ status, name, pricePoints: null });
+  // あ=きているもの い=もっているもの う=こうかんできる
+  // え=ポイントがたりない お=まだ解放されていない
+  const sorted = [
+    of("locked", "お"),
+    of("owned", "い"),
+    of("tooExpensive", "え"),
+    of("equipped", "あ"),
+    of("affordable", "う"),
+  ].sort(compareItems);
+
+  expect(sorted.map((item) => item.name)).toEqual(["あ", "い", "う", "え", "お"]);
+});
+
+test("puts the cheapest goal first within the same state", () => {
+  const of = (pricePoints: number | null, name: string) =>
+    ({ status: "affordable" as const, name, pricePoints });
+  const sorted = [of(600, "たかい"), of(null, "ただ"), of(250, "やすい")].sort(compareItems);
+
+  expect(sorted.map((item) => item.name)).toEqual(["ただ", "やすい", "たかい"]);
+});

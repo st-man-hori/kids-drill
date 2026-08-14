@@ -10,6 +10,7 @@ import {
   wardrobeItems,
 } from "@/db/schema";
 import {
+  compareItems,
   isSlotType,
   isUnlocked,
   itemStatus,
@@ -217,7 +218,7 @@ export const getWardrobe = async (childId: string): Promise<Wardrobe> => {
       };
     });
 
-  return { pointsBalance, items };
+  return { pointsBalance, items: items.sort(compareItems) };
 };
 
 export type WardrobeActionResult =
