@@ -142,6 +142,29 @@ const BaseBody = () => (
   </>
 );
 
+// アイテム一覧に出す小さな見本。アバターと同じ図形を、そのスロットの
+// あたりだけ切り出して使い回す（別に見本用の絵を持たなくて済む）
+const THUMB_VIEWBOX: Record<SlotType, string> = {
+  hair: "18 0 64 56",
+  top: "16 50 68 64",
+  bottom: "16 92 68 40",
+  necklace: "33 52 34 26",
+};
+
+export const ItemThumb = ({
+  slot,
+  asset,
+  className = "",
+}: {
+  slot: SlotType;
+  asset: AvatarAsset;
+  className?: string;
+}) => (
+  <svg viewBox={THUMB_VIEWBOX[slot]} className={className} aria-hidden>
+    {renderSlot(slot, asset)}
+  </svg>
+);
+
 export const Avatar = ({
   equipped,
   className = "",
