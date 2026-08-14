@@ -79,6 +79,18 @@ DBスキーマの概念設計（Drizzle実装前のたたき台）。詳細な�
 - UNIQUE制約: (`child_id`, `slot_type`) ← 1部位につき1アイテムしか装備できないことを保証する
 - ※装備できるのは`child_owned_wardrobe_items`で所持済みのアイテムのみ（アプリ側で担保する）
 
+### 着せ替えの整合性の担保について
+
+neon-httpドライバはトランザクションを張れないため、ポイント交換は次の順で行う（`src/lib/wardrobe-store.ts`）。
+
+1. `child_owned_wardrobe_items`に先に登録する（UNIQUE制約が二重購入を防ぐ）
+2. 残高が足りている場合だけ減算する（`WHERE points_balance >= price`の条件付きUPDATE）
+3. 2が0行なら1を取り消す
+
+この順にしたのは、途中で落ちたときに「ポイントだけ減ってアイテムが無い」より「アイテムだけ手に入る」ほうが子どもへの実害が小さいため。厳密な原子性が要るようになったら、`drizzle-orm/neon-serverless`（WebSocket）へ切り替えてトランザクションを張る。
+
+`unlock_condition_type`の判定は練習セッションの終了時に行う（バッチ処理はしない）。種類を増やすときは`src/lib/wardrobe.ts`に判定を足す必要があるが、**アイテム自体の追加はマイグレーションでレコードを足すだけでよい**。
+
 ## コンテンツ追加の運用
 
 学年・教科拡張時の`subjects` / `difficulty_levels`へのレコード追加は、管理画面は作らずリポジトリ側で行う。当初はシードスクリプト（`seed.ts`）の再実行を想定していたが、**データマイグレーション（`drizzle/`配下のSQL）として追加する方式に変更した**。理由と背景は[architecture.md](./architecture.md)の「マスタデータもマイグレーションで投入する」を参照。

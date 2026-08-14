@@ -25,7 +25,7 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 ## 現在の状態
 
-認証（サインアップ・ログイン）と、算数の練習モード（たしざん）が動く状態。テストはVitest + Testing Libraryでセットアップ済み。
+認証（サインアップ・ログイン）、算数の練習モード（たしざん）、着せ替え（アイテムの解放・ポイント交換・装備）が動く状態。着せ替えのアバターは実イラストがまだ無くSVG図形のダミー。タイムアタックモードとランキングは未実装。テストはVitest + Testing Libraryでセットアップ済み。
 
 ```
 npm run dev      # 開発サーバー起動
