@@ -22,6 +22,13 @@
       "when": 1786688334211,
       "tag": "0002_wardrobe_items",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1786690859681,
+      "tag": "0003_everyday_wardrobe_items",
+      "breakpoints": true
     }
   ]
 }
