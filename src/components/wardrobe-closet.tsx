@@ -62,10 +62,15 @@ export const WardrobeCloset = ({
   };
 
   return (
-    <div className="flex min-h-0 w-full max-w-3xl flex-1 flex-col items-center gap-[clamp(0.5rem,2vh,1.25rem)]">
+    <div className="flex min-h-0 w-full max-w-3xl flex-1 flex-col items-center gap-[clamp(0.375rem,1.5vh,1.25rem)]">
       <PointsBadge points={pointsBalance} />
 
-      <Avatar equipped={equipped} className="h-[clamp(7rem,22vh,12rem)] w-auto shrink-0" />
+      {/* スマホ幅ではアイテム一覧の取り分を確保するため小さめに抑え、
+          タブレット以上（sm:）では従来どおり大きく見せる */}
+      <Avatar
+        equipped={equipped}
+        className="h-[clamp(4.5rem,14vh,7rem)] w-auto shrink-0 sm:h-[clamp(7rem,22vh,12rem)]"
+      />
 
       <StatusMessage message={message} />
 
