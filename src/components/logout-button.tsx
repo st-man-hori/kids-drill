@@ -4,7 +4,9 @@ import { useRouter } from "next/navigation";
 import { signOut } from "next-auth/react";
 import { motion } from "framer-motion";
 
-export const LogoutButton = ({ size = "default" }: { size?: "default" | "compact" }) => {
+// 置き場所はマイページのみ。ヘッダーに常設すると、遊んでいる最中に
+// 誤って押されて中断される（ヘッダー右はマイページ／ログインへの案内にした）
+export const LogoutButton = () => {
   const router = useRouter();
 
   const handleLogout = async () => {
@@ -16,14 +18,12 @@ export const LogoutButton = ({ size = "default" }: { size?: "default" | "compact
     router.refresh();
   };
 
-  const sizeStyles = size === "compact" ? "px-4 py-1.5 text-sm" : "px-8 py-3 text-lg";
-
   return (
     <motion.button
       type="button"
       whileTap={{ scale: 0.95 }}
       onClick={handleLogout}
-      className={`rounded-full border-2 border-brand bg-white font-bold text-brand ${sizeStyles}`}
+      className="rounded-full border-2 border-brand bg-white px-8 py-3 text-lg font-bold text-brand"
     >
       ログアウト
     </motion.button>
