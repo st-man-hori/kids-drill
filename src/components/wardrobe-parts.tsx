@@ -29,7 +29,8 @@ export const SlotTabs = ({
         whileTap={{ scale: 0.95 }}
         onClick={() => onSelect(slotType)}
         aria-pressed={slot === slotType}
-        className={`rounded-full px-[clamp(0.625rem,2vw,1.25rem)] py-2 text-[clamp(0.75rem,1vh+0.4rem,1rem)] font-bold ${
+        // min-h-11 は 44px。タッチ領域の最小サイズを下回らせない（docs/design.md）
+        className={`min-h-11 rounded-full px-[clamp(0.75rem,2.5vw,1.5rem)] py-2 text-[clamp(0.8125rem,1vh+0.4rem,1.125rem)] font-bold ${
           slot === slotType
             ? "bg-brand text-brand-foreground shadow-sm"
             : "border-2 border-brand/40 bg-white text-brand"
@@ -70,7 +71,7 @@ export const ItemTile = ({
     >
       {hidden ? (
         <span
-          className="flex h-[clamp(2rem,6vh,3.25rem)] items-center justify-center text-[clamp(1rem,2.5vh,1.75rem)] font-bold text-foreground/40"
+          className="flex h-[clamp(2rem,6vh,4rem)] items-center justify-center text-[clamp(1rem,2.5vh,1.75rem)] font-bold text-foreground/40"
           aria-hidden
         >
           ？
@@ -79,15 +80,15 @@ export const ItemTile = ({
         <ItemThumb
           slot={item.slotType}
           asset={item.asset}
-          className="h-[clamp(2rem,6vh,3.25rem)] w-auto"
+          className="h-[clamp(2rem,6vh,4rem)] w-auto"
         />
       )}
 
-      <span className="text-[clamp(0.6875rem,0.9vh+0.35rem,0.875rem)] font-bold leading-snug text-foreground">
+      <span className="text-[clamp(0.75rem,1vh+0.4rem,1.0625rem)] font-bold leading-snug text-foreground">
         {hidden ? "？？？" : item.name}
       </span>
 
-      <span className="text-[clamp(0.625rem,0.8vh+0.3rem,0.75rem)] leading-snug text-foreground/70">
+      <span className="text-[clamp(0.6875rem,0.9vh+0.35rem,0.9375rem)] leading-snug text-foreground/70">
         {note}
       </span>
     </motion.button>

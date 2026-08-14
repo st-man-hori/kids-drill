@@ -37,8 +37,10 @@ const CELEBRATION_MESSAGE: Record<CelebrationTier, string> = {
 // 「もっとやる」で次の10問に進んだ後に前の結果が届いても表示しないため。
 type Summary = PracticeSessionResult & { batch: number };
 
+// 上限をスマホ基準で決めるとタブレットで上限に張り付いて小さく見える。
+// 上限はタブレット基準にし、下限と vh 項でスマホ側を守る（docs/design.md）
 const buttonClass =
-  "rounded-full px-10 py-3 text-xl font-bold disabled:opacity-40";
+  "rounded-full px-[clamp(2.5rem,6vw,3.5rem)] py-[clamp(0.75rem,1.5vh,1.125rem)] text-[clamp(1.25rem,1.6vh+0.6rem,1.625rem)] font-bold disabled:opacity-40";
 const primaryButtonClass = `${buttonClass} bg-brand text-brand-foreground shadow-sm`;
 const secondaryButtonClass = `${buttonClass} border-2 border-brand bg-white text-brand`;
 
@@ -298,7 +300,7 @@ export const PracticeSession = ({
 
   return (
     <div className="flex min-h-0 flex-1 flex-col items-center justify-center gap-[clamp(0.75rem,2.5vh,2rem)] overflow-y-auto px-6 py-[clamp(0.5rem,2vh,2.5rem)]">
-      <div className="flex w-full max-w-[min(20rem,85vw,34vh)] flex-col gap-2">
+      <div className="flex w-full max-w-[min(28rem,85vw,34vh)] flex-col gap-2">
         {/* レベル番号は表示しない。降級したときに数字が下がるのが見えてしまい、
             「下がったこと」を子どもに突きつける形になるため（docs/game-design.md）。
             空いた左側にキャラクターを置く。行を増やしていないので画面は伸びない */}

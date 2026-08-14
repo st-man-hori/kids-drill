@@ -12,8 +12,10 @@ export const CtaButton = ({
   variant?: "primary" | "secondary";
   children: React.ReactNode;
 }) => {
+  // 高さ・文字とも、上限をタブレット基準にする。スマホ側は下限が守る
+  // （docs/design.md「タッチ領域とサイズ」）
   const base =
-    "flex h-14 items-center justify-center rounded-full px-8 text-xl font-bold w-full sm:w-auto";
+    "flex h-[clamp(3.5rem,7vh,4.5rem)] items-center justify-center rounded-full px-[clamp(2rem,5vw,3rem)] text-[clamp(1.25rem,1.6vh+0.6rem,1.625rem)] font-bold w-full sm:w-auto";
   const styles =
     variant === "primary"
       ? "bg-brand text-brand-foreground shadow-sm"

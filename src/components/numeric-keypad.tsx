@@ -14,7 +14,7 @@ export const NumericKeypad = ({
   disabled?: boolean;
 }) => {
   return (
-    <div className="grid w-full max-w-[min(20rem,85vw,34vh)] grid-cols-3 gap-[min(0.75rem,1.5vh)]">
+    <div className="grid w-full max-w-[min(28rem,85vw,34vh)] grid-cols-3 gap-[min(0.75rem,1.5vh)]">
       {KEYS.map((key, i) => {
         if (key === "") return <div key={i} />;
 
