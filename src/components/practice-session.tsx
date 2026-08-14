@@ -239,6 +239,21 @@ export const PracticeSession = ({
           </motion.p>
         )}
 
+        {/* 着せ替えアイテムの解放は中期の報酬（docs/game-design.md の報酬ループ）。
+            ポイント表示より後、ボタンの直前に置いて「見にいける」流れにする */}
+        {/* デプロイの入れ替わり中に古いサーバーの応答を受け取る可能性があるため、
+            この項目が無くても落ちないようにしておく */}
+        {currentSummary && currentSummary.unlockedItems?.length > 0 && (
+          <motion.p
+            initial={{ scale: 0.6, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ type: "spring", stiffness: 300, damping: 12, delay: 0.35 }}
+            className="rounded-sm bg-brand/20 px-5 py-2 text-lg font-bold text-foreground"
+          >
+            あたらしい {currentSummary.unlockedItems.join("と")}を てにいれた！
+          </motion.p>
+        )}
+
         <div className="flex flex-col items-center gap-3 sm:flex-row">
           <motion.button
             type="button"

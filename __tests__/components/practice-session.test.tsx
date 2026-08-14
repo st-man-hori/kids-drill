@@ -48,6 +48,7 @@ beforeEach(() => {
   vi.clearAllMocks();
   vi.mocked(submitPracticeSession).mockResolvedValue({
     pointsEarned: 150,
+    unlockedItems: [],
     leveledUp: false,
     levelNumber: 1,
     config: CONFIG,
@@ -177,6 +178,38 @@ test.each([
   },
 );
 
+test("tells the child when a new wardrobe item was unlocked", async () => {
+  vi.mocked(submitPracticeSession).mockResolvedValue({
+    pointsEarned: 150,
+    unlockedItems: ["ぱっつんヘア", "スカート"],
+    leveledUp: false,
+    levelNumber: 1,
+    config: CONFIG,
+  });
+  const user = userEvent.setup();
+  renderSession();
+
+  for (let i = 0; i < TOTAL_QUESTIONS; i++) {
+    await answerOnce(user, "2");
+  }
+
+  expect(
+    await screen.findByText("あたらしい ぱっつんヘアとスカートを てにいれた！"),
+  ).toBeInTheDocument();
+});
+
+test("says nothing about items when none were unlocked", async () => {
+  const user = userEvent.setup();
+  renderSession();
+
+  for (let i = 0; i < TOTAL_QUESTIONS; i++) {
+    await answerOnce(user, "2");
+  }
+  await screen.findByText("150 ポイント ゲット！");
+
+  expect(screen.queryByText(/てにいれた/)).not.toBeInTheDocument();
+});
+
 test("celebrates a streak once three answers in a row are correct", async () => {
   const user = userEvent.setup();
   renderSession();
@@ -265,6 +298,7 @@ test("submits the per-question results and shows what was earned", async () => {
 test("announces a level up and plays the next set at the new level", async () => {
   vi.mocked(submitPracticeSession).mockResolvedValue({
     pointsEarned: 150,
+    unlockedItems: [],
     leveledUp: true,
     levelNumber: 2,
     config: { minA: 1, maxA: 9, minB: 1, maxB: 9, carry: true },
@@ -290,6 +324,7 @@ test("announces a level up and plays the next set at the new level", async () =>
 test("plays the next set at the lower level after a silent demotion", async () => {
   vi.mocked(submitPracticeSession).mockResolvedValue({
     pointsEarned: 20,
+    unlockedItems: [],
     // 降級は演出しないのでleveledUpはfalseのまま、configだけ下のレベルになる
     leveledUp: false,
     levelNumber: 1,

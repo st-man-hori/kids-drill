@@ -16,9 +16,12 @@ import {
   demoteIfStruggling,
   getCurrentLevel,
 } from "@/lib/practice-progress";
+import { grantUnlockedFreeItems } from "@/lib/wardrobe-store";
 
 export type PracticeSessionResult = {
   pointsEarned: number;
+  // 今回の記録で新しく手に入った着せ替えアイテムの名前
+  unlockedItems: string[];
   leveledUp: boolean;
   // レベルが変わった場合は変更後のレベル、変わらなければ今のレベル。
   // クライアントは「もっとやる」で出す次の10問をこのconfigから生成する。
@@ -87,8 +90,21 @@ export const submitPracticeSession = async ({
     ? await advanceToNextLevel(childId, ADD_SKILL_TYPE, level.levelNumber)
     : await demoteIfStruggling(childId, ADD_SKILL_TYPE, level);
 
+  // 解放条件つきの着せ替えアイテムを配る。累計正解数を条件にするものがあるため、
+  // 今回のセッションを記録し終えたこの時点で判定する（docs/game-design.md）。
+  // 配布に失敗してもゲーム自体は続けられるようにする（次のセッション終了時、
+  // またはきせかえ画面を開いたときに配り直される）
+  let unlockedItems: string[] = [];
+  try {
+    const granted = await grantUnlockedFreeItems(childId);
+    unlockedItems = granted.map((item) => item.name);
+  } catch (error) {
+    console.error(error);
+  }
+
   return {
     pointsEarned,
+    unlockedItems,
     // 降級は演出しない（レベルが下がったことを子どもに告げない）ため、
     // 昇級したときだけtrueにする
     leveledUp: leveledUp && nextLevel !== null,

@@ -160,6 +160,27 @@ export const grantUnlockedFreeItems = async (
   return toGrant.map((item) => ({ id: item.id, name: item.name }));
 };
 
+// 今つけているものだけを、描画に必要な形（スロット→アセット）で返す。
+// マイページのようにアバターを出すだけの画面はカタログ全件を要らない
+export const getEquippedAssets = async (
+  childId: string,
+): Promise<Partial<Record<SlotType, AvatarAsset>>> => {
+  const rows = await db
+    .select({
+      slotType: childEquippedItems.slotType,
+      assetRef: wardrobeItems.assetRef,
+    })
+    .from(childEquippedItems)
+    .innerJoin(wardrobeItems, eq(childEquippedItems.wardrobeItemId, wardrobeItems.id))
+    .where(eq(childEquippedItems.childId, childId));
+
+  const equipped: Partial<Record<SlotType, AvatarAsset>> = {};
+  for (const row of rows) {
+    if (isSlotType(row.slotType)) equipped[row.slotType] = parseAssetRef(row.assetRef);
+  }
+  return equipped;
+};
+
 // 図鑑（カタログ）全件を、その子から見た状態つきで返す
 export const getWardrobe = async (childId: string): Promise<Wardrobe> => {
   const [child, achievement, ownedIds, equippedIds, catalog] = await Promise.all([
