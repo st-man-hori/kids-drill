@@ -300,7 +300,7 @@ export const PracticeSession = ({
 
   return (
     <div className="flex min-h-0 flex-1 flex-col items-center justify-center gap-[clamp(0.75rem,2.5vh,2rem)] overflow-y-auto px-6 py-[clamp(0.5rem,2vh,2.5rem)]">
-      <div className="flex w-full max-w-[min(28rem,85vw,34vh)] flex-col gap-2">
+      <div className="flex w-full max-w-[min(28rem,85vw,27vh)] flex-col gap-2">
         {/* レベル番号は表示しない。降級したときに数字が下がるのが見えてしまい、
             「下がったこと」を子どもに突きつける形になるため（docs/game-design.md）。
             空いた左側にキャラクターを置く。行を増やしていないので画面は伸びない */}
