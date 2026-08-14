@@ -24,8 +24,7 @@ const manifest = (): MetadataRoute.Manifest => ({
   icons: [
     {
       src: "/images/logo_512_512.png",
-      // ファイル名は512だが実体は152x152。実寸を書いておく
-      sizes: "152x152",
+      sizes: "512x512",
       type: "image/png",
     },
   ],
