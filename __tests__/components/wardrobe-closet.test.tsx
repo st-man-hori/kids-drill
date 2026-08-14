@@ -2,7 +2,7 @@ import { beforeEach, expect, test, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { WardrobeCloset } from "@/components/wardrobe-closet";
-import { buyWardrobeItem, wearWardrobeItem } from "@/app/wardrobe/actions";
+import { wearWardrobeItem } from "@/app/wardrobe/actions";
 import type { WardrobeItemView } from "@/lib/wardrobe-store";
 
 vi.mock("@/app/wardrobe/actions", () => ({
@@ -24,10 +24,9 @@ const item = (over: Partial<WardrobeItemView> = {}): WardrobeItemView => ({
 beforeEach(() => {
   vi.clearAllMocks();
   vi.mocked(wearWardrobeItem).mockResolvedValue({ ok: true });
-  vi.mocked(buyWardrobeItem).mockResolvedValue({ ok: true });
 });
 
-test("shows the points the child has to spend", () => {
+test("shows the points the child has", () => {
   render(<WardrobeCloset pointsBalance={420} items={[item()]} />);
 
   expect(screen.getByText("もっている ポイント 420")).toBeInTheDocument();
@@ -42,74 +41,23 @@ test("wearing an owned item asks the server to save it", async () => {
   expect(wearWardrobeItem).toHaveBeenCalledWith("item-1");
 });
 
-test("does not reveal what a locked item is, only how to get it", () => {
-  render(
-    <WardrobeCloset
-      pointsBalance={0}
-      items={[
-        item({
-          name: "きんいろヘア",
-          status: "locked",
-          unlockLabel: "ぜんぶで 200もん せいかいすると もらえるよ",
-        }),
-      ]}
-    />,
-  );
-
-  expect(screen.queryByText("きんいろヘア")).not.toBeInTheDocument();
-  expect(screen.getByText("？？？")).toBeInTheDocument();
-  expect(screen.getByText("ぜんぶで 200もん せいかいすると もらえるよ")).toBeInTheDocument();
-});
-
-test("a locked item cannot be tapped", async () => {
+test("the item already worn cannot be tapped again", async () => {
   const user = userEvent.setup();
-  render(<WardrobeCloset pointsBalance={99999} items={[item({ status: "locked" })]} />);
+  render(<WardrobeCloset pointsBalance={0} items={[item({ status: "equipped" })]} />);
 
-  await user.click(screen.getByRole("button", { name: /？？？/ }));
+  await user.click(screen.getByRole("button", { name: /ふわふわヘア/ }));
 
-  expect(buyWardrobeItem).not.toHaveBeenCalled();
   expect(wearWardrobeItem).not.toHaveBeenCalled();
+  expect(screen.getByText("きているよ")).toBeInTheDocument();
 });
 
-test("shows the price of an item that can be exchanged", () => {
-  render(
-    <WardrobeCloset
-      pointsBalance={500}
-      items={[item({ status: "affordable", pricePoints: 400 })]}
-    />,
-  );
+test("points the child to the shop when a slot has nothing in it", () => {
+  render(<WardrobeCloset pointsBalance={0} items={[item({ slotType: "top" })]} />);
 
-  expect(screen.getByText("400 ポイント")).toBeInTheDocument();
-});
-
-test("exchanging an affordable item tells the child they got it", async () => {
-  const user = userEvent.setup();
-  render(
-    <WardrobeCloset
-      pointsBalance={500}
-      items={[item({ status: "affordable", pricePoints: 400 })]}
-    />,
-  );
-
-  await user.click(screen.getByRole("button", { name: /ふわふわヘア/ }));
-
-  expect(buyWardrobeItem).toHaveBeenCalledWith("item-1");
-  expect(await screen.findByText("ふわふわヘアを てにいれた！")).toBeInTheDocument();
-});
-
-test("an item the child cannot afford is not bought", async () => {
-  const user = userEvent.setup();
-  render(
-    <WardrobeCloset
-      pointsBalance={10}
-      items={[item({ status: "tooExpensive", pricePoints: 400 })]}
-    />,
-  );
-
-  await user.click(screen.getByRole("button", { name: /ふわふわヘア/ }));
-
-  expect(buyWardrobeItem).not.toHaveBeenCalled();
-  expect(screen.getByText("ポイントを ためてから また きてね")).toBeInTheDocument();
+  // 初期表示は かみがた。トップスしか持っていないので空
+  expect(
+    screen.getByText("まだ かみがたを もっていないよ。おみせを のぞいてみよう"),
+  ).toBeInTheDocument();
 });
 
 test("only shows the items of the selected slot", async () => {

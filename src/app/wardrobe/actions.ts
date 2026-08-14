@@ -9,6 +9,12 @@ import { equipItem, purchaseItem, type WardrobeActionResult } from "@/lib/wardro
 // 導出しなおすこと（クライアントの申告を信じない）。
 // 練習モードのactions.tsと同じ方針（docs/game-design.md）。
 
+// きせかえとおみせは同じデータを別の切り口で見せているので、どちらも作り直す
+const revalidatePaths = () => {
+  revalidatePath("/wardrobe");
+  revalidatePath("/shop");
+};
+
 const NOT_LOGGED_IN: WardrobeActionResult = { ok: false, reason: "notFound" };
 
 const isValidId = (value: unknown): value is string =>
@@ -23,7 +29,7 @@ export const buyWardrobeItem = async (
   if (!isValidId(wardrobeItemId)) return { ok: false, reason: "notFound" };
 
   const result = await purchaseItem(childId, wardrobeItemId);
-  if (result.ok) revalidatePath("/wardrobe");
+  if (result.ok) revalidatePaths();
   return result;
 };
 
@@ -36,6 +42,6 @@ export const wearWardrobeItem = async (
   if (!isValidId(wardrobeItemId)) return { ok: false, reason: "notFound" };
 
   const result = await equipItem(childId, wardrobeItemId);
-  if (result.ok) revalidatePath("/wardrobe");
+  if (result.ok) revalidatePaths();
   return result;
 };

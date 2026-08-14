@@ -45,6 +45,9 @@ const MyPage = async () => {
         <CtaButton href="/wardrobe" variant="secondary">
           きせかえ
         </CtaButton>
+        <CtaButton href="/shop" variant="secondary">
+          おみせ
+        </CtaButton>
       </div>
 
       <LogoutButton />
