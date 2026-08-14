@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { NumericKeypad } from "@/components/numeric-keypad";
 import { Celebration } from "@/components/celebration";
+import { ReactingAvatar, type AvatarMood } from "@/components/reacting-avatar";
+import type { AvatarAsset, SlotType } from "@/lib/wardrobe";
 import {
   submitPracticeSession,
   type PracticeSessionResult,
@@ -43,9 +45,11 @@ const secondaryButtonClass = `${buttonClass} border-2 border-brand bg-white text
 export const PracticeSession = ({
   config,
   questions: initialQuestions,
+  equipped = {},
 }: {
   config: LevelConfig;
   questions: Question[];
+  equipped?: Partial<Record<SlotType, AvatarAsset>>;
 }) => {
   const router = useRouter();
   const [, startTransition] = useTransition();
@@ -186,6 +190,10 @@ export const PracticeSession = ({
 
   if (finished) {
     const tier = celebrationTier(correctCount, questions.length);
+    // よくできたときだけキャラクターも跳ね続ける。振るわなかったときは
+    // 静かに待つ（落ち込ませる動きにはしない。docs/design.md）
+    const resultMood: AvatarMood =
+      tier === "perfect" || tier === "great" ? "celebrate" : "idle";
 
     return (
       <div className="relative flex min-h-0 flex-1 flex-col items-center justify-center gap-[clamp(0.75rem,3vh,1.75rem)] overflow-y-auto px-6 py-[clamp(0.5rem,2vh,1rem)] text-center">
@@ -206,6 +214,12 @@ export const PracticeSession = ({
         >
           {CELEBRATION_MESSAGE[tier]}
         </motion.h1>
+        <ReactingAvatar
+          equipped={equipped}
+          mood={resultMood}
+          className="h-[clamp(4.5rem,14vh,7rem)] shrink-0"
+        />
+
         <p className="text-[clamp(1.125rem,2vh+0.75rem,1.5rem)] font-bold text-foreground">
           {questions.length}もんちゅう {correctCount}もん せいかい！
         </p>
@@ -286,8 +300,14 @@ export const PracticeSession = ({
     <div className="flex min-h-0 flex-1 flex-col items-center justify-center gap-[clamp(0.75rem,2.5vh,2rem)] overflow-y-auto px-6 py-[clamp(0.5rem,2vh,2.5rem)]">
       <div className="flex w-full max-w-[min(20rem,85vw,34vh)] flex-col gap-2">
         {/* レベル番号は表示しない。降級したときに数字が下がるのが見えてしまい、
-            「下がったこと」を子どもに突きつける形になるため（docs/game-design.md） */}
-        <div className="flex items-baseline justify-end text-sm font-bold text-foreground/60">
+            「下がったこと」を子どもに突きつける形になるため（docs/game-design.md）。
+            空いた左側にキャラクターを置く。行を増やしていないので画面は伸びない */}
+        <div className="flex items-end justify-between text-sm font-bold text-foreground/60">
+          <ReactingAvatar
+            equipped={equipped}
+            mood={feedback ?? "idle"}
+            className="h-[clamp(2.25rem,6vh,3.5rem)]"
+          />
           <p>
             {currentIndex + 1} もんめ ／ {questions.length}もん
           </p>
