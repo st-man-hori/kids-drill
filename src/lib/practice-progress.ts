@@ -14,9 +14,10 @@ export type PracticeLevel = {
 
 const MATH_SUBJECT_SLUG = "math";
 
-// npm run db:seed が未実行の環境で「なぜ動かないのか」が分かるようにする
-const SEED_REQUIRED_MESSAGE =
-  "算数のレベルデータが見つかりません。npm run db:seed を実行してください。";
+// マイグレーション未適用の環境で「なぜ動かないのか」が分かるようにする。
+// レベルのマスタデータはマイグレーションで投入される（docs/architecture.md参照）
+const LEVELS_MISSING_MESSAGE =
+  "算数のレベルデータが見つかりません。npm run db:migrate を実行してください。";
 
 const toPracticeLevel = (level: {
   id: string;
@@ -25,7 +26,7 @@ const toPracticeLevel = (level: {
 }): PracticeLevel => ({
   id: level.id,
   levelNumber: level.levelNumber,
-  // configはjsonb（unknown）。中身の妥当性はseed側で担保している前提
+  // configはjsonb（unknown）。中身の妥当性はマイグレーション側で担保している前提
   config: level.config as LevelConfig,
 });
 
@@ -33,7 +34,7 @@ const getMathSubjectId = async (): Promise<string> => {
   const subject = await db.query.subjects.findFirst({
     where: eq(subjects.slug, MATH_SUBJECT_SLUG),
   });
-  if (!subject) throw new Error(SEED_REQUIRED_MESSAGE);
+  if (!subject) throw new Error(LEVELS_MISSING_MESSAGE);
   return subject.id;
 };
 
@@ -77,7 +78,7 @@ export const getCurrentLevel = async (
   }
 
   const firstLevel = await findLevelByNumber(subjectId, skillType, 1);
-  if (!firstLevel) throw new Error(SEED_REQUIRED_MESSAGE);
+  if (!firstLevel) throw new Error(LEVELS_MISSING_MESSAGE);
   return firstLevel;
 };
 

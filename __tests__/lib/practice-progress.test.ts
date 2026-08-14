@@ -77,17 +77,17 @@ test("returns the level recorded in child_progress", async () => {
   expect(level.levelNumber).toBe(3);
 });
 
-test("asks for the seed to be run when the subject is missing", async () => {
+test("asks for migrations to be run when the subject is missing", async () => {
   mockSubjectsFindFirst.mockResolvedValue(undefined);
 
-  await expect(getCurrentLevel("child-1", "add")).rejects.toThrow("db:seed");
+  await expect(getCurrentLevel("child-1", "add")).rejects.toThrow("db:migrate");
 });
 
-test("asks for the seed to be run when no level exists", async () => {
+test("asks for migrations to be run when no level exists", async () => {
   mockProgressFindFirst.mockResolvedValue(undefined);
   mockLevelsFindFirst.mockResolvedValue(undefined);
 
-  await expect(getCurrentLevel("child-1", "add")).rejects.toThrow("db:seed");
+  await expect(getCurrentLevel("child-1", "add")).rejects.toThrow("db:migrate");
 });
 
 test("advancing writes the next level to child_progress", async () => {
