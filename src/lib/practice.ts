@@ -24,6 +24,10 @@ export const PERFECT_BONUS_POINTS = 50;
 // 何問連続で正解したらコンボ演出を出すか
 export const COMBO_THRESHOLD = 3;
 
+// 正解したあと自動で次の問題へ進むまでの待ち時間(ms)。
+// 正解演出（spring）を見せきる長さと、テンポを損なわない短さの折り合い。
+export const CORRECT_ADVANCE_DELAY_MS = 800;
+
 export type LevelConfig = {
   minA: number;
   maxA: number;

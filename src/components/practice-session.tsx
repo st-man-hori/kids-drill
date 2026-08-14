@@ -10,6 +10,7 @@ import {
 } from "@/app/practice/add/actions";
 import {
   COMBO_THRESHOLD,
+  CORRECT_ADVANCE_DELAY_MS,
   TOTAL_QUESTIONS,
   answerMaxLength,
   generateQuestions,
@@ -107,6 +108,17 @@ export const PracticeSession = ({
     setInput("");
     setFeedback(null);
   }, []);
+
+  // 正解したときは自動で次の問題へ進む。1問ごとに「つぎへ」を押させると
+  // テンポが悪く、10問やりきるまでのタップ数も倍になるため。
+  // 不正解のときは自動で進めない（正しい答えを読んで納得する時間が要る。
+  // 勝手に流れてしまうと間違いが学習につながらない）。
+  useEffect(() => {
+    if (feedback !== "correct") return;
+    const timer = setTimeout(handleNext, CORRECT_ADVANCE_DELAY_MS);
+    // 「つぎへ」を自分で押した場合はfeedbackがnullに戻り、ここで解除される
+    return () => clearTimeout(timer);
+  }, [feedback, handleNext]);
 
   // PCでは物理キーボードでも答えられるようにする（メインのiPadでは
   // 画面のキーパッドを使うため、こちらは補助的な入力手段）

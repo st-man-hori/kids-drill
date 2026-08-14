@@ -1,9 +1,9 @@
 import { beforeEach, expect, test, vi } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { act, fireEvent, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { submitPracticeSession } from "@/app/practice/add/actions";
 import { PracticeSession } from "@/components/practice-session";
-import { TOTAL_QUESTIONS } from "@/lib/practice";
+import { CORRECT_ADVANCE_DELAY_MS, TOTAL_QUESTIONS } from "@/lib/practice";
 
 const { pushMock, refreshMock } = vi.hoisted(() => ({
   pushMock: vi.fn(),
@@ -70,6 +70,74 @@ test("an incorrect answer reveals the correct answer", async () => {
   await user.click(screen.getByRole("button", { name: "こたえる" }));
 
   expect(screen.getByText("ざんねん…こたえは 2 だよ")).toBeInTheDocument();
+});
+
+// 自動送りの検証だけフェイクタイマーを使う（実時間で待つとテストが遅くなるため）。
+// waitFor/findByはフェイクタイマー下で止まるので、これらのテストでは同期のgetByだけを使う。
+// 偽装するのはsetTimeout系だけに絞る。requestAnimationFrameまで止めるとFramer Motionが
+// 進まなくなり、Dateまで止めるとuserEventの内部待機が固まる
+const withFakeTimers = async (body: () => Promise<void>) => {
+  vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout"] });
+  try {
+    await body();
+  } finally {
+    vi.useRealTimers();
+  }
+};
+
+// フェイクタイマー下ではuserEventの内部待機が進まなくなるため、
+// これらのテストだけは同期的なfireEventで操作する
+const tap = (name: string) => fireEvent.click(screen.getByRole("button", { name }));
+const answerWith = (digit: string) => {
+  tap(digit);
+  tap("こたえる");
+};
+const elapse = (ms: number) => act(() => vi.advanceTimersByTime(ms));
+
+test("moves on to the next question by itself after a correct answer", async () => {
+  await withFakeTimers(async () => {
+    renderSession();
+    answerWith("2");
+
+    // 正解演出を見せている間はまだ同じ問題
+    expect(screen.getByText("1 もんめ ／ 10もん")).toBeInTheDocument();
+
+    elapse(CORRECT_ADVANCE_DELAY_MS);
+
+    expect(screen.getByText("2 もんめ ／ 10もん")).toBeInTheDocument();
+    expect(screen.queryByText("せいかい！")).not.toBeInTheDocument();
+  });
+});
+
+test("waits for a tap after an incorrect answer instead of moving on", async () => {
+  await withFakeTimers(async () => {
+    renderSession();
+    answerWith("5");
+
+    elapse(CORRECT_ADVANCE_DELAY_MS * 10);
+
+    // 正しい答えを読む時間が要るので、勝手には進めない
+    expect(screen.getByText("ざんねん…こたえは 2 だよ")).toBeInTheDocument();
+    expect(screen.getByText("1 もんめ ／ 10もん")).toBeInTheDocument();
+
+    tap("つぎへ");
+    expect(screen.getByText("2 もんめ ／ 10もん")).toBeInTheDocument();
+  });
+});
+
+test("lets an impatient child tap through a correct answer early", async () => {
+  await withFakeTimers(async () => {
+    renderSession();
+    answerWith("2");
+    tap("つぎへ");
+
+    expect(screen.getByText("2 もんめ ／ 10もん")).toBeInTheDocument();
+
+    // 自分で進めたあとに残ったタイマーが発火して1問飛ばされないこと
+    elapse(CORRECT_ADVANCE_DELAY_MS * 2);
+
+    expect(screen.getByText("2 もんめ ／ 10もん")).toBeInTheDocument();
+  });
 });
 
 test("celebrates a streak once three answers in a row are correct", async () => {
