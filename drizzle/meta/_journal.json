@@ -15,6 +15,13 @@
       "when": 1786667955017,
       "tag": "0001_math_add_levels",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1786688334211,
+      "tag": "0002_wardrobe_items",
+      "breakpoints": true
     }
   ]
 }
