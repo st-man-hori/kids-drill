@@ -27,19 +27,18 @@ const primaryButtonClass = `${buttonClass} bg-brand text-brand-foreground shadow
 const secondaryButtonClass = `${buttonClass} border-2 border-brand bg-white text-brand`;
 
 export const PracticeSession = ({
-  levelNumber,
   config,
   questions: initialQuestions,
 }: {
-  levelNumber: number;
   config: LevelConfig;
   questions: Question[];
 }) => {
   const router = useRouter();
   const [, startTransition] = useTransition();
 
-  // 現在のレベルはレベルアップすると次の10問から切り替わるので状態として持つ
-  const [level, setLevel] = useState({ levelNumber, config });
+  // 現在のレベルの設定はレベルが変わると次の10問から切り替わるので状態として持つ。
+  // レベル番号は画面に出さない（docs/game-design.md「降級」）ので保持もしない
+  const [levelConfig, setLevelConfig] = useState(config);
   const [questions, setQuestions] = useState(initialQuestions);
   const [batch, setBatch] = useState(0);
   const [startedAt, setStartedAt] = useState(() => new Date().toISOString());
@@ -55,7 +54,7 @@ export const PracticeSession = ({
   const finished = currentIndex >= questions.length;
   const current = questions[currentIndex];
   const correctCount = results.filter(Boolean).length;
-  const maxLength = answerMaxLength(level.config);
+  const maxLength = answerMaxLength(levelConfig);
   const currentSummary = summary?.batch === batch ? summary : null;
 
   // 10問終わって結果画面に来た時点で記録する。「マイページへ もどる」を
@@ -138,14 +137,12 @@ export const PracticeSession = ({
   }, [finished, feedback, handleDigit, handleBackspace, handleCheck, handleNext]);
 
   const handleMore = () => {
-    // レベルアップしていれば次の10問から新しいレベルの問題になる。
+    // レベルが変わっていれば次の10問から新しいレベルの問題になる（降級も同じ）。
     // 記録が返ってきていない場合は今のレベルのまま続ける
-    const nextLevel = currentSummary
-      ? { levelNumber: currentSummary.levelNumber, config: currentSummary.config }
-      : level;
+    const nextConfig = currentSummary ? currentSummary.config : levelConfig;
 
-    setLevel(nextLevel);
-    setQuestions(generateQuestions(nextLevel.config, TOTAL_QUESTIONS));
+    setLevelConfig(nextConfig);
+    setQuestions(generateQuestions(nextConfig, TOTAL_QUESTIONS));
     setBatch((value) => value + 1);
     setStartedAt(new Date().toISOString());
     setCurrentIndex(0);
@@ -195,7 +192,7 @@ export const PracticeSession = ({
             transition={{ type: "spring", stiffness: 300, damping: 12, delay: 0.2 }}
             className="rounded-sm bg-warning/25 px-5 py-2 text-xl font-bold text-foreground"
           >
-            レベルアップ！ つぎは レベル{currentSummary.levelNumber} だよ
+            レベルアップ！ つぎは もうすこし むずかしいよ
           </motion.p>
         )}
 
@@ -230,8 +227,9 @@ export const PracticeSession = ({
   return (
     <div className="flex min-h-0 flex-1 flex-col items-center justify-center gap-[clamp(0.75rem,2.5vh,2rem)] overflow-y-auto px-6 py-[clamp(0.5rem,2vh,2.5rem)]">
       <div className="flex w-full max-w-[min(20rem,85vw,34vh)] flex-col gap-2">
-        <div className="flex items-baseline justify-between text-sm font-bold text-foreground/60">
-          <p>レベル{level.levelNumber}</p>
+        {/* レベル番号は表示しない。降級したときに数字が下がるのが見えてしまい、
+            「下がったこと」を子どもに突きつける形になるため（docs/game-design.md） */}
+        <div className="flex items-baseline justify-end text-sm font-bold text-foreground/60">
           <p>
             {currentIndex + 1} もんめ ／ {questions.length}もん
           </p>

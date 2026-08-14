@@ -20,11 +20,7 @@ const PracticeAddPage = async () => {
   const questions = generateQuestions(level.config, TOTAL_QUESTIONS);
 
   return (
-    <PracticeSession
-      levelNumber={level.levelNumber}
-      config={level.config}
-      questions={questions}
-    />
+    <PracticeSession config={level.config} questions={questions} />
   );
 };
 

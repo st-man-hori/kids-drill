@@ -22,7 +22,16 @@ const CONFIG = { minA: 1, maxA: 9, minB: 1, maxB: 9, carry: false };
 const questions = Array.from({ length: TOTAL_QUESTIONS }, () => ({ a: 1, b: 1, answer: 2 }));
 
 const renderSession = () =>
-  render(<PracticeSession levelNumber={1} config={CONFIG} questions={questions} />);
+  render(<PracticeSession config={CONFIG} questions={questions} />);
+
+// レベル番号は画面に出さないので、「どのレベルの問題が出ているか」は
+// 出題されている式そのもの（繰り上がりの有無）で確かめる
+const displayedCarry = () => {
+  const [a, b] = (screen.getByRole("heading", { level: 1 }).textContent ?? "")
+    .match(/\d+/g)!
+    .map(Number);
+  return (a % 10) + b >= 10;
+};
 
 // 1問ぶん「こたえる」→「つぎへ」まで進める
 const answerOnce = async (user: ReturnType<typeof userEvent.setup>, digit: string) => {
@@ -162,12 +171,45 @@ test("announces a level up and plays the next set at the new level", async () =>
     await answerOnce(user, "2");
   }
 
-  expect(await screen.findByText("レベルアップ！ つぎは レベル2 だよ")).toBeInTheDocument();
+  expect(
+    await screen.findByText("レベルアップ！ つぎは もうすこし むずかしいよ"),
+  ).toBeInTheDocument();
 
   await user.click(screen.getByRole("button", { name: "もっと やる" }));
 
-  expect(screen.getByText("レベル2")).toBeInTheDocument();
+  // 次の10問は繰り上がりありのレベルになっている
+  expect(displayedCarry()).toBe(true);
   expect(screen.getByText("1 もんめ ／ 10もん")).toBeInTheDocument();
+});
+
+test("plays the next set at the lower level after a silent demotion", async () => {
+  vi.mocked(submitPracticeSession).mockResolvedValue({
+    pointsEarned: 20,
+    // 降級は演出しないのでleveledUpはfalseのまま、configだけ下のレベルになる
+    leveledUp: false,
+    levelNumber: 1,
+    config: CONFIG,
+  });
+  const user = userEvent.setup();
+  render(
+    <PracticeSession
+      config={{ minA: 1, maxA: 9, minB: 1, maxB: 9, carry: true }}
+      questions={questions}
+    />,
+  );
+
+  for (let i = 0; i < TOTAL_QUESTIONS; i++) {
+    await answerOnce(user, "2");
+  }
+  await screen.findByText("20 ポイント ゲット！");
+
+  // 「レベルが下がった」ことを子どもに知らせる表示は出さない
+  expect(screen.queryByText(/レベル/)).not.toBeInTheDocument();
+
+  await user.click(screen.getByRole("button", { name: "もっと やる" }));
+
+  // 黙って易しい（繰り上がりなしの）問題に戻っている
+  expect(displayedCarry()).toBe(false);
 });
 
 test("keeps playing the same level when the level is unchanged", async () => {
@@ -180,7 +222,8 @@ test("keeps playing the same level when the level is unchanged", async () => {
   await screen.findByText("150 ポイント ゲット！");
   await user.click(screen.getByRole("button", { name: "もっと やる" }));
 
-  expect(screen.getByText("レベル1")).toBeInTheDocument();
+  // レベルが変わっていないので、次の10問も繰り上がりなしのまま
+  expect(displayedCarry()).toBe(false);
 
   // 次の10問も終われば、その10問ぶんの記録が別に送られる
   for (let i = 0; i < TOTAL_QUESTIONS; i++) {
