@@ -261,23 +261,20 @@ export const TimeAttackSession = ({
         {current?.a} ＋ {current?.b} ＝
       </h1>
 
-      <div
-        role="status"
-        aria-live="polite"
-        className="flex min-h-12 min-w-24 items-center justify-center border-b-4 border-foreground/15 px-4 text-3xl font-bold tracking-widest text-foreground"
-      >
-        {input || (
-          <span className="text-foreground/20" aria-hidden>
-            ?
-          </span>
-        )}
-      </div>
-
-      <div className="relative flex w-full justify-center">
-        <div className="flex w-full justify-center">
-          <NumericKeypad onDigit={handleDigit} onBackspace={handleBackspace} />
+      {/* 正誤は答えを打ち込んでいたその場所で分かるようにする。
+          キーパッドを隠さないので視線を動かさず、テンポも止めない */}
+      <div className="relative flex items-center justify-center">
+        <div
+          role="status"
+          aria-live="polite"
+          className="flex min-h-12 min-w-24 items-center justify-center border-b-4 border-foreground/15 px-4 text-3xl font-bold tracking-widest text-foreground"
+        >
+          {input || (
+            <span className="text-foreground/20" aria-hidden>
+              ?
+            </span>
+          )}
         </div>
-        {/* キーパッドは止めない(pointer-events-none)。フラッシュは一瞬だけ重ねる */}
         {flash && (
           <motion.div
             key={flash.key}
@@ -286,22 +283,24 @@ export const TimeAttackSession = ({
             transition={{ duration: 0.15 }}
             role="status"
             aria-live="polite"
-            className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center gap-1"
+            className="pointer-events-none absolute inset-0 flex items-center justify-center whitespace-nowrap bg-background"
           >
             <span
               aria-hidden
-              className={`text-6xl font-bold ${flash.type === "correct" ? "text-success" : "text-warning"}`}
+              className={`text-3xl font-bold ${flash.type === "correct" ? "text-success" : "text-warning"}`}
             >
               {flash.type === "correct" ? "○" : "✕"}
             </span>
             {flash.type === "incorrect" && (
-              <span className="text-lg font-bold text-warning">
+              <span className="ml-1 text-xs font-bold text-warning">
                 -{TIME_ATTACK_PENALTY_SECONDS}びょう
               </span>
             )}
           </motion.div>
         )}
       </div>
+
+      <NumericKeypad onDigit={handleDigit} onBackspace={handleBackspace} />
 
       <motion.button
         type="button"
