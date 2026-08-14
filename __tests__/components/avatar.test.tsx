@@ -45,3 +45,20 @@ test("hair is drawn behind the body so it frames the head", () => {
   // 髪の色が、顔のパーツ（目の色）より前に現れる＝先に描かれている
   expect(markup.indexOf("#111111")).toBeLessThan(markup.indexOf("#3f3a36"));
 });
+
+test.each(["down", "cheer"] as const)("has two arms in the %s pose", (armPose) => {
+  const { container } = render(<Avatar equipped={{}} armPose={armPose} />);
+
+  expect(container.querySelectorAll("[data-arm]").length).toBe(2);
+});
+
+// うでは肩を軸に回す。ここがずれると、うでが胴から離れて回ってしまう
+test("pivots the arms at the shoulder", () => {
+  const { container } = render(<Avatar equipped={{}} armPose="cheer" />);
+
+  for (const arm of container.querySelectorAll<SVGElement>("[data-arm]")) {
+    // 要素自身のバウンディングボックス基準で、上端中央あたりを軸にする
+    expect(arm.style.transformBox).toBe("fill-box");
+    expect(arm.style.transformOrigin).toBe("50% 8%");
+  }
+});

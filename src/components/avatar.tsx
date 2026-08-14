@@ -1,4 +1,7 @@
+"use client";
+
 import type { ReactNode } from "react";
+import { motion, type Transition, type TargetAndTransition } from "framer-motion";
 import { SLOT_DRAW_ORDER, type AvatarAsset, type SlotType } from "@/lib/wardrobe";
 
 // 着せ替えアバターの描画。**実イラストを用意するまでのダミー**で、
@@ -113,15 +116,72 @@ const renderSlot = (slot: SlotType, asset: AvatarAsset | undefined): ReactNode =
   return draw(asset.color);
 };
 
+// うでの構え。うでは肩を軸に回すので、rectの上端中央を回転の中心にする
+export type ArmPose = "down" | "cheer";
+
+// 下ろした状態(0度)から回す角度。SVGは時計回りが正なので、
+// 左うでは+150で左上、右うでは-150で右上を向く
+const RAISED = 150;
+
+const ARM_MOTION: Record<
+  ArmPose,
+  { left: TargetAndTransition; right: TargetAndTransition; transition: Transition }
+> = {
+  down: {
+    left: { rotate: 0 },
+    right: { rotate: 0 },
+    transition: { type: "spring", stiffness: 200, damping: 16 },
+  },
+  // ばんざい。上げっぱなしにせず、間を置いて繰り返す
+  cheer: {
+    left: { rotate: RAISED },
+    right: { rotate: -RAISED },
+    transition: {
+      type: "spring",
+      stiffness: 260,
+      damping: 12,
+      repeat: Infinity,
+      repeatType: "reverse",
+      repeatDelay: 0.35,
+    },
+  },
+};
+
+// 肩（rectの上端中央）を回転の軸にする。fill-boxで要素自身の
+// バウンディングボックス基準になる
+const ARM_PIVOT = { transformBox: "fill-box", transformOrigin: "50% 8%" } as const;
+
 // 素体。着ているものが何も無くても、これだけで人の形に見えるようにしておく
-const BaseBody = () => (
+const BaseBody = ({ armPose }: { armPose: ArmPose }) => (
   <>
     {/* あし */}
     <rect x="33" y="96" width="12" height="34" rx="6" fill={SKIN} />
     <rect x="55" y="96" width="12" height="34" rx="6" fill={SKIN} />
     {/* うで */}
-    <rect x="20" y="60" width="11" height="34" rx="5.5" fill={SKIN} />
-    <rect x="69" y="60" width="11" height="34" rx="5.5" fill={SKIN} />
+    <motion.rect
+      data-arm="left"
+      x="20"
+      y="60"
+      width="11"
+      height="34"
+      rx="5.5"
+      fill={SKIN}
+      style={ARM_PIVOT}
+      animate={ARM_MOTION[armPose].left}
+      transition={ARM_MOTION[armPose].transition}
+    />
+    <motion.rect
+      data-arm="right"
+      x="69"
+      y="60"
+      width="11"
+      height="34"
+      rx="5.5"
+      fill={SKIN}
+      style={ARM_PIVOT}
+      animate={ARM_MOTION[armPose].right}
+      transition={ARM_MOTION[armPose].transition}
+    />
     {/* からだ */}
     <rect x="30" y="56" width="40" height="46" rx="14" fill={SKIN_SHADE} />
     {/* くび・あたま */}
@@ -167,15 +227,17 @@ export const ItemThumb = ({
 
 export const Avatar = ({
   equipped,
+  armPose = "down",
   className = "",
 }: {
   equipped: Partial<Record<SlotType, AvatarAsset>>;
+  armPose?: ArmPose;
   className?: string;
 }) => (
   <svg viewBox="0 0 100 140" className={className} role="img" aria-label="じぶんの キャラクター">
     {/* かみは からだより後ろに描く。それ以外は SLOT_DRAW_ORDER の順で重ねる */}
     {renderSlot("hair", equipped.hair)}
-    <BaseBody />
+    <BaseBody armPose={armPose} />
     {SLOT_DRAW_ORDER.filter((slot) => slot !== "hair").map((slot) => (
       <g key={slot}>{renderSlot(slot, equipped[slot])}</g>
     ))}

@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, useReducedMotion, type Transition, type TargetAndTransition } from "framer-motion";
-import { Avatar } from "@/components/avatar";
+import { Avatar, type ArmPose } from "@/components/avatar";
 import type { AvatarAsset, SlotType } from "@/lib/wardrobe";
 
 // 答えに反応するアバター。docs/game-design.md が練習モードのフィードバックとして
@@ -36,11 +36,20 @@ const MOTION: Record<AvatarMood, { animate: TargetAndTransition; transition: Tra
     animate: { y: 0, rotate: [0, -7, 5, 0], scale: 1 },
     transition: { duration: 0.6, ease: "easeInOut" },
   },
-  // 結果画面でのお祝い。跳ね続ける
+  // 結果画面でのお祝い。跳ぶのではなく「ばんざい」で喜ぶ（うでの動きはAvatar側）。
+  // からだは踏み込む程度に留めて、うでの動きを主役にする
   celebrate: {
-    animate: { y: [0, -16, 0], rotate: [0, 6, -6, 0], scale: [1, 1.06, 1] },
+    animate: { y: [0, 3, 0], rotate: 0, scale: 1 },
     transition: { duration: 1.1, repeat: Infinity, ease: "easeInOut" },
   },
+};
+
+// うでを上げるのはお祝いのときだけ
+const ARM_POSE: Record<AvatarMood, ArmPose> = {
+  idle: "down",
+  correct: "down",
+  incorrect: "down",
+  celebrate: "cheer",
 };
 
 export const ReactingAvatar = ({
@@ -62,7 +71,11 @@ export const ReactingAvatar = ({
       transition={reduceMotion ? { duration: 0 } : transition}
       className={className}
     >
-      <Avatar equipped={equipped} className="h-full w-auto" />
+      <Avatar
+        equipped={equipped}
+        armPose={reduceMotion ? "down" : ARM_POSE[mood]}
+        className="h-full w-auto"
+      />
     </motion.div>
   );
 };
