@@ -7,6 +7,15 @@ import { SiteFooter } from "@/components/site-footer";
 export const metadata: Metadata = {
   title: "さんすうチャレンジゲーム",
   description: "算数ドリルアプリ",
+  // iPadのホーム画面から起動したときにフルスクリーンで開くための指定
+  // （メインターゲットがiPadなので、マニフェストだけでなくこちらも要る）。
+  // titleはアイコンの下に出る名前で、マニフェストのshort_nameと揃える
+  appleWebApp: {
+    capable: true,
+    title: "さんすう",
+    // 画面の下地が明るいクリーム色なので、ステータスバーの文字は黒（default）
+    statusBarStyle: "default",
+  },
 };
 
 // スクロールなしで画面に収める設計のため、実ビューポート高さ（アドレスバー分の
@@ -15,6 +24,8 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
+  // ブラウザのUI（アドレスバー周り）を画面の下地と同じ色にする
+  themeColor: "#fff9f0",
 };
 
 const RootLayout = ({ children }: LayoutProps<"/">) => {
