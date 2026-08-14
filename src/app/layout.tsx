@@ -5,14 +5,14 @@ import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 
 export const metadata: Metadata = {
-  title: "さんすうチャレンジゲーム",
+  title: "キッズドリルゲーム",
   description: "算数ドリルアプリ",
   // iPadのホーム画面から起動したときにフルスクリーンで開くための指定
   // （メインターゲットがiPadなので、マニフェストだけでなくこちらも要る）。
   // titleはアイコンの下に出る名前で、マニフェストのshort_nameと揃える
   appleWebApp: {
     capable: true,
-    title: "さんすう",
+    title: "キッズドリル",
     // 画面の下地が明るいクリーム色なので、ステータスバーの文字は黒（default）
     statusBarStyle: "default",
   },

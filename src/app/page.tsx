@@ -3,7 +3,7 @@ import { auth } from "@/auth";
 import { TopPageContent } from "@/components/top-page-content";
 
 export const metadata: Metadata = {
-  title: "さんすうチャレンジゲーム | 楽しく学べる算数ドリル",
+  title: "キッズドリルゲーム | 楽しく学べる算数ドリル",
   description:
     "小学1年生から算数の計算練習ができる無料ドリルアプリ。タイムアタックやキャラクターの着せ替えで、楽しく続けられます。",
 };

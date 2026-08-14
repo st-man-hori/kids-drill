@@ -7,9 +7,9 @@ import type { MetadataRoute } from "next";
 // 足りるため依存を増やしていない。
 
 const manifest = (): MetadataRoute.Manifest => ({
-  name: "さんすうチャレンジゲーム",
+  name: "キッズドリルゲーム",
   // ホーム画面のアイコン下に出る名前。長いと省略されるので短くする
-  short_name: "さんすう",
+  short_name: "キッズドリル",
   description: "算数ドリルアプリ",
   // ホーム画面から起動したときは、案内ページではなく自分のページへ直行させる。
   // ログインが切れていれば /mypage 側がログイン画面へ送るので、

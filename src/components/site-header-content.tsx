@@ -10,7 +10,7 @@ export const SiteHeaderContent = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
       <Link href="/" className="shrink-0">
         <Image
           src="/images/header-logo.png"
-          alt="さんすうチャレンジゲーム"
+          alt="キッズドリルゲーム"
           width={494}
           height={68}
           className="h-8 w-auto sm:h-10"
