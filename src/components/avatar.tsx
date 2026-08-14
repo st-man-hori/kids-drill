@@ -117,7 +117,7 @@ const renderSlot = (slot: SlotType, asset: AvatarAsset | undefined): ReactNode =
 };
 
 // うでの構え。うでは肩を軸に回すので、rectの上端中央を回転の中心にする
-export type ArmPose = "down" | "cheer";
+export type ArmPose = "down" | "cheer" | "wave";
 
 // 下ろした状態(0度)から回す角度。SVGは時計回りが正なので、
 // 左うでは+150で左上、右うでは-150で右上を向く
@@ -144,6 +144,13 @@ const ARM_MOTION: Record<
       repeatType: "reverse",
       repeatDelay: 0.35,
     },
+  },
+  // 片手を上げて振る。springは2キーフレームまでなので、
+  // 振る動き（3点以上）はtweenで書く
+  wave: {
+    left: { rotate: 0 },
+    right: { rotate: [0, -RAISED, -RAISED + 22, -RAISED, -RAISED + 22, -RAISED] },
+    transition: { duration: 1.6, ease: "easeInOut", times: [0, 0.28, 0.46, 0.64, 0.82, 1] },
   },
 };
 
