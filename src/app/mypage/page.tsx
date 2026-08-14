@@ -45,15 +45,21 @@ const MyPage = async () => {
         もっている ポイント {child?.pointsBalance ?? 0}
       </p>
 
-      <div className="flex flex-col items-center gap-3 sm:flex-row">
+      <div className="flex flex-wrap items-center justify-center gap-3">
         <CtaButton href="/practice/add" variant="primary">
           たしざん
+        </CtaButton>
+        <CtaButton href="/time-attack" variant="primary">
+          たいむあたっく
         </CtaButton>
         <CtaButton href="/wardrobe" variant="secondary">
           きせかえ
         </CtaButton>
         <CtaButton href="/shop" variant="secondary">
           おみせ
+        </CtaButton>
+        <CtaButton href="/ranking" variant="secondary">
+          ランキング
         </CtaButton>
       </div>
 
