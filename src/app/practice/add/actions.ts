@@ -11,13 +11,18 @@ import {
   shouldLevelUp,
   type LevelConfig,
 } from "@/lib/practice";
-import { advanceToNextLevel, getCurrentLevel } from "@/lib/practice-progress";
+import {
+  advanceToNextLevel,
+  demoteIfStruggling,
+  getCurrentLevel,
+} from "@/lib/practice-progress";
 
 export type PracticeSessionResult = {
   pointsEarned: number;
   leveledUp: boolean;
-  // レベルアップした場合は次のレベル、しなかった場合は今のレベル。
-  // クライアントは「もっとやる」で出す次の10問をこのconfigから生成する
+  // レベルが変わった場合は変更後のレベル、変わらなければ今のレベル。
+  // クライアントは「もっとやる」で出す次の10問をこのconfigから生成する。
+  // 降級した場合もここが下のレベルになるが、leveledUpはfalseのまま
   levelNumber: number;
   config: LevelConfig;
 };
@@ -74,15 +79,19 @@ export const submitPracticeSession = async ({
       .where(eq(childProfiles.id, childId));
   }
 
-  // レベルアップ判定は「このセッションを終えた時点」で行う。practice_sessionsは
-  // 昇級前のレベルで記録済みなので、先に記録→後で昇級の順にしている
-  const nextLevel = shouldLevelUp(results)
+  // レベル変更の判定は「このセッションを終えた時点」で行う。practice_sessionsは
+  // 変更前のレベルで記録済みなので、先に記録→後で判定の順にしている
+  // （降級判定は今回のセッションを含む直近の記録を見るため、この順序が必要）。
+  const leveledUp = shouldLevelUp(results);
+  const nextLevel = leveledUp
     ? await advanceToNextLevel(childId, ADD_SKILL_TYPE, level.levelNumber)
-    : null;
+    : await demoteIfStruggling(childId, ADD_SKILL_TYPE, level);
 
   return {
     pointsEarned,
-    leveledUp: nextLevel !== null,
+    // 降級は演出しない（レベルが下がったことを子どもに告げない）ため、
+    // 昇級したときだけtrueにする
+    leveledUp: leveledUp && nextLevel !== null,
     levelNumber: (nextLevel ?? level).levelNumber,
     config: (nextLevel ?? level).config,
   };

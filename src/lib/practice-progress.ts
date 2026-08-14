@@ -1,7 +1,16 @@
-import { and, eq } from "drizzle-orm";
+import { and, desc, eq } from "drizzle-orm";
 import { db } from "@/db";
-import { childProgress, difficultyLevels, subjects } from "@/db/schema";
-import type { LevelConfig } from "@/lib/practice";
+import {
+  childProgress,
+  difficultyLevels,
+  practiceSessions,
+  subjects,
+} from "@/db/schema";
+import {
+  LEVEL_DOWN_STREAK,
+  isStrugglingSession,
+  type LevelConfig,
+} from "@/lib/practice";
 
 // child_progress（子どもごとの現在レベル）の読み書き。DBに触るためClient
 // Componentからは読み込まないこと（出題ロジックの純粋な部分は practice.ts）。
@@ -82,6 +91,26 @@ export const getCurrentLevel = async (
   return firstLevel;
 };
 
+const setCurrentLevel = async (
+  childId: string,
+  subjectId: string,
+  skillType: string,
+  levelId: string,
+): Promise<void> => {
+  await db
+    .insert(childProgress)
+    .values({
+      childId,
+      subjectId,
+      skillType,
+      currentLevelId: levelId,
+    })
+    .onConflictDoUpdate({
+      target: [childProgress.childId, childProgress.subjectId, childProgress.skillType],
+      set: { currentLevelId: levelId, updatedAt: new Date() },
+    });
+};
+
 // 次のレベルへ進める。最高レベルに到達済みで次が無ければnullを返す
 // （その場合はchild_progressを更新しない）。
 export const advanceToNextLevel = async (
@@ -93,18 +122,54 @@ export const advanceToNextLevel = async (
   const nextLevel = await findLevelByNumber(subjectId, skillType, currentLevelNumber + 1);
   if (!nextLevel) return null;
 
-  await db
-    .insert(childProgress)
-    .values({
-      childId,
-      subjectId,
-      skillType,
-      currentLevelId: nextLevel.id,
-    })
-    .onConflictDoUpdate({
-      target: [childProgress.childId, childProgress.subjectId, childProgress.skillType],
-      set: { currentLevelId: nextLevel.id, updatedAt: new Date() },
-    });
+  await setCurrentLevel(childId, subjectId, skillType, nextLevel.id);
 
   return nextLevel;
+};
+
+// 直近の成績が振るわない場合に1つ下のレベルへ戻す。戻したときだけ新しいレベルを返す。
+//
+// 昇級だけあって降級が無いと、まぐれで8問正解して上がった子が「毎回2〜3問しか
+// 解けないレベル」に固定され、自力で戻れなくなる（報酬ループが全部止まる）。
+// docs/game-design.md の「降級」を参照。
+//
+// 判定対象を「今のレベルで解いたセッション」に絞っているため、降級した直後は
+// 対象セッションが0件になり、連続で下げ続けることはない。
+export const demoteIfStruggling = async (
+  childId: string,
+  skillType: string,
+  currentLevel: PracticeLevel,
+): Promise<PracticeLevel | null> => {
+  if (currentLevel.levelNumber <= 1) return null;
+
+  const recentSessions = await db
+    .select({
+      correctCount: practiceSessions.correctCount,
+      totalQuestions: practiceSessions.totalQuestions,
+    })
+    .from(practiceSessions)
+    .where(
+      and(
+        eq(practiceSessions.childId, childId),
+        eq(practiceSessions.levelId, currentLevel.id),
+      ),
+    )
+    // finished_atはnull許容（並び順にnullが混ざりうる）ため、notNullのstarted_atで並べる
+    .orderBy(desc(practiceSessions.startedAt))
+    .limit(LEVEL_DOWN_STREAK);
+
+  if (recentSessions.length < LEVEL_DOWN_STREAK) return null;
+  if (!recentSessions.every(isStrugglingSession)) return null;
+
+  const subjectId = await getMathSubjectId();
+  const previousLevel = await findLevelByNumber(
+    subjectId,
+    skillType,
+    currentLevel.levelNumber - 1,
+  );
+  if (!previousLevel) return null;
+
+  await setCurrentLevel(childId, subjectId, skillType, previousLevel.id);
+
+  return previousLevel;
 };

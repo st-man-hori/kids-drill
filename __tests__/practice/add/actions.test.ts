@@ -1,8 +1,16 @@
 import { beforeEach, expect, test, vi } from "vitest";
 import { LEVEL_UP_CORRECT_COUNT, TOTAL_QUESTIONS, calculatePoints } from "@/lib/practice";
 
-const { mockInsert, mockValues, mockUpdate, mockSet, mockAuth, mockGetCurrentLevel, mockAdvanceToNextLevel } =
-  vi.hoisted(() => {
+const {
+  mockInsert,
+  mockValues,
+  mockUpdate,
+  mockSet,
+  mockAuth,
+  mockGetCurrentLevel,
+  mockAdvanceToNextLevel,
+  mockDemoteIfStruggling,
+} = vi.hoisted(() => {
     const mockValues = vi.fn().mockResolvedValue(undefined);
     const mockInsert = vi.fn(() => ({ values: mockValues }));
     const mockWhere = vi.fn().mockResolvedValue(undefined);
@@ -16,8 +24,9 @@ const { mockInsert, mockValues, mockUpdate, mockSet, mockAuth, mockGetCurrentLev
       mockAuth: vi.fn(),
       mockGetCurrentLevel: vi.fn(),
       mockAdvanceToNextLevel: vi.fn(),
+      mockDemoteIfStruggling: vi.fn(),
     };
-  });
+});
 
 vi.mock("@/db", () => ({
   db: { insert: mockInsert, update: mockUpdate },
@@ -35,6 +44,7 @@ vi.mock("@/auth", () => ({
 vi.mock("@/lib/practice-progress", () => ({
   getCurrentLevel: mockGetCurrentLevel,
   advanceToNextLevel: mockAdvanceToNextLevel,
+  demoteIfStruggling: mockDemoteIfStruggling,
 }));
 
 import { submitPracticeSession } from "@/app/practice/add/actions";
@@ -58,6 +68,7 @@ beforeEach(() => {
   mockAuth.mockResolvedValue({ user: { id: "child-1" } });
   mockGetCurrentLevel.mockResolvedValue(LEVEL_1);
   mockAdvanceToNextLevel.mockResolvedValue(null);
+  mockDemoteIfStruggling.mockResolvedValue(null);
 });
 
 test("records the session against the level held on the server, not one sent by the client", async () => {
@@ -129,6 +140,48 @@ test("stays on the current level below the threshold", async () => {
     levelNumber: LEVEL_1.levelNumber,
     config: LEVEL_1.config,
   });
+});
+
+test("serves the lower level's questions after a demotion", async () => {
+  mockGetCurrentLevel.mockResolvedValue(LEVEL_2);
+  mockDemoteIfStruggling.mockResolvedValue(LEVEL_1);
+
+  const result = await submitPracticeSession({
+    results: resultsOf(2),
+    startedAt: new Date().toISOString(),
+  });
+
+  expect(mockDemoteIfStruggling).toHaveBeenCalledWith("child-1", "add", LEVEL_2);
+  // 降級は演出しない。次の10問は下のレベルになるが、leveledUpはfalseのまま
+  expect(result).toMatchObject({
+    leveledUp: false,
+    levelNumber: LEVEL_1.levelNumber,
+    config: LEVEL_1.config,
+  });
+});
+
+test("records the session against the pre-demotion level", async () => {
+  mockGetCurrentLevel.mockResolvedValue(LEVEL_2);
+  mockDemoteIfStruggling.mockResolvedValue(LEVEL_1);
+
+  await submitPracticeSession({
+    results: resultsOf(2),
+    startedAt: new Date().toISOString(),
+  });
+
+  // 降級判定は今回のセッションも含めて数えるため、記録が先でなければならない
+  expect(mockValues.mock.calls[0][0].levelId).toBe(LEVEL_2.id);
+});
+
+test("does not check for demotion when the child levelled up", async () => {
+  mockAdvanceToNextLevel.mockResolvedValue(LEVEL_2);
+
+  await submitPracticeSession({
+    results: resultsOf(LEVEL_UP_CORRECT_COUNT),
+    startedAt: new Date().toISOString(),
+  });
+
+  expect(mockDemoteIfStruggling).not.toHaveBeenCalled();
 });
 
 test("reports no level up when the child is already on the last level", async () => {

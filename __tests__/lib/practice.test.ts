@@ -1,6 +1,7 @@
 import { expect, test } from "vitest";
 import {
   ADD_LEVELS,
+  LEVEL_DOWN_CORRECT_COUNT,
   LEVEL_UP_CORRECT_COUNT,
   PERFECT_BONUS_POINTS,
   POINTS_PER_CORRECT,
@@ -9,6 +10,7 @@ import {
   calculatePoints,
   generateQuestion,
   generateQuestions,
+  isStrugglingSession,
   shouldLevelUp,
 } from "@/lib/practice";
 
@@ -86,4 +88,22 @@ test("calculatePoints pays per correct answer and adds a bonus for a perfect set
 
 test("calculatePoints does not pay a perfect bonus for an empty set", () => {
   expect(calculatePoints([])).toBe(0);
+});
+
+test.each([
+  [LEVEL_DOWN_CORRECT_COUNT, true],
+  [LEVEL_DOWN_CORRECT_COUNT + 1, false],
+  [0, true],
+  [TOTAL_QUESTIONS, false],
+])("a session with %i correct counts as struggling: %s", (correctCount, expected) => {
+  expect(isStrugglingSession({ correctCount, totalQuestions: TOTAL_QUESTIONS })).toBe(
+    expected,
+  );
+});
+
+// 10問に満たないセッションは判定に含めない（shouldLevelUpと揃える）
+test("a session shorter than one full set never counts as struggling", () => {
+  expect(
+    isStrugglingSession({ correctCount: 0, totalQuestions: TOTAL_QUESTIONS - 1 }),
+  ).toBe(false);
 });

@@ -9,6 +9,13 @@ export const TOTAL_QUESTIONS = 10;
 // レベルアップ判定の正解数（TOTAL_QUESTIONS問中）
 export const LEVEL_UP_CORRECT_COUNT = 8;
 
+// 降級判定（docs/game-design.md）。この正解数以下のセッションが
+// LEVEL_DOWN_STREAK回続いたらレベルを1つ下げる。
+// 4問以下なのは「当てずっぽうでも当たる範囲を下回っている」水準だから。
+// 2回連続を条件にするのは、眠い・気が散ったといった1回のコケで下げないため。
+export const LEVEL_DOWN_CORRECT_COUNT = 4;
+export const LEVEL_DOWN_STREAK = 2;
+
 // 獲得ポイント（docs/game-design.md）。着せ替えアイテムの価格が未定のため
 // 暫定値で、アイテム実装時にバランス調整する前提の数値。
 export const POINTS_PER_CORRECT = 10;
@@ -110,6 +117,17 @@ export const shouldLevelUp = (results: readonly boolean[]): boolean => {
   const recent = results.slice(-TOTAL_QUESTIONS);
   return recent.filter(Boolean).length >= LEVEL_UP_CORRECT_COUNT;
 };
+
+// 1セッション分の記録が「手が出ていない」水準かどうか。practice_sessionsの
+// レコードから判定するため、resultsの配列ではなく件数で受ける。
+// 「もっとやる」の途中終了など10問に満たないセッションは判定に含めない
+// （shouldLevelUpが満了セッションのみを見るのと揃えている）。
+export const isStrugglingSession = (session: {
+  correctCount: number;
+  totalQuestions: number;
+}): boolean =>
+  session.totalQuestions >= TOTAL_QUESTIONS &&
+  session.correctCount <= LEVEL_DOWN_CORRECT_COUNT;
 
 export const calculatePoints = (results: readonly boolean[]): number => {
   const correctCount = results.filter(Boolean).length;
