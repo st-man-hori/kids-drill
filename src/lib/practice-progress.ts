@@ -39,7 +39,9 @@ const toPracticeLevel = (level: {
   config: level.config as LevelConfig,
 });
 
-const getMathSubjectId = async (): Promise<string> => {
+// タイムアタックの記録（time-attack/actions.ts）も同じ「算数」subject_idを
+// 使うため、ここから公開する
+export const getMathSubjectId = async (): Promise<string> => {
   const subject = await db.query.subjects.findFirst({
     where: eq(subjects.slug, MATH_SUBJECT_SLUG),
   });
