@@ -6,7 +6,7 @@ import { childProfiles } from "@/db/schema";
 import { getTimeBasedGreeting } from "@/lib/greeting";
 import { getEquippedAssets } from "@/lib/wardrobe-store";
 import { LogoutButton } from "@/components/logout-button";
-import { CtaButton } from "@/components/cta-button";
+import { LinkButton } from "@/components/link-button";
 import { GreetingAvatar } from "@/components/greeting-avatar";
 import { pickGreeting } from "@/lib/avatar-greeting";
 
@@ -46,21 +46,21 @@ const MyPage = async () => {
       </p>
 
       <div className="flex flex-wrap items-center justify-center gap-3">
-        <CtaButton href="/practice/add" variant="primary">
+        <LinkButton href="/practice/add" variant="primary">
           たしざん
-        </CtaButton>
-        <CtaButton href="/time-attack" variant="primary">
+        </LinkButton>
+        <LinkButton href="/time-attack" variant="primary">
           たいむあたっく
-        </CtaButton>
-        <CtaButton href="/wardrobe" variant="secondary">
+        </LinkButton>
+        <LinkButton href="/wardrobe" variant="secondary">
           きせかえ
-        </CtaButton>
-        <CtaButton href="/shop" variant="secondary">
+        </LinkButton>
+        <LinkButton href="/shop" variant="secondary">
           おみせ
-        </CtaButton>
-        <CtaButton href="/ranking" variant="secondary">
+        </LinkButton>
+        <LinkButton href="/ranking" variant="secondary">
           ランキング
-        </CtaButton>
+        </LinkButton>
       </div>
 
       <LogoutButton />

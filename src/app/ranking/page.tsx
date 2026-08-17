@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
-import { CtaButton } from "@/components/cta-button";
+import { LinkButton } from "@/components/link-button";
 import { RankingBoard } from "@/components/ranking-board";
 import { getRanking } from "@/lib/ranking-store";
 
@@ -21,12 +21,12 @@ const RankingPage = async () => {
       <RankingBoard ranking={ranking} />
 
       <div className="flex flex-col items-center gap-3 sm:flex-row">
-        <CtaButton href="/time-attack" variant="primary">
+        <LinkButton href="/time-attack" variant="primary">
           たいむあたっくで あそぶ
-        </CtaButton>
-        <CtaButton href="/mypage" variant="secondary">
+        </LinkButton>
+        <LinkButton href="/mypage" variant="secondary">
           マイページへ もどる
-        </CtaButton>
+        </LinkButton>
       </div>
     </div>
   );

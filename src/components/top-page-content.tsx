@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { CtaButton } from "@/components/cta-button";
+import { LinkButton } from "@/components/link-button";
 
 // 「機能を3つ並べる」のではなく、報酬ループ（docs/game-design.md）そのものを
 // 順番として見せる。中身はアプリの実物と同じ見た目の断片にしてあり、
@@ -52,17 +52,17 @@ export const TopPageContent = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
           </p>
           <div className="flex flex-col items-center gap-3 sm:flex-row">
             {isLoggedIn ? (
-              <CtaButton href="/mypage" variant="primary">
+              <LinkButton href="/mypage" variant="primary">
                 マイページへ
-              </CtaButton>
+              </LinkButton>
             ) : (
               <>
-                <CtaButton href="/signup" variant="primary">
+                <LinkButton href="/signup" variant="primary">
                   はじめる
-                </CtaButton>
-                <CtaButton href="/login" variant="secondary">
+                </LinkButton>
+                <LinkButton href="/login" variant="secondary">
                   ログイン
-                </CtaButton>
+                </LinkButton>
               </>
             )}
           </div>

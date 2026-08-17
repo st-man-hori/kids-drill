@@ -1,9 +1,9 @@
 import { expect, test } from "vitest";
 import { render, screen } from "@testing-library/react";
-import { CtaButton } from "@/components/cta-button";
+import { LinkButton } from "@/components/link-button";
 
 test("renders as a link pointing to the given href", () => {
-  render(<CtaButton href="/signup">はじめる</CtaButton>);
+  render(<LinkButton href="/signup">はじめる</LinkButton>);
 
   const link = screen.getByRole("link", { name: "はじめる" });
   expect(link).toHaveAttribute("href", "/signup");

@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
-import { CtaButton } from "@/components/cta-button";
+import { LinkButton } from "@/components/link-button";
 import { WardrobeShop } from "@/components/wardrobe-shop";
 import { getWardrobe, grantUnlockedFreeItems } from "@/lib/wardrobe-store";
 import { isOwnedStatus } from "@/lib/wardrobe";
@@ -27,12 +27,12 @@ const ShopPage = async () => {
       <WardrobeShop pointsBalance={wardrobe.pointsBalance} items={forSale} />
 
       <div className="flex flex-col items-center gap-3 sm:flex-row">
-        <CtaButton href="/wardrobe" variant="primary">
+        <LinkButton href="/wardrobe" variant="primary">
           きせかえへ
-        </CtaButton>
-        <CtaButton href="/mypage" variant="secondary">
+        </LinkButton>
+        <LinkButton href="/mypage" variant="secondary">
           マイページへ もどる
-        </CtaButton>
+        </LinkButton>
       </div>
     </div>
   );

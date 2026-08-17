@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
 
-export const CtaButton = ({
+export const LinkButton = ({
   href,
   variant = "primary",
   children,
