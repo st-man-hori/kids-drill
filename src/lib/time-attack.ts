@@ -18,6 +18,17 @@ export const TIME_ATTACK_TICK_MS = 100;
 // 表示中も次の問題へはすぐ進めるようにする（キー入力を止めない）
 export const TIME_ATTACK_FLASH_MS = 450;
 
+// 連続正解のボーナス。docs/game-design.md「連続正解でタイムボーナス」。
+// ペナルティと同じ3秒にしているのは、子どもにとって「3秒」を得も損も
+// 共通のものさしとして理解しやすくするため
+export const TIME_ATTACK_COMBO_STREAK = 5;
+export const TIME_ATTACK_COMBO_BONUS_SECONDS = 3;
+
+// 連続正解数がボーナスの節目(5, 10, 15...)かどうか。streakは0始まりではなく
+// 「今の連続正解数」をそのまま渡す想定
+export const isComboMilestone = (streak: number): boolean =>
+  streak > 0 && streak % TIME_ATTACK_COMBO_STREAK === 0;
+
 // correctCountはクライアント申告値（採点自体がクライアント側の入力チェックで
 // 行われるのは練習モードのresultsと同じ。src/app/practice/add/actions.tsの
 // コメント参照）。際限なく大きい値が来ないよう、60秒間で理論上あり得る範囲で

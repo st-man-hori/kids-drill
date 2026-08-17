@@ -3,6 +3,8 @@ import { act, fireEvent, render, screen } from "@testing-library/react";
 import { submitTimeAttackRun } from "@/app/time-attack/actions";
 import { TimeAttackSession } from "@/components/time-attack-session";
 import {
+  TIME_ATTACK_COMBO_BONUS_SECONDS,
+  TIME_ATTACK_COMBO_STREAK,
   TIME_ATTACK_DURATION_SECONDS,
   TIME_ATTACK_FLASH_MS,
   TIME_ATTACK_PENALTY_SECONDS,
@@ -86,6 +88,46 @@ test("an incorrect answer does not increase the score and applies a time penalty
   elapse(200);
   expect(
     screen.getByText(`のこり ${TIME_ATTACK_DURATION_SECONDS - TIME_ATTACK_PENALTY_SECONDS}びょう`),
+  ).toBeInTheDocument();
+});
+
+test("reaching the combo streak grants a time bonus and shows it", () => {
+  render(<TimeAttackSession config={CONFIG} />);
+  start();
+
+  for (let i = 0; i < TIME_ATTACK_COMBO_STREAK - 1; i++) answerWith("2");
+  expect(screen.queryByText(`+${TIME_ATTACK_COMBO_BONUS_SECONDS}びょう`)).not.toBeInTheDocument();
+
+  answerWith("2");
+  expect(screen.getByText(`+${TIME_ATTACK_COMBO_BONUS_SECONDS}びょう`)).toBeInTheDocument();
+  expect(
+    screen.getByText(
+      `のこり ${TIME_ATTACK_DURATION_SECONDS + TIME_ATTACK_COMBO_BONUS_SECONDS}びょう`,
+    ),
+  ).toBeInTheDocument();
+});
+
+test("a wrong answer resets the streak so the bonus needs a fresh run", () => {
+  render(<TimeAttackSession config={CONFIG} />);
+  start();
+
+  for (let i = 0; i < TIME_ATTACK_COMBO_STREAK - 1; i++) answerWith("2");
+  answerWith("9");
+  for (let i = 0; i < TIME_ATTACK_COMBO_STREAK - 1; i++) answerWith("2");
+
+  expect(screen.queryByText(`+${TIME_ATTACK_COMBO_BONUS_SECONDS}びょう`)).not.toBeInTheDocument();
+});
+
+test("the bonus repeats every additional streak", () => {
+  render(<TimeAttackSession config={CONFIG} />);
+  start();
+
+  for (let i = 0; i < TIME_ATTACK_COMBO_STREAK * 2; i++) answerWith("2");
+
+  expect(
+    screen.getByText(
+      `のこり ${TIME_ATTACK_DURATION_SECONDS + TIME_ATTACK_COMBO_BONUS_SECONDS * 2}びょう`,
+    ),
   ).toBeInTheDocument();
 });
 

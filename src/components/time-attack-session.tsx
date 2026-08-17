@@ -9,10 +9,13 @@ import type { AvatarAsset, SlotType } from "@/lib/wardrobe";
 import { submitTimeAttackRun, type TimeAttackResult } from "@/app/time-attack/actions";
 import { answerMaxLength, generateQuestion, type LevelConfig, type Question } from "@/lib/practice";
 import {
+  TIME_ATTACK_COMBO_BONUS_SECONDS,
+  TIME_ATTACK_COMBO_STREAK,
   TIME_ATTACK_DURATION_SECONDS,
   TIME_ATTACK_FLASH_MS,
   TIME_ATTACK_PENALTY_SECONDS,
   TIME_ATTACK_TICK_MS,
+  isComboMilestone,
 } from "@/lib/time-attack";
 
 // docs/game-design.md「タイムアタックモード」: 問題数の上限は無く時間切れまで
@@ -20,7 +23,7 @@ import {
 // 練習モード(PracticeSession)と違って「1問ごとに待つ」設計を持たない。
 
 type Phase = "idle" | "playing" | "finished";
-type Flash = { type: "correct" | "incorrect"; key: number };
+type Flash = { type: "correct" | "incorrect"; key: number; bonusSeconds?: number };
 
 // 上限をタブレット基準にする(docs/design.md)。practice-session.tsxと同じ値
 const buttonClass =
@@ -49,9 +52,13 @@ export const TimeAttackSession = ({
   const maxLength = answerMaxLength(config);
   const flashKey = useRef(0);
   const submittedRef = useRef(false);
+  // 連続正解数。表示には使わずボーナス判定にだけ使うのでrefで持つ
+  // (不正解でリセットするだけの単純なカウンタを再レンダー無しで追える)
+  const comboRef = useRef(0);
 
   const handleStart = useCallback(() => {
     submittedRef.current = false;
+    comboRef.current = 0;
     setSummary(null);
     setScore(0);
     setInput("");
@@ -119,10 +126,24 @@ export const TimeAttackSession = ({
 
     const isCorrect = Number(input) === current.answer;
     setScore((value) => (isCorrect ? value + 1 : value));
+
+    // 連続正解が節目(5, 10, 15...)に達したら時間ボーナス。ペナルティと
+    // 対称に扱う(docs/game-design.md「連続正解でタイムボーナス」)
+    let bonusSeconds: number | undefined;
+    if (isCorrect) {
+      comboRef.current += 1;
+      if (isComboMilestone(comboRef.current)) bonusSeconds = TIME_ATTACK_COMBO_BONUS_SECONDS;
+    } else {
+      comboRef.current = 0;
+    }
+
     if (!isCorrect) {
       setRemainingMs((ms) => Math.max(ms - PENALTY_MS, 0));
+    } else if (bonusSeconds) {
+      setRemainingMs((ms) => ms + bonusSeconds! * 1000);
     }
-    setFlash({ type: isCorrect ? "correct" : "incorrect", key: flashKey.current++ });
+
+    setFlash({ type: isCorrect ? "correct" : "incorrect", key: flashKey.current++, bonusSeconds });
     setCurrent(generateQuestion(config));
     setInput("");
   }, [phase, input, current, config]);
@@ -165,6 +186,10 @@ export const TimeAttackSession = ({
         </p>
         <p className="text-sm font-bold text-foreground/70">
           まちがえると {TIME_ATTACK_PENALTY_SECONDS}びょう へっちゃうよ
+        </p>
+        <p className="text-sm font-bold text-foreground/70">
+          {TIME_ATTACK_COMBO_STREAK}もん れんぞく せいかいすると {TIME_ATTACK_COMBO_BONUS_SECONDS}
+          びょう ふえるよ
         </p>
         <motion.button
           type="button"
@@ -294,6 +319,11 @@ export const TimeAttackSession = ({
             {flash.type === "incorrect" && (
               <span className="ml-1 text-xs font-bold text-warning">
                 -{TIME_ATTACK_PENALTY_SECONDS}びょう
+              </span>
+            )}
+            {flash.bonusSeconds && (
+              <span className="ml-1 text-xs font-bold text-success">
+                +{flash.bonusSeconds}びょう
               </span>
             )}
           </motion.div>
