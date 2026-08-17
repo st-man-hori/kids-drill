@@ -32,11 +32,24 @@ test("shows the price of an item on sale", () => {
   expect(screen.getByText("400 ポイント")).toBeInTheDocument();
 });
 
-test("buying tells the child to go and wear it", async () => {
+// タップ即購入だとポイントが意図せず減ってしまう（issue #7）ため、
+// affordableなアイテムは確認ダイアログを挟んでから購入する
+test("tapping an item asks for confirmation instead of buying right away", async () => {
   const user = userEvent.setup();
   render(<WardrobeShop pointsBalance={500} items={[item()]} />);
 
   await user.click(screen.getByRole("button", { name: /きんいろヘア/ }));
+
+  expect(buyWardrobeItem).not.toHaveBeenCalled();
+  expect(screen.getByRole("dialog")).toHaveTextContent("400 ポイントで こうかんするよ。いい？");
+});
+
+test("confirming the dialog buys the item", async () => {
+  const user = userEvent.setup();
+  render(<WardrobeShop pointsBalance={500} items={[item()]} />);
+
+  await user.click(screen.getByRole("button", { name: /きんいろヘア/ }));
+  await user.click(screen.getByRole("button", { name: "こうかんする" }));
 
   expect(buyWardrobeItem).toHaveBeenCalledWith("item-1");
   expect(
@@ -49,8 +62,45 @@ test("what was just bought disappears from the shop", async () => {
   render(<WardrobeShop pointsBalance={500} items={[item()]} />);
 
   await user.click(screen.getByRole("button", { name: /きんいろヘア/ }));
+  await user.click(screen.getByRole("button", { name: "こうかんする" }));
 
   expect(await screen.findByText("かみがたは ぜんぶ てにいれたよ！")).toBeInTheDocument();
+});
+
+test("cancelling the dialog does not buy the item", async () => {
+  const user = userEvent.setup();
+  render(<WardrobeShop pointsBalance={500} items={[item()]} />);
+
+  await user.click(screen.getByRole("button", { name: /きんいろヘア/ }));
+  await user.click(screen.getByRole("button", { name: "やめる" }));
+
+  expect(buyWardrobeItem).not.toHaveBeenCalled();
+  expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+  // ダイアログを閉じただけで、まだ おみせ に残っている
+  expect(screen.getByText("きんいろヘア")).toBeInTheDocument();
+});
+
+test("tapping outside the dialog cancels without buying", async () => {
+  const user = userEvent.setup();
+  render(<WardrobeShop pointsBalance={500} items={[item()]} />);
+
+  await user.click(screen.getByRole("button", { name: /きんいろヘア/ }));
+  // ダイアログのカード自体ではなく、背景（オーバーレイ）をクリックする
+  await user.click(screen.getByRole("dialog").parentElement!);
+
+  expect(buyWardrobeItem).not.toHaveBeenCalled();
+  expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+});
+
+test("pressing Escape cancels the dialog without buying", async () => {
+  const user = userEvent.setup();
+  render(<WardrobeShop pointsBalance={500} items={[item()]} />);
+
+  await user.click(screen.getByRole("button", { name: /きんいろヘア/ }));
+  await user.keyboard("{Escape}");
+
+  expect(buyWardrobeItem).not.toHaveBeenCalled();
+  expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
 });
 
 test("does not reveal what a locked item is, only how to get it", () => {
