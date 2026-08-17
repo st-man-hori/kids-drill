@@ -65,7 +65,8 @@ export const ItemTile = ({
       whileTap={disabled ? undefined : { scale: 0.95 }}
       onClick={onTap}
       disabled={disabled}
-      className={`flex w-full flex-col items-center gap-1 rounded-[20px] p-[clamp(0.375rem,1.2vh,0.75rem)] text-center shadow-sm ${
+      // min-h-11 は 44px。タッチ領域の最小サイズを下回らせない（docs/design.md）
+      className={`flex min-h-11 w-full flex-col items-center gap-1 rounded-[20px] p-[clamp(0.375rem,1.2vh,0.75rem)] text-center shadow-sm ${
         highlighted ? "bg-brand/25 ring-2 ring-brand" : "bg-white/70"
       } ${hidden ? "opacity-50" : ""}`}
     >
