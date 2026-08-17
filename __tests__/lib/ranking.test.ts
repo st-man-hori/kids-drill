@@ -1,5 +1,5 @@
 import { expect, test } from "vitest";
-import { getWeekStart, percentile } from "@/lib/ranking";
+import { getWeekStart, percentile, rankTier } from "@/lib/ranking";
 
 test.each([
   // 月曜日はその日の0時が週の始まり
@@ -30,4 +30,20 @@ test("percentile never reports less than 1%", () => {
 
 test("percentile falls back to 100 when nobody has played this week", () => {
   expect(percentile(1, 0)).toBe(100);
+});
+
+test.each([
+  // 1〜3位は参加人数によらず常にtop(パーセンタイルでは4人中1位=25%でtopの
+  // しきい値からこぼれるが、それでも1位はtop扱いにする)
+  [1, 4, "top"],
+  [3, 4, "top"],
+  [1, 1, "top"],
+  [1, 100, "top"],
+  [20, 100, "top"],
+  [25, 100, "middle"],
+  [60, 100, "middle"],
+  [61, 100, "growing"],
+  [100, 100, "growing"],
+] as const)("rankTier(%i, %i) -> %s", (rank, total, expected) => {
+  expect(rankTier(rank, total)).toBe(expected);
 });

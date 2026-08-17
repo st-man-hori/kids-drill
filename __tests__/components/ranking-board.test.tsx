@@ -22,12 +22,30 @@ test("always shows the all-time personal best", () => {
   expect(screen.getByText("じこベスト 12てん")).toBeInTheDocument();
 });
 
-test("shows this week's percentile badge and weekly best when the child has played", () => {
+test("shows the top tier badge and weekly best for a top rank", () => {
   render(<RankingBoard ranking={ranking({ rank: 1, totalParticipants: 4, weeklyBest: 10 })} />);
 
-  // 1/4 = 25%
-  expect(screen.getByText("じょうい 25%")).toBeInTheDocument();
+  expect(screen.getByText("じょうい グループだよ！")).toBeInTheDocument();
   expect(screen.getByText("こんしゅうの ベスト 10てん")).toBeInTheDocument();
+});
+
+test("shows the middle tier badge for a middling rank", () => {
+  render(<RankingBoard ranking={ranking({ rank: 40, totalParticipants: 100, weeklyBest: 5 })} />);
+
+  expect(screen.getByText("まんなかへんだよ")).toBeInTheDocument();
+});
+
+test("shows an encouraging badge for a lower rank, never a discouraging one", () => {
+  render(<RankingBoard ranking={ranking({ rank: 90, totalParticipants: 100, weeklyBest: 2 })} />);
+
+  expect(screen.getByText("これから ぐんぐん のびるよ")).toBeInTheDocument();
+});
+
+// %という表現は小学校低学年にはまだ理解できない（docs/game-design.md）
+test("never shows a raw percentage", () => {
+  render(<RankingBoard ranking={ranking({ rank: 1, totalParticipants: 4 })} />);
+
+  expect(screen.queryByText(/%/)).not.toBeInTheDocument();
 });
 
 test("encourages a first attempt when the child hasn't played this week", () => {

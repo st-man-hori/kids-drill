@@ -2,11 +2,12 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { percentile } from "@/lib/ranking";
+import { RANK_TIER_LABEL, rankTier } from "@/lib/ranking";
 import type { RankingView } from "@/lib/ranking-store";
 
 // docs/game-design.md「ランキング設計」: 見せ方はやさしく。自己ベストとの比較を
-// 主役にし、ランキングは「上位◯%」のようなバッジ表示を基本にする。
+// 主役にし、ランキングは「じょういグループだよ！」のような言葉のバッジを基本にする。
+// %表記は使わない（小学校低学年はまだ習っていない）。
 // 詳細な数値順位は任意で見られる程度に留める（→ボタンで開閉する）
 
 export const RankingBoard = ({ ranking }: { ranking: RankingView }) => {
@@ -31,8 +32,8 @@ export const RankingBoard = ({ ranking }: { ranking: RankingView }) => {
           className="flex flex-col items-center gap-1 rounded-[20px] bg-brand/20 px-6 py-4"
         >
           <p className="text-sm font-bold text-foreground/70">こんしゅうの あなたは</p>
-          <p className="text-[clamp(1.5rem,2.5vh+1rem,2.25rem)] font-bold text-brand">
-            じょうい {percentile(rank, totalParticipants)}%
+          <p className="text-[clamp(1.25rem,2vh+0.75rem,1.75rem)] font-bold text-brand">
+            {RANK_TIER_LABEL[rankTier(rank, totalParticipants)]}
           </p>
           <p className="text-sm font-bold text-foreground/70">
             こんしゅうの ベスト {weeklyBest}てん
