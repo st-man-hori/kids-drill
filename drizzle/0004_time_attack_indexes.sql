@@ -1,0 +1,2 @@
+CREATE INDEX "time_attack_runs_played_at_index" ON "time_attack_runs" USING btree ("played_at");--> statement-breakpoint
+CREATE INDEX "time_attack_runs_child_id_index" ON "time_attack_runs" USING btree ("child_id");

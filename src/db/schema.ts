@@ -6,6 +6,7 @@ import {
   jsonb,
   timestamp,
   unique,
+  index,
 } from "drizzle-orm/pg-core";
 
 // docs/data-model.md がこのスキーマの一次情報源。テーブル追加・変更時はそちらも更新すること。
@@ -68,19 +69,30 @@ export const practiceSessions = pgTable("practice_sessions", {
   finishedAt: timestamp("finished_at"),
 });
 
-export const timeAttackRuns = pgTable("time_attack_runs", {
-  id: uuid("id").primaryKey().defaultRandom(),
-  childId: uuid("child_id")
-    .notNull()
-    .references(() => childProfiles.id),
-  subjectId: uuid("subject_id")
-    .notNull()
-    .references(() => subjects.id),
-  skillType: text("skill_type").notNull(),
-  correctCount: integer("correct_count").notNull(),
-  durationSeconds: integer("duration_seconds").notNull().default(60),
-  playedAt: timestamp("played_at").notNull().defaultNow(),
-});
+export const timeAttackRuns = pgTable(
+  "time_attack_runs",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    childId: uuid("child_id")
+      .notNull()
+      .references(() => childProfiles.id),
+    subjectId: uuid("subject_id")
+      .notNull()
+      .references(() => subjects.id),
+    skillType: text("skill_type").notNull(),
+    correctCount: integer("correct_count").notNull(),
+    durationSeconds: integer("duration_seconds").notNull().default(60),
+    playedAt: timestamp("played_at").notNull().defaultNow(),
+  },
+  (t) => [
+    // ランキング集計（src/lib/ranking-store.ts）の gte(playedAt, weekStart) が
+    // 全期間の行を毎回フルスキャンしないようにする
+    index().on(t.playedAt),
+    // 自己ベスト集計（time-attack/actions.ts, ranking-store.ts）の
+    // eq(childId, ...) 用
+    index().on(t.childId),
+  ],
+);
 
 export const wardrobeItems = pgTable("wardrobe_items", {
   id: uuid("id").primaryKey().defaultRandom(),
