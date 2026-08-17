@@ -55,7 +55,7 @@ export const ADD_SKILL_TYPE = "add";
 export const ADD_LEVELS: readonly LevelConfig[] = [
   { minA: 1, maxA: 9, minB: 1, maxB: 9, carry: false }, // Lv1: 1桁+1桁、繰り上がりなし
   { minA: 1, maxA: 9, minB: 1, maxB: 9, carry: true }, // Lv2: 1桁+1桁、繰り上がりあり
-  { minA: 10, maxA: 10, minB: 1, maxB: 9, carry: false }, // Lv3: 10+1桁
+  { minA: 10, maxA: 19, minB: 1, maxB: 9, carry: false }, // Lv3: 2桁(10〜19)+1桁、繰り上がりなし（issue #5: 旧設定はaが10固定で必ず「10+〇」になっていた）
   { minA: 11, maxA: 19, minB: 1, maxB: 9, carry: false }, // Lv4: 2桁(11〜19)+1桁、繰り上がりなし
   { minA: 11, maxA: 19, minB: 1, maxB: 9, carry: true }, // Lv5: 2桁(11〜19)+1桁、繰り上がりあり
 ];
