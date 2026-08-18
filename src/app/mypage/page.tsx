@@ -52,6 +52,11 @@ const MyPage = async () => {
         <LinkButton href="/time-attack" variant="primary">
           たいむあたっく
         </LinkButton>
+        {/* よみがなモードは国語スパイク（scripts/kokugo-ai/README.md参照）のプロトタイプ。
+            mainへはマージしない前提 */}
+        <LinkButton href="/practice/kokugo" variant="primary">
+          よみがな
+        </LinkButton>
         <LinkButton href="/wardrobe" variant="secondary">
           きせかえ
         </LinkButton>
