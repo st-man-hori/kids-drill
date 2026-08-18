@@ -1,0 +1,17 @@
+[
+  { "kanji": "一", "grade": 1, "correctReadings": ["いち", "ひと", "ひとつ"] },
+  { "kanji": "二", "grade": 1, "correctReadings": ["に", "ふた", "ふたつ"] },
+  { "kanji": "三", "grade": 1, "correctReadings": ["さん", "み", "みっつ"] },
+  { "kanji": "火", "grade": 1, "correctReadings": ["か", "ひ"] },
+  { "kanji": "水", "grade": 1, "correctReadings": ["すい", "みず"] },
+  { "kanji": "木", "grade": 1, "correctReadings": ["もく", "ぼく", "き", "こ"] },
+  { "kanji": "金", "grade": 1, "correctReadings": ["きん", "こん", "かね"] },
+  { "kanji": "土", "grade": 1, "correctReadings": ["ど", "と", "つち"] },
+  { "kanji": "日", "grade": 1, "correctReadings": ["にち", "じつ", "ひ", "か"] },
+  { "kanji": "月", "grade": 1, "correctReadings": ["げつ", "がつ", "つき"] },
+  { "kanji": "山", "grade": 1, "correctReadings": ["さん", "やま"] },
+  { "kanji": "川", "grade": 1, "correctReadings": ["せん", "かわ"] },
+  { "kanji": "人", "grade": 1, "correctReadings": ["じん", "にん", "ひと"] },
+  { "kanji": "大", "grade": 1, "correctReadings": ["だい", "たい", "おお", "おおきい"] },
+  { "kanji": "小", "grade": 1, "correctReadings": ["しょう", "ちい", "ちいさい", "こ", "お"] }
+]

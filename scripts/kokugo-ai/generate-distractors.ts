@@ -1,0 +1,208 @@
+/**
+ * 漢字よみクイズの誤答選択肢をAI（さくらのAI Engine、OpenAI互換API）に考えさせ、
+ * 正解データ（学年別漢字配当表由来のマスタ）と機械的に突き合わせて検証するスパイク。
+ *
+ * アプリ本体には未接続。architecture.mdの着手順序（算数＝ひき算・タイムアタック・
+ * ランキングが揃うまで他教科へ広げない）と切り離すため、standaloneスクリプトとして置く。
+ *
+ * 実行方法:
+ *   npm run kokugo:generate-distractors
+ *
+ * 必要な環境変数（.env、このプロジェクトのローカル秘密情報の置き場）:
+ *   SAKURA_AI_API_KEY  - さくらのAI Engineのコントロールパネルで発行したキー
+ *   SAKURA_AI_BASE_URL - OpenAI互換エンドポイントのURL（コントロールパネル記載の値をそのまま使う。
+ *                        `/chat/completions`を含む完全なURLでもベースURLのみでもどちらでも可）
+ *   SAKURA_AI_MODEL    - 使用するモデル名
+ */
+import { readFileSync, mkdirSync, writeFileSync } from "node:fs";
+import { join, dirname } from "node:path";
+import { fileURLToPath } from "node:url";
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+
+/** tsxのnode向けdotenv読み込みに依存せず、.envを自前で読む（依存追加を避けるため） */
+const loadDotEnv = () => {
+  const envPath = join(__dirname, "..", "..", ".env");
+  let text: string;
+  try {
+    text = readFileSync(envPath, "utf-8");
+  } catch {
+    return;
+  }
+  for (const line of text.split("\n")) {
+    const trimmed = line.trim();
+    if (!trimmed || trimmed.startsWith("#")) continue;
+    const eq = trimmed.indexOf("=");
+    if (eq === -1) continue;
+    const key = trimmed.slice(0, eq).trim();
+    const value = trimmed.slice(eq + 1).trim();
+    if (process.env[key] === undefined) {
+      process.env[key] = value;
+    }
+  }
+};
+
+loadDotEnv();
+
+type KanjiMasterEntry = {
+  kanji: string;
+  grade: number;
+  correctReadings: string[];
+};
+
+type QuizCandidate = {
+  kanji: string;
+  correctReading: string;
+  distractors: string[];
+  model: string;
+  generatedAt: string;
+  needsHumanReview: true;
+};
+
+const DISTRACTOR_COUNT = 3;
+const HIRAGANA_ONLY = /^[ぁ-んー]+$/;
+
+const main = async () => {
+  const apiKey = requireEnv("SAKURA_AI_API_KEY");
+  const baseUrl = requireEnv("SAKURA_AI_BASE_URL");
+  const model = requireEnv("SAKURA_AI_MODEL");
+
+  const masterPath = join(__dirname, "sample-kanji-master.json");
+  const master: KanjiMasterEntry[] = JSON.parse(readFileSync(masterPath, "utf-8"));
+
+  const results: QuizCandidate[] = [];
+  const skipped: { kanji: string; reason: string }[] = [];
+
+  for (const entry of master) {
+    const targetReading = entry.correctReadings[0];
+    console.log(`[${entry.kanji}] ${targetReading} の誤答候補を生成中...`);
+
+    let rawDistractors: string[];
+    try {
+      rawDistractors = await requestDistractors({ apiKey, baseUrl, model }, entry, targetReading);
+    } catch (err) {
+      skipped.push({ kanji: entry.kanji, reason: `API呼び出し失敗: ${(err as Error).message}` });
+      continue;
+    }
+
+    const validated = validateDistractors(rawDistractors, entry);
+    if (validated.length < DISTRACTOR_COUNT) {
+      skipped.push({
+        kanji: entry.kanji,
+        reason: `検証後に${DISTRACTOR_COUNT}件揃わなかった（候補: ${JSON.stringify(rawDistractors)} → 有効: ${JSON.stringify(validated)}）`,
+      });
+      continue;
+    }
+
+    results.push({
+      kanji: entry.kanji,
+      correctReading: targetReading,
+      distractors: validated.slice(0, DISTRACTOR_COUNT),
+      model,
+      generatedAt: new Date().toISOString(),
+      needsHumanReview: true,
+    });
+  }
+
+  const outDir = join(__dirname, "output");
+  mkdirSync(outDir, { recursive: true });
+  const outPath = join(outDir, "quiz-candidates.json");
+  writeFileSync(outPath, JSON.stringify(results, null, 2), "utf-8");
+
+  console.log(`\n生成完了: ${results.length}件 → ${outPath}`);
+  if (skipped.length > 0) {
+    console.log(`スキップ: ${skipped.length}件`);
+    for (const s of skipped) console.log(`  - ${s.kanji}: ${s.reason}`);
+  }
+  console.log("\n※ 出力はすべて needsHumanReview: true。人間のレビューを経るまでは実データとして扱わないこと。");
+};
+
+const requestDistractors = async (
+  auth: { apiKey: string; baseUrl: string; model: string },
+  entry: KanjiMasterEntry,
+  targetReading: string,
+): Promise<string[]> => {
+  const prompt = [
+    "あなたは日本の小学1年生向け「漢字のよみ」4択クイズの誤答選択肢を作成しています。",
+    `漢字「${entry.kanji}」の正しい読み方の一つは「${targetReading}」です。`,
+    `この漢字の正しい読み方は他に ${JSON.stringify(entry.correctReadings)} もあります。`,
+    "この4択クイズの誤答選択肢として使う、もっともらしいが誤りである読み方をひらがなで3つ考えてください。",
+    "条件:",
+    "- ひらがなのみ（漢字・カタカナ・記号を含めない）",
+    "- 上に挙げた正しい読み方のいずれとも一致しないこと",
+    "- 小学1年生が読める、日常的な音の並びであること（でたらめな音の羅列にしない）",
+    "出力は他の文章を含めず、次のJSON形式のみで返してください:",
+    '{"distractors": ["よみ1", "よみ2", "よみ3"]}',
+  ].join("\n");
+
+  const endpoint = auth.baseUrl.includes("/chat/completions")
+    ? auth.baseUrl
+    : `${auth.baseUrl.replace(/\/$/, "")}/chat/completions`;
+
+  const res = await fetch(endpoint, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${auth.apiKey}`,
+    },
+    body: JSON.stringify({
+      model: auth.model,
+      temperature: 0.7,
+      messages: [{ role: "user", content: prompt }],
+    }),
+  });
+
+  if (!res.ok) {
+    throw new Error(`HTTP ${res.status}: ${await res.text()}`);
+  }
+
+  const data = await res.json();
+  const content: string | undefined = data?.choices?.[0]?.message?.content;
+  if (!content) {
+    throw new Error(`レスポンスにcontentが無い: ${JSON.stringify(data)}`);
+  }
+
+  return parseDistractorsFromContent(content);
+};
+
+const parseDistractorsFromContent = (content: string): string[] => {
+  const jsonMatch = content.match(/\{[\s\S]*\}/);
+  const jsonText = jsonMatch ? jsonMatch[0] : content;
+  const parsed = JSON.parse(jsonText);
+  if (!Array.isArray(parsed.distractors)) {
+    throw new Error(`distractorsが配列でない: ${jsonText}`);
+  }
+  return parsed.distractors;
+};
+
+/** AIの出力を正解データと機械的に突き合わせて検証する（このスパイクの本題） */
+const validateDistractors = (candidates: string[], entry: KanjiMasterEntry): string[] => {
+  const seen = new Set<string>();
+  const valid: string[] = [];
+
+  for (const c of candidates) {
+    const candidate = c.trim();
+    if (!HIRAGANA_ONLY.test(candidate)) continue; // ひらがな以外は却下
+    if (entry.correctReadings.includes(candidate)) continue; // 正解と偶然一致は却下
+    if (seen.has(candidate)) continue; // 重複は却下
+    seen.add(candidate);
+    valid.push(candidate);
+  }
+
+  return valid;
+};
+
+const requireEnv = (name: string): string => {
+  const value = process.env[name];
+  if (!value) {
+    throw new Error(
+      `環境変数 ${name} が未設定です。.env.local に設定してください（.env.local.example参照）`,
+    );
+  }
+  return value;
+};
+
+main().catch((err) => {
+  console.error(err);
+  process.exitCode = 1;
+});

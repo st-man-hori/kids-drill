@@ -37,6 +37,9 @@ yarn-error.log*
 # vercel
 .vercel
 
+# 国語AIスパイクの生成物（未レビューのAI生成コンテンツはコミットしない）
+/scripts/kokugo-ai/output/
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
