@@ -55,6 +55,21 @@ export const childProgress = pgTable(
   (t) => [unique().on(t.childId, t.subjectId, t.skillType)],
 );
 
+// よみがなモード（国語スパイク、docs/architecture.mdの着手順序をあえて前倒しした
+// プロトタイプ。詳細はscripts/kokugo-ai/README.md）の4択問題バンク。
+// 正解データ・誤答データとも人間レビュー済みのものだけをマイグレーションで投入する
+// （scripts/kokugo-ai/generate-distractors.tsが生成する候補はneedsHumanReview: true）。
+export const kanjiQuestions = pgTable("kanji_questions", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  levelId: uuid("level_id")
+    .notNull()
+    .references(() => difficultyLevels.id),
+  kanji: text("kanji").notNull(),
+  correctReading: text("correct_reading").notNull(),
+  // string[]。4択のうち正解以外の3つ
+  distractorReadings: jsonb("distractor_readings").notNull(),
+});
+
 export const practiceSessions = pgTable("practice_sessions", {
   id: uuid("id").primaryKey().defaultRandom(),
   childId: uuid("child_id")

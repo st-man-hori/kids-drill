@@ -43,6 +43,20 @@
       "when": 1786966536425,
       "tag": "0005_fix_add_level3_config",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1787064519618,
+      "tag": "0006_kokugo_kanji_questions",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1787064542050,
+      "tag": "0007_kokugo_kanji_yomi_master_data",
+      "breakpoints": true
     }
   ]
 }
