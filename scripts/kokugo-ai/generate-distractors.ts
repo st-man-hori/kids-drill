@@ -137,7 +137,10 @@ const requestDistractors = async (
     "条件:",
     "- ひらがなのみ（漢字・カタカナ・記号を含めない）",
     "- 上に挙げた正しい読み方のいずれとも一致しないこと",
-    `- ○○に当てはめても不自然に見えない（「${entry.readingTemplate}」の○○に入れて読める）こと`,
+    `- **○○の部分だけを置き換える文字列であること。○○の前後に付いている固定の文字（「${entry.readingTemplate}」の○○以外の部分）を候補の中に含めないこと**`,
+    `  （悪い例: ○○が「${targetReading}」・テンプレートが「${entry.readingTemplate}」のとき、` +
+      "固定部分と同じ読みで終わる/始まる候補を出すと、当てはめたときに同じ音が二重になる誤り）",
+    `- 目安として「${targetReading}」と近い文字数であること（○○の場所を置き換えるだけなので、極端に長い/短い候補は不自然）`,
     "- 小学1年生が読める、日常的な音の並びであること（でたらめな音の羅列にしない）",
     "出力は他の文章を含めず、次のJSON形式のみで返してください:",
     '{"distractors": ["よみ1", "よみ2", "よみ3"]}',
@@ -188,11 +191,21 @@ const validateDistractors = (candidates: string[], entry: KanjiMasterEntry): str
   const seen = new Set<string>();
   const valid: string[] = [];
 
+  // readingTemplateの○○以外の固定部分。候補がこれと同じ文字列で終わる/始まると、
+  // ○○に当てはめたときに固定部分が二重になる（例: "○○りょく"に対して"さりょく"を
+  // 選ぶと「さりょくりょく」になる）ため、そのような候補は却下する
+  const blankIndex = entry.readingTemplate.indexOf("○○");
+  const fixedPrefix = entry.readingTemplate.slice(0, blankIndex);
+  const fixedSuffix = entry.readingTemplate.slice(blankIndex + 2);
+
   for (const c of candidates) {
     const candidate = c.trim();
     if (!HIRAGANA_ONLY.test(candidate)) continue; // ひらがな以外は却下
+    if (candidate.startsWith("ん")) continue; // 「ん」で始まる語は日本語に存在しない
     if (entry.correctReadings.includes(candidate)) continue; // 正解と偶然一致は却下
     if (seen.has(candidate)) continue; // 重複は却下
+    if (fixedSuffix && candidate.endsWith(fixedSuffix)) continue; // 当てはめると固定部分が二重になる
+    if (fixedPrefix && candidate.startsWith(fixedPrefix)) continue;
     seen.add(candidate);
     valid.push(candidate);
   }

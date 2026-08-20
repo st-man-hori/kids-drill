@@ -122,8 +122,12 @@ const findDecomposableExample = (
   // 読みの分解自体は機械的に行うので、手で読みを書き起こす必要はない
   preferredSurface?: string,
 ): DecomposedExample | null => {
-  // 長い読みを先に試す（短い読みが別の読みの前方一致になるケースの誤判定を避ける）
-  const readingsByLengthDesc = [...ownReadings].sort((a, b) => b.length - a.length);
+  // 短い読み（語幹）を先に試す。kyoiku-kanji-apiのkunyomiは辞書の慣例
+  // （例: 「出る」なら で.る のように語幹＋送り仮名で分ける）通り、「で」のような
+  // 語幹と「でる」のような送り仮名込みの完全形を両方別エントリで持っていることが多い。
+  // 完全形を先に一致させると送り仮名がreading_templateの外に出てこず「○○」だけに
+  // なってしまう（本来「○○る」と出せるはずのヒントが消える）ため、短い方を優先する
+  const readingsByLengthAsc = [...ownReadings].sort((a, b) => a.length - b.length);
 
   const candidates: (DecomposedExample & { priority: number; exampleIndex: number })[] = [];
 
@@ -144,7 +148,7 @@ const findDecomposableExample = (
 
     if (!isOkuriganaForm && compoundPosition === -1) return;
 
-    for (const reading of readingsByLengthDesc) {
+    for (const reading of readingsByLengthAsc) {
       if (!parsed.reading.startsWith(reading)) continue;
       if (isOkuriganaForm) {
         candidates.push({
@@ -169,7 +173,7 @@ const findDecomposableExample = (
       }
     }
     if (!isOkuriganaForm && compoundPosition === 1) {
-      for (const reading of readingsByLengthDesc) {
+      for (const reading of readingsByLengthAsc) {
         if (!parsed.reading.endsWith(reading)) continue;
         const otherGrade = gradeByKanji.get(chars[0]) ?? Number.POSITIVE_INFINITY;
         candidates.push({
