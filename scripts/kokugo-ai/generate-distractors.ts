@@ -1,9 +1,11 @@
 /**
- * 漢字よみクイズの誤答選択肢をAI（さくらのAI Engine、OpenAI互換API）に考えさせ、
- * 正解データ（学年別漢字配当表由来のマスタ）と機械的に突き合わせて検証するスパイク。
+ * kanji_questions の誤答選択肢（distractor_readings）を、正解データ
+ * （kyoiku-kanji-api由来、fetch-kanji-master.ts）ごとにAI（さくらのAI Engine、
+ * OpenAI互換API）へ考えさせ、機械的に突き合わせて検証する。
  *
- * アプリ本体には未接続。architecture.mdの着手順序（算数＝ひき算・タイムアタック・
- * ランキングが揃うまで他教科へ広げない）と切り離すため、standaloneスクリプトとして置く。
+ * 出力（scripts/kokugo-ai/output/quiz-candidates.json）はneedsHumanReview: true
+ * 付きのAI生成物。kanji_questionsへは drizzle のdata migrationとして投入し、
+ * PRの差分でレビューする（docs/architecture.md「国語（漢字のよみ）」参照）。
  *
  * 実行方法:
  *   npm run kokugo:generate-distractors
@@ -13,10 +15,12 @@
  *   SAKURA_AI_BASE_URL - OpenAI互換エンドポイントのURL（コントロールパネル記載の値をそのまま使う。
  *                        `/chat/completions`を含む完全なURLでもベースURLのみでもどちらでも可）
  *   SAKURA_AI_MODEL    - 使用するモデル名
+ *   KYOIKU_KANJI_API_BASE_URL - 省略時は本番URL（https://api.kyoiku-kanji.st-man.com）
  */
 import { readFileSync, mkdirSync, writeFileSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
+import { fetchGradeOneKanjiMaster, type KanjiMasterEntry } from "./fetch-kanji-master";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -44,14 +48,10 @@ const loadDotEnv = () => {
 
 loadDotEnv();
 
-type KanjiMasterEntry = {
-  kanji: string;
-  grade: number;
-  correctReadings: string[];
-};
-
 type QuizCandidate = {
   kanji: string;
+  levelNumber: number;
+  strokeCount: number;
   correctReading: string;
   distractors: string[];
   model: string;
@@ -67,14 +67,14 @@ const main = async () => {
   const baseUrl = requireEnv("SAKURA_AI_BASE_URL");
   const model = requireEnv("SAKURA_AI_MODEL");
 
-  const masterPath = join(__dirname, "sample-kanji-master.json");
-  const master: KanjiMasterEntry[] = JSON.parse(readFileSync(masterPath, "utf-8"));
+  const master = await fetchGradeOneKanjiMaster();
+  console.log(`kyoiku-kanji-apiから${master.length}字取得（${master[master.length - 1]?.levelNumber ?? 0}レベル）`);
 
   const results: QuizCandidate[] = [];
   const skipped: { kanji: string; reason: string }[] = [];
 
   for (const entry of master) {
-    const targetReading = entry.correctReadings[0];
+    const targetReading = entry.correctReading;
     console.log(`[${entry.kanji}] ${targetReading} の誤答候補を生成中...`);
 
     let rawDistractors: string[];
@@ -96,6 +96,8 @@ const main = async () => {
 
     results.push({
       kanji: entry.kanji,
+      levelNumber: entry.levelNumber,
+      strokeCount: entry.strokeCount,
       correctReading: targetReading,
       distractors: validated.slice(0, DISTRACTOR_COUNT),
       model,

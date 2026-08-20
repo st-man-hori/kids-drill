@@ -12,6 +12,7 @@
     "db:migrate": "drizzle-kit migrate",
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio",
+    "kokugo:fetch-kanji-master": "tsx scripts/kokugo-ai/fetch-kanji-master.ts",
     "kokugo:generate-distractors": "tsx scripts/kokugo-ai/generate-distractors.ts"
   },
   "dependencies": {
