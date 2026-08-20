@@ -52,6 +52,8 @@ type QuizCandidate = {
   kanji: string;
   levelNumber: number;
   strokeCount: number;
+  exampleWord: string;
+  readingTemplate: string;
   correctReading: string;
   distractors: string[];
   model: string;
@@ -98,6 +100,8 @@ const main = async () => {
       kanji: entry.kanji,
       levelNumber: entry.levelNumber,
       strokeCount: entry.strokeCount,
+      exampleWord: entry.exampleWord,
+      readingTemplate: entry.readingTemplate,
       correctReading: targetReading,
       distractors: validated.slice(0, DISTRACTOR_COUNT),
       model,
@@ -125,13 +129,15 @@ const requestDistractors = async (
   targetReading: string,
 ): Promise<string[]> => {
   const prompt = [
-    "あなたは日本の小学1年生向け「漢字のよみ」4択クイズの誤答選択肢を作成しています。",
-    `漢字「${entry.kanji}」の正しい読み方の一つは「${targetReading}」です。`,
-    `この漢字の正しい読み方は他に ${JSON.stringify(entry.correctReadings)} もあります。`,
+    "あなたは日本の小学1年生向け「熟語の読み仮名」穴埋め4択クイズの誤答選択肢を作成しています。",
+    `熟語「${entry.exampleWord}」の読み方は「${entry.readingTemplate.replace("○○", targetReading)}」で、`,
+    `○○の部分（＝漢字「${entry.kanji}」の読み）は「${targetReading}」です。`,
+    `漢字「${entry.kanji}」の正しい読み方は他に ${JSON.stringify(entry.correctReadings)} もあります。`,
     "この4択クイズの誤答選択肢として使う、もっともらしいが誤りである読み方をひらがなで3つ考えてください。",
     "条件:",
     "- ひらがなのみ（漢字・カタカナ・記号を含めない）",
     "- 上に挙げた正しい読み方のいずれとも一致しないこと",
+    `- ○○に当てはめても不自然に見えない（「${entry.readingTemplate}」の○○に入れて読める）こと`,
     "- 小学1年生が読める、日常的な音の並びであること（でたらめな音の羅列にしない）",
     "出力は他の文章を含めず、次のJSON形式のみで返してください:",
     '{"distractors": ["よみ1", "よみ2", "よみ3"]}',
