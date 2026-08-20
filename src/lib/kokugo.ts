@@ -17,12 +17,17 @@ export type KanjiQuestionBankEntry = {
   kanji: string;
   correctReading: string;
   distractorReadings: string[];
+  // 熟語の穴埋め表示用（例: "一番"・"○○ばん"）。docs/architecture.md「国語（漢字のよみ）」参照
+  exampleWord: string;
+  readingTemplate: string;
 };
 
 export type KanjiQuestion = {
   id: string;
   kanji: string;
   correctReading: string;
+  exampleWord: string;
+  readingTemplate: string;
   // 正解を含む4択。表示順はシャッフル済み
   choices: string[];
 };
@@ -42,6 +47,8 @@ const toQuestion = (entry: KanjiQuestionBankEntry): KanjiQuestion => ({
   id: entry.id,
   kanji: entry.kanji,
   correctReading: entry.correctReading,
+  exampleWord: entry.exampleWord,
+  readingTemplate: entry.readingTemplate,
   choices: shuffle([entry.correctReading, ...entry.distractorReadings]),
 });
 

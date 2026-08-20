@@ -24,7 +24,14 @@ vi.mock("@/app/practice/kokugo/actions", () => ({
 }));
 
 const POOL: KanjiQuestionBankEntry[] = [
-  { id: "1", kanji: "一", correctReading: "いち", distractorReadings: ["にん", "さつ", "くん"] },
+  {
+    id: "1",
+    kanji: "一",
+    correctReading: "いち",
+    distractorReadings: ["にん", "さつ", "くん"],
+    exampleWord: "一番",
+    readingTemplate: "○○ばん",
+  },
 ];
 
 // 出題は常に同じ漢字・同じ選択肢順にする（乱数のシャッフルに依存させない）
@@ -32,6 +39,8 @@ const questions = Array.from({ length: TOTAL_QUESTIONS }, () => ({
   id: "1",
   kanji: "一",
   correctReading: "いち",
+  exampleWord: "一番",
+  readingTemplate: "○○ばん",
   choices: ["いち", "にん", "さつ", "くん"],
 }));
 
@@ -48,10 +57,11 @@ beforeEach(() => {
   });
 });
 
-test("shows the kanji to read", () => {
+test("shows the example word and the blanked reading template", () => {
   renderSession();
 
-  expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("一");
+  expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("一番");
+  expect(screen.getByText("○○ばん")).toBeInTheDocument();
 });
 
 test("tapping the correct reading shows positive feedback", async () => {
@@ -161,7 +171,14 @@ test("submits per-question results and shows what was earned", async () => {
 
 test("announces a level up and plays the next set from the new pool", async () => {
   const nextPool: KanjiQuestionBankEntry[] = [
-    { id: "2", kanji: "水", correctReading: "すい", distractorReadings: ["すう", "すく", "すん"] },
+    {
+      id: "2",
+      kanji: "水",
+      correctReading: "すい",
+      distractorReadings: ["すう", "すく", "すん"],
+      exampleWord: "水中",
+      readingTemplate: "○○ちゅう",
+    },
   ];
   vi.mocked(submitKokugoSession).mockResolvedValue({
     pointsEarned: 150,
@@ -185,7 +202,7 @@ test("announces a level up and plays the next set from the new pool", async () =
   await user.click(screen.getByRole("button", { name: "もっと やる" }));
 
   // 次の10問は新しいレベルのプールから選ばれている（今回は1字しか無いので必ずこれになる）
-  expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("水");
+  expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("水中");
 });
 
 test("tells the child when a new wardrobe item was unlocked", async () => {

@@ -2,9 +2,30 @@ import { expect, test } from "vitest";
 import { pickKanjiQuestions, type KanjiQuestionBankEntry } from "@/lib/kokugo";
 
 const POOL: KanjiQuestionBankEntry[] = [
-  { id: "1", kanji: "一", correctReading: "いち", distractorReadings: ["にん", "さつ", "くん"] },
-  { id: "2", kanji: "二", correctReading: "に", distractorReadings: ["さん", "よん", "ご"] },
-  { id: "3", kanji: "三", correctReading: "さん", distractorReadings: ["みつ", "さお", "みず"] },
+  {
+    id: "1",
+    kanji: "一",
+    correctReading: "いち",
+    distractorReadings: ["にん", "さつ", "くん"],
+    exampleWord: "一番",
+    readingTemplate: "○○ばん",
+  },
+  {
+    id: "2",
+    kanji: "二",
+    correctReading: "に",
+    distractorReadings: ["さん", "よん", "ご"],
+    exampleWord: "二月",
+    readingTemplate: "○○がつ",
+  },
+  {
+    id: "3",
+    kanji: "三",
+    correctReading: "さん",
+    distractorReadings: ["みつ", "さお", "みず"],
+    exampleWord: "三人",
+    readingTemplate: "○○にん",
+  },
 ];
 
 test("pickKanjiQuestions returns the requested number of questions", () => {

@@ -154,5 +154,7 @@ export const getKanjiQuestionPool = async (
     kanji: row.kanji,
     correctReading: row.correctReading,
     distractorReadings: row.distractorReadings as string[],
+    exampleWord: row.exampleWord,
+    readingTemplate: row.readingTemplate,
   }));
 };

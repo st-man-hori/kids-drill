@@ -152,12 +152,26 @@ test("does not demote below level 1", async () => {
 
 test("getKanjiQuestionPool maps DB rows into bank entries", async () => {
   mockKanjiQuestionsFindMany.mockResolvedValue([
-    { id: "q1", kanji: "一", correctReading: "いち", distractorReadings: ["にん", "さつ", "くん"] },
+    {
+      id: "q1",
+      kanji: "一",
+      correctReading: "いち",
+      distractorReadings: ["にん", "さつ", "くん"],
+      exampleWord: "一番",
+      readingTemplate: "○○ばん",
+    },
   ]);
 
   const pool = await getKanjiQuestionPool("level-1");
 
   expect(pool).toEqual([
-    { id: "q1", kanji: "一", correctReading: "いち", distractorReadings: ["にん", "さつ", "くん"] },
+    {
+      id: "q1",
+      kanji: "一",
+      correctReading: "いち",
+      distractorReadings: ["にん", "さつ", "くん"],
+      exampleWord: "一番",
+      readingTemplate: "○○ばん",
+    },
   ]);
 });

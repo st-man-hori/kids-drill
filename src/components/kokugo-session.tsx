@@ -256,11 +256,16 @@ export const KokugoSession = ({
         <p className="text-[clamp(1rem,1.6vh+0.4rem,1.375rem)] font-bold text-foreground/70">
           なんて よむ？
         </p>
-        {/* この漢字自体が出題内容なので、ふりがなは振らない（振ると答えが見えてしまう）。
-            design.mdの「画面の漢字にはふりがなを振る」の意図的な例外 */}
+        {/* 熟語自体が出題内容なので、ふりがなは振らない（振ると答えが見えてしまう）。
+            design.mdの「画面の漢字にはふりがなを振る」の意図的な例外。読みの一部
+            （対象漢字以外の部分）はreadingTemplateとして下に表示する（○○が対象漢字の
+            読みの穴）*/}
         <h1 className="text-[clamp(3rem,8vh+1rem,5.5rem)] font-bold tracking-wide text-foreground">
-          {current.kanji}
+          {current.exampleWord}
         </h1>
+        <p className="text-[clamp(1.25rem,2.6vh+0.5rem,2rem)] font-bold tracking-wide text-foreground/80">
+          {current.readingTemplate}
+        </p>
       </div>
 
       <div className="relative flex w-full justify-center">
