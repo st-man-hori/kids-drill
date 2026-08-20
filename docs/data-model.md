@@ -42,10 +42,12 @@ DBスキーマの概念設計（Drizzle実装前のたたき台）。詳細な�
 - `id`
 - `level_id`（fk → difficulty_levels。国語/kanji_yomiのレベルに紐づく）
 - `kanji`
-- `correct_reading`
+- `example_word`（出題する熟語。例: "一番"）
+- `reading_template`（example_wordの読みを対象漢字の部分だけ○○で穴埋めした表示用文字列。例: "○○ばん"）
+- `correct_reading`（○○に入る、熟語の中でのこの漢字の読み。例: "いち"）
 - `distractor_readings`（JSON配列。4択のうち正解以外の3つ）
 
-正解データ（`kanji` / `correct_reading`）とレベル分けの由来は外部API（`kyoiku-kanji-api`）、誤答（`distractor_readings`）はさくらのAI Engineで生成→機械検証したものを人間がレビューして採用する。詳細は[architecture.md](./architecture.md)の「国語（漢字のよみ）」を参照。
+出題は単独の漢字の読みではなく、実際の熟語の穴埋め（[game-design.md](./game-design.md)は参照せず、architecture.mdの「国語（漢字のよみ）」に設計判断がある）。`example_word`・`reading_template`・`correct_reading`は外部API（`kyoiku-kanji-api`）が返す熟語データから機械的に導出し、`distractor_readings`はさくらのAI Engineで生成→機械検証したものを人間がレビューして採用する。
 
 `correct_reading`・`kanji`は他の`difficulty_levels`同様マイグレーションで投入する固定データ。一方`distractor_readings`は将来GitHub Actionsで日次に洗い替える計画があり、その回はマイグレーションを経由せず対象行への直接UPDATEになる想定（architecture.mdの「誤答の日替わりローテーションについて」参照）。同じテーブル内で列ごとに更新経路が異なる、意図的な非対称。
 
