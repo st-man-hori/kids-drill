@@ -38,6 +38,17 @@ DBスキーマの概念設計（Drizzle実装前のたたき台）。詳細な�
 - `current_level_id`（fk → difficulty_levels）
 - `updated_at`
 
+### kanji_questions（漢字よみ4択クイズの問題バンク）
+- `id`
+- `level_id`（fk → difficulty_levels。国語/kanji_yomiのレベルに紐づく）
+- `kanji`
+- `correct_reading`
+- `distractor_readings`（JSON配列。4択のうち正解以外の3つ）
+
+正解データ（`kanji` / `correct_reading`）とレベル分けの由来は外部API（`kyoiku-kanji-api`）、誤答（`distractor_readings`）はさくらのAI Engineで生成→機械検証したものを人間がレビューして採用する。詳細は[architecture.md](./architecture.md)の「国語（漢字のよみ）」を参照。
+
+`correct_reading`・`kanji`は他の`difficulty_levels`同様マイグレーションで投入する固定データ。一方`distractor_readings`は将来GitHub Actionsで日次に洗い替える計画があり、その回はマイグレーションを経由せず対象行への直接UPDATEになる想定（architecture.mdの「誤答の日替わりローテーションについて」参照）。同じテーブル内で列ごとに更新経路が異なる、意図的な非対称。
+
 ### practice_sessions（練習モードの記録）
 - `id`
 - `child_id`

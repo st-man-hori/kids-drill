@@ -25,7 +25,7 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 ## 現在の状態
 
-認証（サインアップ・ログイン）、算数の練習モード（たしざん）、タイムアタックモード、ランキング、着せ替え（アイテムの解放・ポイント交換・装備）が動く状態。着せ替えのアバターは実イラストがまだ無くSVG図形のダミー。タイムアタックはプロトタイプ実装で、出題難易度は練習モードと同じ`child_progress`の現在レベルを流用しており、専用の難易度調整は未検討。テストはVitest + Testing Libraryでセットアップ済み。
+認証（サインアップ・ログイン）、算数の練習モード（たしざん）、タイムアタックモード、ランキング、着せ替え（アイテムの解放・ポイント交換・装備）、国語の練習モード（漢字のよみ4択）が動く状態。着せ替えのアバターは実イラストがまだ無くSVG図形のダミー。タイムアタックはプロトタイプ実装で、出題難易度は練習モードと同じ`child_progress`の現在レベルを流用しており、専用の難易度調整は未検討。ひきざんは未実装（着手順序の変更の経緯は`docs/architecture.md`参照）。漢字のよみのマスタデータ（正解・レベル分け）は自作API`kyoiku-kanji-api`、誤答はさくらのAI Engineで生成——詳細は`docs/architecture.md`の「国語（漢字のよみ）」と`scripts/kokugo-ai/README.md`。テストはVitest + Testing Libraryでセットアップ済み。
 
 ```
 npm run dev      # 開発サーバー起動
