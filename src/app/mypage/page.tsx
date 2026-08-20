@@ -52,6 +52,9 @@ const MyPage = async () => {
         <LinkButton href="/time-attack" variant="primary">
           たいむあたっく
         </LinkButton>
+        <LinkButton href="/practice/kanji" variant="primary">
+          かんじクイズ
+        </LinkButton>
         <LinkButton href="/wardrobe" variant="secondary">
           きせかえ
         </LinkButton>
