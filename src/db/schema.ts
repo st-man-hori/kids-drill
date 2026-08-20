@@ -65,9 +65,16 @@ export const kanjiQuestions = pgTable("kanji_questions", {
     .notNull()
     .references(() => difficultyLevels.id),
   kanji: text("kanji").notNull(),
+  // 熟語中でのこの漢字の読み（例: "一"に対して"いち"）。単独の辞書的な読みではなく、
+  // example_wordの中での読みを指す
   correctReading: text("correct_reading").notNull(),
   // string[]。4択のうち正解以外の3つ
   distractorReadings: jsonb("distractor_readings").notNull(),
+  // correct_readingの穴埋め元になった熟語（例: "一番"）
+  exampleWord: text("example_word").notNull(),
+  // exampleWordの読みのうち、この漢字の読み以外の部分を残し○○で穴埋めした表示用文字列
+  // （例: "○○ばん"）
+  readingTemplate: text("reading_template").notNull(),
 });
 
 export const practiceSessions = pgTable("practice_sessions", {

@@ -64,6 +64,27 @@
       "when": 1787200507969,
       "tag": "0008_kokugo_kanji_yomi_real_master_data",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1787202035217,
+      "tag": "0009_kokugo_kanji_questions_clear_before_column_add",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1787202044667,
+      "tag": "0010_kokugo_kanji_questions_example_columns",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1787202865963,
+      "tag": "0011_kokugo_kanji_yomi_example_master_data",
+      "breakpoints": true
     }
   ]
 }
