@@ -1,6 +1,7 @@
 import { expect, test } from "vitest";
 import {
   buildKanjiChoices,
+  kanjiBankForLevel,
   kanjiOnlyWord,
   pickKanjiQuestions,
   prepareKanjiQuestions,
@@ -12,6 +13,7 @@ const question = (over: Partial<KanjiQuizQuestion> = {}): KanjiQuizQuestion => (
   kanji: "八",
   correctReading: "ハチ",
   readingType: "on",
+  strokeCount: 2,
   distractorPool: ["バチ", "ハツ", "ハイ", "ハン", "パチ", "カチ", "ラチ", "ワチ", "ガチ"],
   exampleWord: "八月（はちがつ）",
   maskedReading: "○○がつ",
@@ -87,6 +89,26 @@ test("kanjiOnlyWord strips the furigana without revealing the masked reading", (
   expect(kanjiOnlyWord("七時（しちじ）")).toBe("七時");
   expect(kanjiOnlyWord("大学（だいがく）")).toBe("大学");
   expect(kanjiOnlyWord("八")).toBe("八");
+});
+
+test("kanjiBankForLevel keeps only questions at or below the stroke count cap", () => {
+  const bank = [
+    question({ id: "a", strokeCount: 2 }),
+    question({ id: "b", strokeCount: 3 }),
+    question({ id: "c", strokeCount: 4 }),
+  ];
+
+  const filtered = kanjiBankForLevel({ maxStrokeCount: 3 }, bank);
+
+  expect(filtered.map((q) => q.id)).toEqual(["a", "b"]);
+});
+
+test("kanjiBankForLevel returns the whole bank when there is no stroke count cap", () => {
+  const bank = [question({ id: "a", strokeCount: 2 }), question({ id: "b", strokeCount: 20 })];
+
+  const filtered = kanjiBankForLevel({ maxStrokeCount: null }, bank);
+
+  expect(filtered).toHaveLength(2);
 });
 
 test("the bundled grade1 question bank loads and has 4 distinct choices per question", () => {

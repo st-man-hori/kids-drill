@@ -24,7 +24,8 @@
       ],
       "exampleWord": "一年生（いちねんせい）",
       "maskedReading": "○○ねんせい",
-      "meaning": "one"
+      "meaning": "one",
+      "strokeCount": 1
     },
     {
       "id": "七-シチ",
@@ -44,7 +45,8 @@
       ],
       "exampleWord": "七時（しちじ）",
       "maskedReading": "○○じ",
-      "meaning": "seven"
+      "meaning": "seven",
+      "strokeCount": 2
     },
     {
       "id": "九-キュウ",
@@ -64,7 +66,8 @@
       ],
       "exampleWord": "九州（きゅうしゅう）",
       "maskedReading": "○○○しゅう",
-      "meaning": "nine"
+      "meaning": "nine",
+      "strokeCount": 2
     },
     {
       "id": "二-ニ",
@@ -84,7 +87,8 @@
       ],
       "exampleWord": "二時間（にじかん）",
       "maskedReading": "○じかん",
-      "meaning": "two"
+      "meaning": "two",
+      "strokeCount": 2
     },
     {
       "id": "人-ジン",
@@ -104,7 +108,8 @@
       ],
       "exampleWord": "人類学（じんるいがく）",
       "maskedReading": "○○るいがく",
-      "meaning": "human being, person"
+      "meaning": "human being, person",
+      "strokeCount": 2
     },
     {
       "id": "入-ニュウ",
@@ -124,7 +129,8 @@
       ],
       "exampleWord": "収入（しゅうにゅう）",
       "maskedReading": "しゅう○○○",
-      "meaning": "enter, put in"
+      "meaning": "enter, put in",
+      "strokeCount": 2
     },
     {
       "id": "八-ハチ",
@@ -144,7 +150,8 @@
       ],
       "exampleWord": "八月（はちがつ）",
       "maskedReading": "○○がつ",
-      "meaning": "eight"
+      "meaning": "eight",
+      "strokeCount": 2
     },
     {
       "id": "力-リョク",
@@ -164,7 +171,8 @@
       ],
       "exampleWord": "体力（たいりょく）",
       "maskedReading": "たい○○○",
-      "meaning": "power, force"
+      "meaning": "power, force",
+      "strokeCount": 2
     },
     {
       "id": "十-ジュウ",
@@ -184,7 +192,8 @@
       ],
       "exampleWord": "十年（じゅうねん）",
       "maskedReading": "○○○ねん",
-      "meaning": "ten"
+      "meaning": "ten",
+      "strokeCount": 2
     },
     {
       "id": "三-サン",
@@ -204,7 +213,8 @@
       ],
       "exampleWord": "三人（さんにん）",
       "maskedReading": "○○にん",
-      "meaning": "three"
+      "meaning": "three",
+      "strokeCount": 3
     },
     {
       "id": "上-ジョウ",
@@ -224,7 +234,8 @@
       ],
       "exampleWord": "上下する（じょうげする）",
       "maskedReading": "○○○げする",
-      "meaning": "up"
+      "meaning": "up",
+      "strokeCount": 3
     },
     {
       "id": "下-した",
@@ -244,7 +255,8 @@
       ],
       "exampleWord": "靴下（くつした）",
       "maskedReading": "くつ○○",
-      "meaning": "down"
+      "meaning": "down",
+      "strokeCount": 3
     },
     {
       "id": "千-セン",
@@ -264,7 +276,8 @@
       ],
       "exampleWord": "八千（はっせん）",
       "maskedReading": "はっ○○",
-      "meaning": "thousand"
+      "meaning": "thousand",
+      "strokeCount": 3
     },
     {
       "id": "口-コウ",
@@ -284,7 +297,8 @@
       ],
       "exampleWord": "人口（じんこう）",
       "maskedReading": "じん○○",
-      "meaning": "mouth"
+      "meaning": "mouth",
+      "strokeCount": 3
     },
     {
       "id": "土-ド",
@@ -304,7 +318,8 @@
       ],
       "exampleWord": "土曜日（どようび）",
       "maskedReading": "○ようび",
-      "meaning": "soil, earth, ground"
+      "meaning": "soil, earth, ground",
+      "strokeCount": 3
     },
     {
       "id": "夕-セキ",
@@ -324,7 +339,8 @@
       ],
       "exampleWord": "一朝一夕（いっちょういっせき）",
       "maskedReading": "いっちょういっ○○",
-      "meaning": "evening"
+      "meaning": "evening",
+      "strokeCount": 3
     },
     {
       "id": "大-ダイ",
@@ -344,7 +360,8 @@
       ],
       "exampleWord": "大学（だいがく）",
       "maskedReading": "○○がく",
-      "meaning": "big"
+      "meaning": "big",
+      "strokeCount": 3
     },
     {
       "id": "女-ジョ",
@@ -364,7 +381,8 @@
       ],
       "exampleWord": "女性（じょせい）",
       "maskedReading": "○○せい",
-      "meaning": "woman"
+      "meaning": "woman",
+      "strokeCount": 3
     },
     {
       "id": "子-シ",
@@ -384,7 +402,8 @@
       ],
       "exampleWord": "帽子（ぼうし）",
       "maskedReading": "ぼう○",
-      "meaning": "child, noun suffix"
+      "meaning": "child, noun suffix",
+      "strokeCount": 3
     },
     {
       "id": "小-ショウ",
@@ -404,7 +423,8 @@
       ],
       "exampleWord": "小説（しょうせつ）",
       "maskedReading": "○○○せつ",
-      "meaning": "small"
+      "meaning": "small",
+      "strokeCount": 3
     },
     {
       "id": "山-サン",
@@ -424,7 +444,8 @@
       ],
       "exampleWord": "富士山（ふじさん）",
       "maskedReading": "ふじ○○",
-      "meaning": "mountain"
+      "meaning": "mountain",
+      "strokeCount": 3
     },
     {
       "id": "川-セン",
@@ -444,7 +465,8 @@
       ],
       "exampleWord": "河川（かせん）",
       "maskedReading": "か○○",
-      "meaning": "river"
+      "meaning": "river",
+      "strokeCount": 3
     },
     {
       "id": "中-チュウ",
@@ -464,7 +486,8 @@
       ],
       "exampleWord": "中国（ちゅうごく）",
       "maskedReading": "○○○ごく",
-      "meaning": "middle, in"
+      "meaning": "middle, in",
+      "strokeCount": 4
     },
     {
       "id": "五-ゴ",
@@ -484,7 +507,8 @@
       ],
       "exampleWord": "五月（ごがつ）",
       "maskedReading": "○がつ",
-      "meaning": "five"
+      "meaning": "five",
+      "strokeCount": 4
     },
     {
       "id": "六-ロク",
@@ -504,7 +528,8 @@
       ],
       "exampleWord": "六時（ろくじ）",
       "maskedReading": "○○じ",
-      "meaning": "six"
+      "meaning": "six",
+      "strokeCount": 4
     },
     {
       "id": "円-エン",
@@ -524,7 +549,8 @@
       ],
       "exampleWord": "千円（せんえん）",
       "maskedReading": "せん○○",
-      "meaning": "circle, yen"
+      "meaning": "circle, yen",
+      "strokeCount": 4
     },
     {
       "id": "天-テン",
@@ -544,7 +570,8 @@
       ],
       "exampleWord": "天気（てんき）",
       "maskedReading": "○○き",
-      "meaning": "heaven"
+      "meaning": "heaven",
+      "strokeCount": 4
     },
     {
       "id": "手-シュ",
@@ -564,7 +591,8 @@
       ],
       "exampleWord": "選手（せんしゅ）",
       "maskedReading": "せん○○",
-      "meaning": "hand"
+      "meaning": "hand",
+      "strokeCount": 4
     },
     {
       "id": "文-ブン",
@@ -584,7 +612,8 @@
       ],
       "exampleWord": "文法（ぶんぽう）",
       "maskedReading": "○○ぽう",
-      "meaning": "letter, writings, sentence"
+      "meaning": "letter, writings, sentence",
+      "strokeCount": 4
     },
     {
       "id": "日-ニチ",
@@ -604,7 +633,8 @@
       ],
       "exampleWord": "一日（いちにち）",
       "maskedReading": "いち○○",
-      "meaning": "day, sun, Japan"
+      "meaning": "day, sun, Japan",
+      "strokeCount": 4
     },
     {
       "id": "月-ゲツ",
@@ -624,7 +654,8 @@
       ],
       "exampleWord": "来月（らいげつ）",
       "maskedReading": "らい○○",
-      "meaning": "moon, month"
+      "meaning": "moon, month",
+      "strokeCount": 4
     },
     {
       "id": "木-ボク",
@@ -644,7 +675,8 @@
       ],
       "exampleWord": "大木（たいぼく）",
       "maskedReading": "たい○○",
-      "meaning": "tree, wood"
+      "meaning": "tree, wood",
+      "strokeCount": 4
     },
     {
       "id": "水-スイ",
@@ -664,7 +696,8 @@
       ],
       "exampleWord": "水曜日（すいようび）",
       "maskedReading": "○○ようび",
-      "meaning": "water"
+      "meaning": "water",
+      "strokeCount": 4
     },
     {
       "id": "火-カ",
@@ -684,7 +717,8 @@
       ],
       "exampleWord": "火事（かじ）",
       "maskedReading": "○じ",
-      "meaning": "fire"
+      "meaning": "fire",
+      "strokeCount": 4
     },
     {
       "id": "犬-ケン",
@@ -704,7 +738,8 @@
       ],
       "exampleWord": "番犬（ばんけん）",
       "maskedReading": "ばん○○",
-      "meaning": "dog"
+      "meaning": "dog",
+      "strokeCount": 4
     },
     {
       "id": "王-オウ",
@@ -724,7 +759,8 @@
       ],
       "exampleWord": "王様（おうさま）",
       "maskedReading": "○○さま",
-      "meaning": "king"
+      "meaning": "king",
+      "strokeCount": 4
     },
     {
       "id": "出-スイ",
@@ -744,7 +780,8 @@
       ],
       "exampleWord": "出納（すいとう）",
       "maskedReading": "○○とう",
-      "meaning": "go out, put out"
+      "meaning": "go out, put out",
+      "strokeCount": 5
     },
     {
       "id": "右-ウ",
@@ -764,7 +801,8 @@
       ],
       "exampleWord": "右折する（うせつする）",
       "maskedReading": "○せつする",
-      "meaning": "right"
+      "meaning": "right",
+      "strokeCount": 5
     },
     {
       "id": "四-シ",
@@ -784,7 +822,8 @@
       ],
       "exampleWord": "四月（しがつ）",
       "maskedReading": "○がつ",
-      "meaning": "four"
+      "meaning": "four",
+      "strokeCount": 5
     },
     {
       "id": "左-サ",
@@ -804,7 +843,8 @@
       ],
       "exampleWord": "左右する（さゆうする）",
       "maskedReading": "○ゆうする",
-      "meaning": "left"
+      "meaning": "left",
+      "strokeCount": 5
     },
     {
       "id": "本-ホン",
@@ -824,7 +864,8 @@
       ],
       "exampleWord": "本日（ほんじつ）",
       "maskedReading": "○○じつ",
-      "meaning": "basis, book, this"
+      "meaning": "basis, book, this",
+      "strokeCount": 5
     },
     {
       "id": "正-セイ",
@@ -844,7 +885,8 @@
       ],
       "exampleWord": "正解（せいかい）",
       "maskedReading": "○○かい",
-      "meaning": "right, correct"
+      "meaning": "right, correct",
+      "strokeCount": 5
     },
     {
       "id": "玉-ギョク",
@@ -864,7 +906,8 @@
       ],
       "exampleWord": "玉座（ぎょくざ）",
       "maskedReading": "○○○ざ",
-      "meaning": "gem, jewel, ball"
+      "meaning": "gem, jewel, ball",
+      "strokeCount": 5
     },
     {
       "id": "生-セイ",
@@ -884,7 +927,8 @@
       ],
       "exampleWord": "学生（がくせい）",
       "maskedReading": "がく○○",
-      "meaning": "life, be born, student"
+      "meaning": "life, be born, student",
+      "strokeCount": 5
     },
     {
       "id": "田-デン",
@@ -904,7 +948,8 @@
       ],
       "exampleWord": "水田（すいでん）",
       "maskedReading": "すい○○",
-      "meaning": "rice field"
+      "meaning": "rice field",
+      "strokeCount": 5
     },
     {
       "id": "白-ハク",
@@ -924,7 +969,8 @@
       ],
       "exampleWord": "白紙（はくし）",
       "maskedReading": "○○し",
-      "meaning": "white"
+      "meaning": "white",
+      "strokeCount": 5
     },
     {
       "id": "目-モク",
@@ -944,7 +990,8 @@
       ],
       "exampleWord": "目的地（もくてきち）",
       "maskedReading": "○○てきち",
-      "meaning": "eye, item"
+      "meaning": "eye, item",
+      "strokeCount": 5
     },
     {
       "id": "石-セキ",
@@ -964,7 +1011,8 @@
       ],
       "exampleWord": "石像（せきぞう）",
       "maskedReading": "○○ぞう",
-      "meaning": "stone"
+      "meaning": "stone",
+      "strokeCount": 5
     },
     {
       "id": "立-リツ",
@@ -984,7 +1032,8 @@
       ],
       "exampleWord": "国立（こくりつ）",
       "maskedReading": "こく○○",
-      "meaning": "stand, establish"
+      "meaning": "stand, establish",
+      "strokeCount": 5
     },
     {
       "id": "休-キュウ",
@@ -1004,7 +1053,8 @@
       ],
       "exampleWord": "休日（きゅうじつ）",
       "maskedReading": "○○○じつ",
-      "meaning": "rest"
+      "meaning": "rest",
+      "strokeCount": 6
     },
     {
       "id": "先-セン",
@@ -1024,7 +1074,8 @@
       ],
       "exampleWord": "先生（せんせい）",
       "maskedReading": "○○せい",
-      "meaning": "ahead"
+      "meaning": "ahead",
+      "strokeCount": 6
     },
     {
       "id": "名-メイ",
@@ -1044,7 +1095,8 @@
       ],
       "exampleWord": "氏名（しめい）",
       "maskedReading": "し○○",
-      "meaning": "name"
+      "meaning": "name",
+      "strokeCount": 6
     },
     {
       "id": "字-ジ",
@@ -1064,7 +1116,8 @@
       ],
       "exampleWord": "漢字（かんじ）",
       "maskedReading": "かん○",
-      "meaning": "character"
+      "meaning": "character",
+      "strokeCount": 6
     },
     {
       "id": "年-ネン",
@@ -1084,7 +1137,8 @@
       ],
       "exampleWord": "去年（きょねん）",
       "maskedReading": "きょ○○",
-      "meaning": "year"
+      "meaning": "year",
+      "strokeCount": 6
     },
     {
       "id": "早-ソウ",
@@ -1104,7 +1158,8 @@
       ],
       "exampleWord": "早朝（そうちょう）",
       "maskedReading": "○○ちょう",
-      "meaning": "early, quick"
+      "meaning": "early, quick",
+      "strokeCount": 6
     },
     {
       "id": "気-キ",
@@ -1124,7 +1179,8 @@
       ],
       "exampleWord": "気候（きこう）",
       "maskedReading": "○こう",
-      "meaning": "gas, spirit"
+      "meaning": "gas, spirit",
+      "strokeCount": 6
     },
     {
       "id": "百-ヒャク",
@@ -1144,7 +1200,8 @@
       ],
       "exampleWord": "百倍（ひゃくばい）",
       "maskedReading": "○○○ばい",
-      "meaning": "hundred"
+      "meaning": "hundred",
+      "strokeCount": 6
     },
     {
       "id": "竹-チク",
@@ -1164,7 +1221,8 @@
       ],
       "exampleWord": "竹林（ちくりん）",
       "maskedReading": "○○りん",
-      "meaning": "bamboo"
+      "meaning": "bamboo",
+      "strokeCount": 6
     },
     {
       "id": "糸-シ",
@@ -1184,7 +1242,8 @@
       ],
       "exampleWord": "綿糸（めんし）",
       "maskedReading": "めん○",
-      "meaning": "thread"
+      "meaning": "thread",
+      "strokeCount": 6
     },
     {
       "id": "耳-ジ",
@@ -1204,7 +1263,8 @@
       ],
       "exampleWord": "耳鼻科（じびか）",
       "maskedReading": "○びか",
-      "meaning": "ear"
+      "meaning": "ear",
+      "strokeCount": 6
     },
     {
       "id": "虫-チュウ",
@@ -1224,7 +1284,8 @@
       ],
       "exampleWord": "虫害（ちゅうがい）",
       "maskedReading": "○○○がい",
-      "meaning": "insect, bug"
+      "meaning": "insect, bug",
+      "strokeCount": 6
     },
     {
       "id": "村-ソン",
@@ -1244,7 +1305,8 @@
       ],
       "exampleWord": "農村（のうそん）",
       "maskedReading": "のう○○",
-      "meaning": "village"
+      "meaning": "village",
+      "strokeCount": 7
     },
     {
       "id": "男-ダン",
@@ -1264,7 +1326,8 @@
       ],
       "exampleWord": "男子学生（だんしがくせい）",
       "maskedReading": "○○しがくせい",
-      "meaning": "man"
+      "meaning": "man",
+      "strokeCount": 7
     },
     {
       "id": "町-チョウ",
@@ -1284,7 +1347,8 @@
       ],
       "exampleWord": "町長（ちょうちょう）",
       "maskedReading": "○○○ちょう",
-      "meaning": "town"
+      "meaning": "town",
+      "strokeCount": 7
     },
     {
       "id": "花-カ",
@@ -1304,7 +1368,8 @@
       ],
       "exampleWord": "花壇（かだん）",
       "maskedReading": "○だん",
-      "meaning": "flower"
+      "meaning": "flower",
+      "strokeCount": 7
     },
     {
       "id": "見-ケン",
@@ -1324,7 +1389,8 @@
       ],
       "exampleWord": "見学する（けんがくする）",
       "maskedReading": "○○がくする",
-      "meaning": "see"
+      "meaning": "see",
+      "strokeCount": 7
     },
     {
       "id": "貝-かい",
@@ -1344,7 +1410,8 @@
       ],
       "exampleWord": "貝柱（かいばしら）",
       "maskedReading": "○○ばしら",
-      "meaning": "shellfish, shell"
+      "meaning": "shellfish, shell",
+      "strokeCount": 7
     },
     {
       "id": "赤-セキ",
@@ -1364,7 +1431,8 @@
       ],
       "exampleWord": "赤外線（せきがいせん）",
       "maskedReading": "○○がいせん",
-      "meaning": "red"
+      "meaning": "red",
+      "strokeCount": 7
     },
     {
       "id": "足-ソク",
@@ -1384,7 +1452,8 @@
       ],
       "exampleWord": "足跡（そくせき）",
       "maskedReading": "○○せき",
-      "meaning": "foot, suffice, add"
+      "meaning": "foot, suffice, add",
+      "strokeCount": 7
     },
     {
       "id": "車-シャ",
@@ -1404,7 +1473,8 @@
       ],
       "exampleWord": "自転車（じてんしゃ）",
       "maskedReading": "じてん○○",
-      "meaning": "vehicle, wheel, car"
+      "meaning": "vehicle, wheel, car",
+      "strokeCount": 7
     },
     {
       "id": "学-ガク",
@@ -1424,7 +1494,8 @@
       ],
       "exampleWord": "学生（がくせい）",
       "maskedReading": "○○せい",
-      "meaning": "study, educational, institution"
+      "meaning": "study, educational, institution",
+      "strokeCount": 8
     },
     {
       "id": "林-リン",
@@ -1444,7 +1515,8 @@
       ],
       "exampleWord": "林業（りんぎょう）",
       "maskedReading": "○○ぎょう",
-      "meaning": "woods, forest"
+      "meaning": "woods, forest",
+      "strokeCount": 8
     },
     {
       "id": "空-クウ",
@@ -1464,7 +1536,8 @@
       ],
       "exampleWord": "空間（くうかん）",
       "maskedReading": "○○かん",
-      "meaning": "sky, air, empty"
+      "meaning": "sky, air, empty",
+      "strokeCount": 8
     },
     {
       "id": "金-キン",
@@ -1484,7 +1557,8 @@
       ],
       "exampleWord": "金曜日（きんようび）",
       "maskedReading": "○○ようび",
-      "meaning": "metal, gold, money"
+      "meaning": "metal, gold, money",
+      "strokeCount": 8
     },
     {
       "id": "雨-ウ",
@@ -1504,7 +1578,8 @@
       ],
       "exampleWord": "雨期（うき）",
       "maskedReading": "○き",
-      "meaning": "rain"
+      "meaning": "rain",
+      "strokeCount": 8
     },
     {
       "id": "青-セイ",
@@ -1524,7 +1599,8 @@
       ],
       "exampleWord": "青春（せいしゅん）",
       "maskedReading": "○○しゅん",
-      "meaning": "blue"
+      "meaning": "blue",
+      "strokeCount": 8
     },
     {
       "id": "草-ソウ",
@@ -1544,7 +1620,8 @@
       ],
       "exampleWord": "草原（そうげん）",
       "maskedReading": "○○げん",
-      "meaning": "grass"
+      "meaning": "grass",
+      "strokeCount": 9
     },
     {
       "id": "音-オン",
@@ -1564,7 +1641,8 @@
       ],
       "exampleWord": "音楽（おんがく）",
       "maskedReading": "○○がく",
-      "meaning": "sound"
+      "meaning": "sound",
+      "strokeCount": 9
     },
     {
       "id": "校-コウ",
@@ -1584,7 +1662,8 @@
       ],
       "exampleWord": "学校（がっこう）",
       "maskedReading": "がっ○○",
-      "meaning": "school"
+      "meaning": "school",
+      "strokeCount": 10
     },
     {
       "id": "森-シン",
@@ -1604,7 +1683,8 @@
       ],
       "exampleWord": "森林（しんりん）",
       "maskedReading": "○○りん",
-      "meaning": "forest"
+      "meaning": "forest",
+      "strokeCount": 12
     }
   ]
 }

@@ -1,8 +1,13 @@
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { PracticeSession } from "@/components/practice-session";
-import { ADD_SKILL_TYPE, TOTAL_QUESTIONS, generateQuestions } from "@/lib/practice";
-import { getCurrentLevel } from "@/lib/practice-progress";
+import {
+  ADD_SKILL_TYPE,
+  TOTAL_QUESTIONS,
+  generateQuestions,
+  type LevelConfig,
+} from "@/lib/practice";
+import { getCurrentLevel, getMathSubjectId } from "@/lib/practice-progress";
 import { getEquippedAssets } from "@/lib/wardrobe-store";
 
 const PracticeAddPage = async () => {
@@ -11,9 +16,11 @@ const PracticeAddPage = async () => {
     redirect("/login");
   }
 
+  const mathSubjectId = await getMathSubjectId();
+
   // 出題レベルはchild_progressの現在レベル（未記録ならLv1）
   const [level, equipped] = await Promise.all([
-    getCurrentLevel(session.user.id, ADD_SKILL_TYPE),
+    getCurrentLevel<LevelConfig>(session.user.id, mathSubjectId, ADD_SKILL_TYPE),
     // 育てているキャラクターは問題を解いている間もそばに居させる
     // （docs/game-design.md の「キャラ反応」）
     getEquippedAssets(session.user.id),

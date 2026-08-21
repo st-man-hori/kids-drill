@@ -1,8 +1,8 @@
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { TimeAttackSession } from "@/components/time-attack-session";
-import { ADD_SKILL_TYPE } from "@/lib/practice";
-import { getCurrentLevel } from "@/lib/practice-progress";
+import { ADD_SKILL_TYPE, type LevelConfig } from "@/lib/practice";
+import { getCurrentLevel, getMathSubjectId } from "@/lib/practice-progress";
 import { getEquippedAssets } from "@/lib/wardrobe-store";
 
 const TimeAttackPage = async () => {
@@ -11,10 +11,12 @@ const TimeAttackPage = async () => {
     redirect("/login");
   }
 
+  const mathSubjectId = await getMathSubjectId();
+
   // タイムアタック専用の難易度は持たず、練習モードと同じchild_progressの
   // 現在レベルをそのまま使う(出題ロジックの導出元を分けない)
   const [level, equipped] = await Promise.all([
-    getCurrentLevel(session.user.id, ADD_SKILL_TYPE),
+    getCurrentLevel<LevelConfig>(session.user.id, mathSubjectId, ADD_SKILL_TYPE),
     getEquippedAssets(session.user.id),
   ]);
 

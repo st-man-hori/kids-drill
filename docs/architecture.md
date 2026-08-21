@@ -29,7 +29,13 @@ Yahoo!テキスト解析APIは未使用。教育漢字APIが読みを構造化�
 
 **問題データをDBではなく静的JSONにした理由**: `difficulty_levels.config`のような「毎回同じロジックで解釈するパラメータ」と違い、こちらは生成にAI呼び出しというコストが伴う「コンテンツそのもの」。マイグレーションで管理するより「スクリプトで生成→レビューしてコミット」の方が実態に合っている。
 
-**v1のスコープ**: `child_progress`・ポイント・レベル昇降・着せ替え解放といった既存の報酬経済にはまだ接続していない。DBスキーマ変更（`subjects`への国語追加、`skill_type`の設計など）を伴う判断のため、先に遊べる形を用意することを優先した。結果画面の演出（`Celebration`・`celebrationTier`）は`src/lib/practice.ts`から流用しているが、ポイント付与や`practice_sessions`への記録は行わない。ゲーム画面（`/practice/kanji`）は現状grade1のバンクのみを参照しており、学年2〜6ぶんのデータは生成済みでも未接続（学年選択・子どもの`grade`との連動は今後の検討課題）。報酬ループへの統合含め[game-design.md](./game-design.md)を参照。
+**v1のスコープ**: ポイント・`practice_sessions`への記録・レベル昇降・着せ替え解放のすべてを、既存の報酬経済（`src/lib/practice-progress.ts`）にそのまま接続している。`practice_sessions.level_id`は算数もかんじも共通で必須のまま——`subject_id`・`skill_type`をテーブルに直接持たせる設計も一度検討したが、「レベルを持たないスキル」という特殊ケースのために`practice_sessions`の汎用性を落とすより、かんじにもレベルを持たせて既存の仕組みにそのまま乗せる方がシンプルと判断した。
+
+**かんじの難易度軸には画数（`strokeCount`）を使う。** どの漢字を学校で習ったかはアプリから分からないため、算数の「繰り上がりの有無」のように**どの子にも共通して測れる指標**が要る。教育漢字APIは元々`strokeCount`を返しており、`src/data/kanji-quiz/grade{N}.json`の各設問にも持たせてある（`scripts/kokugo-ai/lib/kyoiku-kanji-client.ts`）。レベルは`KanjiLevelConfig.maxStrokeCount`（`src/lib/kanji-quiz.ts`）による画数の上限で区切り、**下限は設けない累積方式**（レベルが上がるほど出題プールが広がる＝すでに解けるようになった易しい字も引き続き出題対象に残る）。grade1（80字）は`maxStrokeCount = 3 / 4 / 6 / null`の4レベルで運用する（`drizzle/0006_kanji_reading_levels.sql`、`subjects`に国語＝`kokugo`を追加し`skill_type = "kanji_reading"`で`difficulty_levels`に投入）。
+
+かんじの出題は算数のように無限生成ではなく固定バンクからの抽選（`prepareKanjiQuestions`）なので、`practice.ts`の`LevelConfig`のような「問題を生成するパラメータ」ではなく「固定バンクをフィルタする条件」としてconfigを使っている（`kanjiBankForLevel`）。レベル昇降の判定ロジック自体（`shouldLevelUp`・`isStrugglingSession`・`advanceToNextLevel`・`demoteIfStruggling`）は算数と共有しており、かんじ専用の実装は持たない。
+
+結果画面の演出（`Celebration`・`celebrationTier`）も`src/lib/practice.ts`から流用している。ゲーム画面（`/practice/kanji`）は現状grade1のバンクのみを参照しており、学年2〜6ぶんのデータは生成済みでも未接続（学年選択・子どもの`grade`との連動は今後の検討課題。これはレベル昇降とは別の軸で、あくまで「どの学年の配当漢字を出題するか」というコンテンツ選択の話）。報酬ループへの統合含め[game-design.md](./game-design.md)を参照。
 
 ## ターゲット
 

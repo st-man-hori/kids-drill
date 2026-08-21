@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { Celebration } from "@/components/celebration";
@@ -13,11 +13,20 @@ import {
   type CelebrationTier,
 } from "@/lib/practice";
 import { kanjiOnlyWord, type KanjiQuizQuestionWithChoices } from "@/lib/kanji-quiz";
+import {
+  submitKanjiQuizSession,
+  type KanjiQuizSessionResult,
+} from "@/app/practice/kanji/actions";
 
-// たしざん練習（PracticeSession）と見た目・タイミングを揃えつつ、DBへの
-// 記録は行わない独立モード（v1）。ポイント・レベル等の報酬経済へつなぐかは
-// docs/architecture.md「漢字のよみ」節が未決定としている論点で、ここでは
-// 先に遊べる形を作ることを優先している
+// たしざん練習（PracticeSession）と見た目・タイミングを揃えている。
+// practice_sessionsへの記録・ポイント・レベル昇降・着せ替え解放はすべて
+// 算数と同じ仕組み（practice-progress.ts）を共有する。難易度軸だけが違い、
+// かんじは画数（KanjiLevelConfig.maxStrokeCount。docs/architecture.md
+// 「かんじよみクイズ」）を使う。
+//
+// 「もういちど」はページ遷移（router.refresh）で次のレベルの問題を
+// サーバー側から取り直す（practice-session.tsxのようにクライアント側で
+// 次の10問を生成し直す「もっとやる」拡張は持たない）
 
 const CELEBRATION_MESSAGE: Record<CelebrationTier, string> = {
   perfect: "ぜんもん せいかい！",
@@ -55,16 +64,37 @@ export const KanjiQuizSession = ({
   equipped?: Partial<Record<SlotType, AvatarAsset>>;
 }) => {
   const router = useRouter();
+  const [, startTransition] = useTransition();
 
+  const [startedAt] = useState(() => new Date().toISOString());
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selected, setSelected] = useState<number | null>(null);
   const [results, setResults] = useState<boolean[]>([]);
   const [missed, setMissed] = useState<{ kanji: string; correctReading: string }[]>([]);
+  const [summary, setSummary] = useState<KanjiQuizSessionResult | null>(null);
 
   const finished = currentIndex >= questions.length;
   const current = questions[currentIndex];
   const correctCount = results.filter(Boolean).length;
   const answered = selected !== null;
+
+  // 結果画面に来た時点で記録・加点する。「もういちど」はページ遷移で別インスタンスに
+  // なるため、このrefはStrictModeでのeffect二重発火だけを見張ればよい
+  const submitted = useRef(false);
+  useEffect(() => {
+    if (!finished || submitted.current || results.length === 0) return;
+    submitted.current = true;
+
+    startTransition(async () => {
+      try {
+        const result = await submitKanjiQuizSession({ results, startedAt });
+        if (result) setSummary(result);
+      } catch (error) {
+        // 記録に失敗してもゲーム自体は続けられるようにする
+        console.error(error);
+      }
+    });
+  }, [finished, results, startedAt, startTransition]);
 
   const handleSelect = useCallback(
     (index: number) => {
@@ -143,6 +173,43 @@ export const KanjiQuizSession = ({
         <p className="text-[clamp(1.125rem,2vh+0.75rem,1.5rem)] font-bold text-foreground">
           {questions.length}もんちゅう {correctCount}もん せいかい！
         </p>
+
+        {/* サーバー側の加点が返ってきてから出す（値はサーバー側が正）。
+            少し遅れて弾んで出てくるのが演出も兼ねる（PracticeSessionと同じ） */}
+        {summary && summary.pointsEarned > 0 && (
+          <motion.p
+            initial={{ scale: 0.6, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ type: "spring", stiffness: 300, damping: 14 }}
+            className="rounded-sm bg-success/20 px-5 py-2 text-xl font-bold text-foreground"
+          >
+            {summary.pointsEarned} ポイント ゲット！
+          </motion.p>
+        )}
+
+        {summary?.leveledUp && (
+          <motion.p
+            initial={{ scale: 0.6, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ type: "spring", stiffness: 300, damping: 12, delay: 0.2 }}
+            className="rounded-sm bg-warning/25 px-5 py-2 text-xl font-bold text-foreground"
+          >
+            レベルアップ！ つぎは もうすこし むずかしいよ
+          </motion.p>
+        )}
+
+        {/* 着せ替えアイテムの解放は中期の報酬（docs/game-design.md の報酬ループ）。
+            PracticeSessionと同じ位置・演出タイミングに揃える */}
+        {summary && summary.unlockedItems.length > 0 && (
+          <motion.p
+            initial={{ scale: 0.6, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ type: "spring", stiffness: 300, damping: 12, delay: 0.35 }}
+            className="rounded-sm bg-brand/20 px-5 py-2 text-lg font-bold text-foreground"
+          >
+            あたらしい {summary.unlockedItems.join("と")}を てにいれた！
+          </motion.p>
+        )}
 
         {missed.length > 0 && (
           <div className="flex flex-wrap items-center justify-center gap-2 rounded-md bg-black/5 px-4 py-3">

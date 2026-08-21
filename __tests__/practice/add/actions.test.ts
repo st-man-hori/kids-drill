@@ -10,6 +10,7 @@ const {
   mockGetCurrentLevel,
   mockAdvanceToNextLevel,
   mockDemoteIfStruggling,
+  mockGetMathSubjectId,
 } = vi.hoisted(() => {
     const mockValues = vi.fn().mockResolvedValue(undefined);
     const mockInsert = vi.fn(() => ({ values: mockValues }));
@@ -25,6 +26,7 @@ const {
       mockGetCurrentLevel: vi.fn(),
       mockAdvanceToNextLevel: vi.fn(),
       mockDemoteIfStruggling: vi.fn(),
+      mockGetMathSubjectId: vi.fn(),
     };
 });
 
@@ -45,6 +47,7 @@ vi.mock("@/lib/practice-progress", () => ({
   getCurrentLevel: mockGetCurrentLevel,
   advanceToNextLevel: mockAdvanceToNextLevel,
   demoteIfStruggling: mockDemoteIfStruggling,
+  getMathSubjectId: mockGetMathSubjectId,
 }));
 
 import { submitPracticeSession } from "@/app/practice/add/actions";
@@ -69,6 +72,7 @@ beforeEach(() => {
   mockGetCurrentLevel.mockResolvedValue(LEVEL_1);
   mockAdvanceToNextLevel.mockResolvedValue(null);
   mockDemoteIfStruggling.mockResolvedValue(null);
+  mockGetMathSubjectId.mockResolvedValue("subject-math");
 });
 
 test("records the session against the level held on the server, not one sent by the client", async () => {
@@ -76,7 +80,7 @@ test("records the session against the level held on the server, not one sent by 
 
   await submitPracticeSession({ results: resultsOf(8), startedAt });
 
-  expect(mockGetCurrentLevel).toHaveBeenCalledWith("child-1", "add");
+  expect(mockGetCurrentLevel).toHaveBeenCalledWith("child-1", "subject-math", "add");
   expect(mockValues).toHaveBeenCalledOnce();
   const inserted = mockValues.mock.calls[0][0];
   expect(inserted.childId).toBe("child-1");
@@ -120,7 +124,7 @@ test("levels up and returns the next level once the threshold is reached", async
     startedAt: new Date().toISOString(),
   });
 
-  expect(mockAdvanceToNextLevel).toHaveBeenCalledWith("child-1", "add", 1);
+  expect(mockAdvanceToNextLevel).toHaveBeenCalledWith("child-1", "subject-math", "add", 1);
   expect(result).toMatchObject({
     leveledUp: true,
     levelNumber: LEVEL_2.levelNumber,
@@ -151,7 +155,7 @@ test("serves the lower level's questions after a demotion", async () => {
     startedAt: new Date().toISOString(),
   });
 
-  expect(mockDemoteIfStruggling).toHaveBeenCalledWith("child-1", "add", LEVEL_2);
+  expect(mockDemoteIfStruggling).toHaveBeenCalledWith("child-1", "subject-math", "add", LEVEL_2);
   // 降級は演出しない。次の10問は下のレベルになるが、leveledUpはfalseのまま
   expect(result).toMatchObject({
     leveledUp: false,

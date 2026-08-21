@@ -70,6 +70,8 @@ import {
   advanceToNextLevel,
   demoteIfStruggling,
   getCurrentLevel,
+  getKokugoSubjectId,
+  getMathSubjectId,
 } from "@/lib/practice-progress";
 import {
   LEVEL_DOWN_CORRECT_COUNT,
@@ -78,18 +80,31 @@ import {
 } from "@/lib/practice";
 
 const CONFIG = { minA: 1, maxA: 9, minB: 1, maxB: 9, carry: false };
+const SUBJECT_ID = "subject-math";
 
 beforeEach(() => {
   vi.clearAllMocks();
-  mockSubjectsFindFirst.mockResolvedValue({ id: "subject-math" });
+  mockSubjectsFindFirst.mockResolvedValue({ id: SUBJECT_ID });
   mockLimit.mockResolvedValue([]);
+});
+
+test("getMathSubjectId asks for migrations to be run when the subject is missing", async () => {
+  mockSubjectsFindFirst.mockResolvedValue(undefined);
+
+  await expect(getMathSubjectId()).rejects.toThrow("db:migrate");
+});
+
+test("getKokugoSubjectId asks for migrations to be run when the subject is missing", async () => {
+  mockSubjectsFindFirst.mockResolvedValue(undefined);
+
+  await expect(getKokugoSubjectId()).rejects.toThrow("db:migrate");
 });
 
 test("starts at level 1 when the child has no progress row yet", async () => {
   mockProgressFindFirst.mockResolvedValue(undefined);
   mockLevelsFindFirst.mockResolvedValue({ id: "level-1", levelNumber: 1, config: CONFIG });
 
-  const level = await getCurrentLevel("child-1", "add");
+  const level = await getCurrentLevel("child-1", SUBJECT_ID, "add");
 
   expect(level).toEqual({ id: "level-1", levelNumber: 1, config: CONFIG });
   // 表示のための読み取りでchild_progressに書き込まないこと
@@ -100,35 +115,29 @@ test("returns the level recorded in child_progress", async () => {
   mockProgressFindFirst.mockResolvedValue({ currentLevelId: "level-3" });
   mockLevelsFindFirst.mockResolvedValue({ id: "level-3", levelNumber: 3, config: CONFIG });
 
-  const level = await getCurrentLevel("child-1", "add");
+  const level = await getCurrentLevel("child-1", SUBJECT_ID, "add");
 
   expect(level.id).toBe("level-3");
   expect(level.levelNumber).toBe(3);
-});
-
-test("asks for migrations to be run when the subject is missing", async () => {
-  mockSubjectsFindFirst.mockResolvedValue(undefined);
-
-  await expect(getCurrentLevel("child-1", "add")).rejects.toThrow("db:migrate");
 });
 
 test("asks for migrations to be run when no level exists", async () => {
   mockProgressFindFirst.mockResolvedValue(undefined);
   mockLevelsFindFirst.mockResolvedValue(undefined);
 
-  await expect(getCurrentLevel("child-1", "add")).rejects.toThrow("db:migrate");
+  await expect(getCurrentLevel("child-1", SUBJECT_ID, "add")).rejects.toThrow("db:migrate");
 });
 
 test("advancing writes the next level to child_progress", async () => {
   mockLevelsFindFirst.mockResolvedValue({ id: "level-2", levelNumber: 2, config: CONFIG });
 
-  const level = await advanceToNextLevel("child-1", "add", 1);
+  const level = await advanceToNextLevel("child-1", SUBJECT_ID, "add", 1);
 
   expect(level).toEqual({ id: "level-2", levelNumber: 2, config: CONFIG });
   expect(mockValues).toHaveBeenCalledWith(
     expect.objectContaining({
       childId: "child-1",
-      subjectId: "subject-math",
+      subjectId: SUBJECT_ID,
       skillType: "add",
       currentLevelId: "level-2",
     }),
@@ -140,7 +149,7 @@ test("advancing writes the next level to child_progress", async () => {
 test("does not advance past the highest level", async () => {
   mockLevelsFindFirst.mockResolvedValue(undefined);
 
-  const level = await advanceToNextLevel("child-1", "add", 5);
+  const level = await advanceToNextLevel("child-1", SUBJECT_ID, "add", 5);
 
   expect(level).toBeNull();
   expect(mockInsert).not.toHaveBeenCalled();
@@ -160,7 +169,7 @@ test("demotes after a streak of poor sessions on the current level", async () =>
   mockLimit.mockResolvedValue(Array(LEVEL_DOWN_STREAK).fill(struggling));
   mockLevelsFindFirst.mockResolvedValue({ id: "level-2", levelNumber: 2, config: CONFIG });
 
-  const level = await demoteIfStruggling("child-1", "add", LEVEL_3);
+  const level = await demoteIfStruggling("child-1", SUBJECT_ID, "add", LEVEL_3);
 
   expect(level).toEqual({ id: "level-2", levelNumber: 2, config: CONFIG });
   expect(mockValues).toHaveBeenCalledWith(
@@ -171,7 +180,7 @@ test("demotes after a streak of poor sessions on the current level", async () =>
 test("does not demote when one session in the streak was good enough", async () => {
   mockLimit.mockResolvedValue([struggling, decent]);
 
-  const level = await demoteIfStruggling("child-1", "add", LEVEL_3);
+  const level = await demoteIfStruggling("child-1", SUBJECT_ID, "add", LEVEL_3);
 
   expect(level).toBeNull();
   expect(mockInsert).not.toHaveBeenCalled();
@@ -180,14 +189,14 @@ test("does not demote when one session in the streak was good enough", async () 
 test("does not demote on a single bad session", async () => {
   mockLimit.mockResolvedValue([struggling]);
 
-  const level = await demoteIfStruggling("child-1", "add", LEVEL_3);
+  const level = await demoteIfStruggling("child-1", SUBJECT_ID, "add", LEVEL_3);
 
   expect(level).toBeNull();
   expect(mockInsert).not.toHaveBeenCalled();
 });
 
 test("does not demote below level 1", async () => {
-  const level = await demoteIfStruggling("child-1", "add", {
+  const level = await demoteIfStruggling("child-1", SUBJECT_ID, "add", {
     id: "level-1",
     levelNumber: 1,
     config: CONFIG,
@@ -203,7 +212,7 @@ test("ignores short sessions when judging a demotion", async () => {
   // 「もっとやる」を途中でやめた10問未満のセッションは判定に含めない
   mockLimit.mockResolvedValue([struggling, { correctCount: 1, totalQuestions: 3 }]);
 
-  const level = await demoteIfStruggling("child-1", "add", LEVEL_3);
+  const level = await demoteIfStruggling("child-1", SUBJECT_ID, "add", LEVEL_3);
 
   expect(level).toBeNull();
   expect(mockInsert).not.toHaveBeenCalled();

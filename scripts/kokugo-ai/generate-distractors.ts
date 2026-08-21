@@ -60,6 +60,7 @@ type KanjiQuizQuestion = {
   kanji: string;
   correctReading: string;
   readingType: "on" | "kun";
+  strokeCount: number;
   distractorPool: string[];
   exampleWord: string;
   maskedReading: string;
@@ -67,6 +68,7 @@ type KanjiQuizQuestion = {
 };
 
 type Target = DistractorTarget & {
+  strokeCount: number;
   exampleWord: string;
   maskedReading: string;
   meaning: string;
@@ -102,6 +104,7 @@ const processGrade = async (grade: number): Promise<void> => {
       kanji: entry.kanji,
       correctReading: selected.reading,
       readingType: selected.readingType,
+      strokeCount: entry.strokeCount,
       exampleWord: selected.example.word,
       maskedReading: selected.example.maskedReading,
       meaning: entry.meaning,
@@ -120,6 +123,7 @@ const processGrade = async (grade: number): Promise<void> => {
     kanji: target.kanji,
     correctReading: target.correctReading,
     readingType: target.readingType,
+    strokeCount: target.strokeCount,
     distractorPool: poolsById[target.id] ?? [],
     exampleWord: target.exampleWord,
     maskedReading: target.maskedReading,
