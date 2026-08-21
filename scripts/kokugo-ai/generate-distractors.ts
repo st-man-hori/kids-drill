@@ -40,10 +40,15 @@ type KanjiQuizQuestion = {
   readingType: "on" | "kun";
   distractors: string[];
   exampleWord: string;
+  maskedReading: string;
   meaning: string;
 };
 
-type Target = DistractorTarget & { exampleWord: string; meaning: string };
+type Target = DistractorTarget & {
+  exampleWord: string;
+  maskedReading: string;
+  meaning: string;
+};
 
 const main = async () => {
   console.log(`[1/4] fetching grade ${grade} kanji from kyoiku-kanji API...`);
@@ -57,12 +62,15 @@ const main = async () => {
     "utf-8",
   );
 
-  console.log("[2/4] selecting the primary reading for each kanji...");
+  console.log("[2/4] selecting a reading + disambiguating example for each kanji...");
   const targets: Target[] = [];
   for (const entry of entries) {
     const selected = selectPrimaryReading(entry);
-    if (!selected) {
-      console.warn(`  skip ${entry.kanji}: no bare (non-okurigana) reading found`);
+    // 用例から読みを一意に切り出せなかった字は出題しない（文脈なしで「この字の
+    // 読みは？」と聞くと、複数の読みを持つ字で誤答が実は別の場面の正しい読み
+    // だった、という事故が起きるため。詳細はselect-reading.tsのコメント参照）
+    if (!selected || !selected.example) {
+      console.warn(`  skip ${entry.kanji}: no unambiguous example-based reading found`);
       continue;
     }
     targets.push({
@@ -70,11 +78,12 @@ const main = async () => {
       kanji: entry.kanji,
       correctReading: selected.reading,
       readingType: selected.readingType,
-      exampleWord: entry.examples[0]?.word ?? "",
+      exampleWord: selected.example.word,
+      maskedReading: selected.example.maskedReading,
       meaning: entry.meaning,
     });
   }
-  console.log(`  ${targets.length} questions to generate distractors for`);
+  console.log(`  ${targets.length}/${entries.length} kanji have a usable question`);
 
   console.log("[3/4] generating distractors via Sakura AI...");
   const distractorsById = await generateDistractors(targets, (message) =>
@@ -89,6 +98,7 @@ const main = async () => {
     readingType: target.readingType,
     distractors: distractorsById[target.id] ?? [],
     exampleWord: target.exampleWord,
+    maskedReading: target.maskedReading,
     meaning: target.meaning,
   }));
 

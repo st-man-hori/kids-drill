@@ -1,6 +1,7 @@
 import { expect, test } from "vitest";
 import {
   buildKanjiChoices,
+  kanjiOnlyWord,
   pickKanjiQuestions,
   prepareKanjiQuestions,
   type KanjiQuizQuestion,
@@ -13,6 +14,7 @@ const question = (over: Partial<KanjiQuizQuestion> = {}): KanjiQuizQuestion => (
   readingType: "on",
   distractors: ["バチ", "ハツ", "ハイ"],
   exampleWord: "八月（はちがつ）",
+  maskedReading: "○○がつ",
   meaning: "eight",
   ...over,
 });
@@ -56,6 +58,12 @@ test("prepareKanjiQuestions attaches ready-to-render choices to each question", 
   expect(prepared.choices.some((c) => c.correct && c.text === prepared.correctReading)).toBe(
     true,
   );
+});
+
+test("kanjiOnlyWord strips the furigana without revealing the masked reading", () => {
+  expect(kanjiOnlyWord("七時（しちじ）")).toBe("七時");
+  expect(kanjiOnlyWord("大学（だいがく）")).toBe("大学");
+  expect(kanjiOnlyWord("八")).toBe("八");
 });
 
 test("the bundled grade1 question bank loads and has 4 distinct choices per question", () => {

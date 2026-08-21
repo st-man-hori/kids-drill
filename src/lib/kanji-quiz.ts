@@ -14,10 +14,22 @@ export type KanjiQuizQuestion = {
   readingType: "on" | "kun";
   distractors: string[];
   exampleWord: string;
+  // 対象の字が担う読みだけを○で伏せた熟語のふりがな（例:「○○がく」）。
+  // 「この字単体の読みは？」だと複数の読みを持つ字で問いが一意に決まらない
+  // （docs/architecture.md「かんじよみクイズ」）ため、出題そのものに含めて
+  // 文脈で読みを一意にする
+  maskedReading: string;
   meaning: string;
 };
 
 export type KanjiQuizChoice = { text: string; correct: boolean };
+
+// exampleWordは「七時（しちじ）」のようにふりがな付きで持っている。ふりがなを
+// そのまま出題時に見せると答え（maskedReadingで伏せた部分）が漏れるため、
+// 熟語のかな表記部分だけを取り除いた「七時」を返す。読みを与えていないので、
+// 対象の字以外に小1で習わない字が混ざっていても安全に出題前から見せられる
+export const kanjiOnlyWord = (exampleWord: string): string =>
+  exampleWord.split(/[（(]/)[0].trim();
 
 export type KanjiQuizQuestionWithChoices = KanjiQuizQuestion & {
   choices: KanjiQuizChoice[];

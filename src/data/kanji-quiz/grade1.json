@@ -1,6 +1,6 @@
 {
   "grade": 1,
-  "generatedAt": "2026-08-20T15:41:33.846Z",
+  "generatedAt": "2026-08-20T23:50:23.022Z",
   "source": {
     "kanjiApi": "https://api.kyoiku-kanji.st-man.com/v1/kanji",
     "distractorModel": "gpt-oss-120b"
@@ -13,10 +13,11 @@
       "readingType": "on",
       "distractors": [
         "イツ",
-        "ニチ",
-        "シチ"
+        "イナ",
+        "ヒチ"
       ],
       "exampleWord": "一年生（いちねんせい）",
+      "maskedReading": "○○ねんせい",
       "meaning": "one"
     },
     {
@@ -25,11 +26,12 @@
       "correctReading": "シチ",
       "readingType": "on",
       "distractors": [
-        "ジツ",
+        "シツ",
         "ジチ",
-        "シツ"
+        "シナ"
       ],
       "exampleWord": "七時（しちじ）",
+      "maskedReading": "○○じ",
       "meaning": "seven"
     },
     {
@@ -38,11 +40,12 @@
       "correctReading": "キュウ",
       "readingType": "on",
       "distractors": [
-        "キュー",
-        "キュ",
-        "キュウウ"
+        "キュオ",
+        "キュイ",
+        "キュエ"
       ],
       "exampleWord": "九州（きゅうしゅう）",
+      "maskedReading": "○○○しゅう",
       "meaning": "nine"
     },
     {
@@ -51,11 +54,12 @@
       "correctReading": "ニ",
       "readingType": "on",
       "distractors": [
-        "ナ",
         "ジ",
-        "ミ"
+        "ミ",
+        "ヒ"
       ],
       "exampleWord": "二時間（にじかん）",
+      "maskedReading": "○じかん",
       "meaning": "two"
     },
     {
@@ -65,10 +69,11 @@
       "readingType": "on",
       "distractors": [
         "ジツ",
-        "ジュ",
-        "ジュウ"
+        "ジモ",
+        "ジヌ"
       ],
       "exampleWord": "人類学（じんるいがく）",
+      "maskedReading": "○○るいがく",
       "meaning": "human being, person"
     },
     {
@@ -78,10 +83,11 @@
       "readingType": "on",
       "distractors": [
         "ニュ",
-        "ヌウ",
-        "ヒュウ"
+        "ニュー",
+        "ニョウ"
       ],
       "exampleWord": "収入（しゅうにゅう）",
+      "maskedReading": "しゅう○○○",
       "meaning": "enter, put in"
     },
     {
@@ -90,24 +96,26 @@
       "correctReading": "ハチ",
       "readingType": "on",
       "distractors": [
-        "バチ",
         "ハツ",
-        "ハイ"
+        "バチ",
+        "ハシ"
       ],
       "exampleWord": "八月（はちがつ）",
+      "maskedReading": "○○がつ",
       "meaning": "eight"
     },
     {
-      "id": "力-リキ",
+      "id": "力-リョク",
       "kanji": "力",
-      "correctReading": "リキ",
+      "correctReading": "リョク",
       "readingType": "on",
       "distractors": [
         "リク",
-        "リツ",
-        "リカ"
+        "ロク",
+        "リョ"
       ],
       "exampleWord": "体力（たいりょく）",
+      "maskedReading": "たい○○○",
       "meaning": "power, force"
     },
     {
@@ -116,11 +124,12 @@
       "correctReading": "ジュウ",
       "readingType": "on",
       "distractors": [
+        "ジュツ",
         "ジュー",
-        "ジュ",
-        "チュウ"
+        "ジユウ"
       ],
-      "exampleWord": "十（じゅう）",
+      "exampleWord": "十年（じゅうねん）",
+      "maskedReading": "○○○ねん",
       "meaning": "ten"
     },
     {
@@ -131,9 +140,10 @@
       "distractors": [
         "ザン",
         "サツ",
-        "シン"
+        "サマ"
       ],
       "exampleWord": "三人（さんにん）",
+      "maskedReading": "○○にん",
       "meaning": "three"
     },
     {
@@ -143,23 +153,25 @@
       "readingType": "on",
       "distractors": [
         "ショウ",
-        "チョウ",
-        "ジョ"
+        "ジュウ",
+        "ジヨウ"
       ],
       "exampleWord": "上下する（じょうげする）",
+      "maskedReading": "○○○げする",
       "meaning": "up"
     },
     {
-      "id": "下-カ",
+      "id": "下-した",
       "kanji": "下",
-      "correctReading": "カ",
-      "readingType": "on",
+      "correctReading": "した",
+      "readingType": "kun",
       "distractors": [
-        "キ",
-        "ケ",
-        "ガ"
+        "しだ",
+        "しな",
+        "すた"
       ],
-      "exampleWord": "地下鉄（ちかてつ）",
+      "exampleWord": "靴下（くつした）",
+      "maskedReading": "くつ○○",
       "meaning": "down"
     },
     {
@@ -169,23 +181,25 @@
       "readingType": "on",
       "distractors": [
         "サン",
-        "ゼン",
-        "シン"
+        "シン",
+        "センツ"
       ],
-      "exampleWord": "千（せん）",
+      "exampleWord": "八千（はっせん）",
+      "maskedReading": "はっ○○",
       "meaning": "thousand"
     },
     {
-      "id": "口-ク",
+      "id": "口-コウ",
       "kanji": "口",
-      "correctReading": "ク",
+      "correctReading": "コウ",
       "readingType": "on",
       "distractors": [
-        "キ",
-        "ケ",
-        "カ"
+        "コオ",
+        "ゴウ",
+        "コク"
       ],
       "exampleWord": "人口（じんこう）",
+      "maskedReading": "じん○○",
       "meaning": "mouth"
     },
     {
@@ -196,9 +210,10 @@
       "distractors": [
         "ト",
         "ナ",
-        "タ"
+        "ヂ"
       ],
       "exampleWord": "土曜日（どようび）",
+      "maskedReading": "○ようび",
       "meaning": "soil, earth, ground"
     },
     {
@@ -207,11 +222,12 @@
       "correctReading": "セキ",
       "readingType": "on",
       "distractors": [
-        "ゼキ",
-        "サキ",
-        "セコ"
+        "ユウ",
+        "ショウ",
+        "サイ"
       ],
       "exampleWord": "一朝一夕（いっちょういっせき）",
+      "maskedReading": "いっちょういっ○○",
       "meaning": "evening"
     },
     {
@@ -221,10 +237,11 @@
       "readingType": "on",
       "distractors": [
         "タイ",
-        "ダツ",
-        "ナイ"
+        "チョウ",
+        "バイ"
       ],
       "exampleWord": "大学（だいがく）",
+      "maskedReading": "○○がく",
       "meaning": "big"
     },
     {
@@ -233,11 +250,12 @@
       "correctReading": "ジョ",
       "readingType": "on",
       "distractors": [
-        "ジュ",
-        "チョ",
+        "ニョ",
+        "ニョウ",
         "ショ"
       ],
       "exampleWord": "女性（じょせい）",
+      "maskedReading": "○○せい",
       "meaning": "woman"
     },
     {
@@ -246,11 +264,12 @@
       "correctReading": "シ",
       "readingType": "on",
       "distractors": [
-        "ジ",
         "ス",
+        "ジ",
         "ツ"
       ],
       "exampleWord": "帽子（ぼうし）",
+      "maskedReading": "ぼう○",
       "meaning": "child, noun suffix"
     },
     {
@@ -259,11 +278,12 @@
       "correctReading": "ショウ",
       "readingType": "on",
       "distractors": [
-        "シュウ",
-        "ショオ",
-        "シユウ"
+        "ショ",
+        "スウ",
+        "ショク"
       ],
       "exampleWord": "小説（しょうせつ）",
+      "maskedReading": "○○○せつ",
       "meaning": "small"
     },
     {
@@ -272,11 +292,12 @@
       "correctReading": "サン",
       "readingType": "on",
       "distractors": [
-        "サム",
-        "サツ",
-        "ザン"
+        "ヤマ",
+        "セン",
+        "サ"
       ],
       "exampleWord": "富士山（ふじさん）",
+      "maskedReading": "ふじ○○",
       "meaning": "mountain"
     },
     {
@@ -285,11 +306,12 @@
       "correctReading": "セン",
       "readingType": "on",
       "distractors": [
-        "ゼン",
+        "カワ",
         "サン",
-        "センツ"
+        "セ"
       ],
       "exampleWord": "河川（かせん）",
+      "maskedReading": "か○○",
       "meaning": "river"
     },
     {
@@ -299,10 +321,11 @@
       "readingType": "on",
       "distractors": [
         "ジュウ",
-        "ツウ",
-        "チュエ"
+        "チュ",
+        "チョウ"
       ],
       "exampleWord": "中国（ちゅうごく）",
+      "maskedReading": "○○○ごく",
       "meaning": "middle, in"
     },
     {
@@ -313,9 +336,10 @@
       "distractors": [
         "コ",
         "ゴウ",
-        "グ"
+        "カ"
       ],
       "exampleWord": "五月（ごがつ）",
+      "maskedReading": "○がつ",
       "meaning": "five"
     },
     {
@@ -324,11 +348,12 @@
       "correctReading": "ロク",
       "readingType": "on",
       "distractors": [
-        "ロウ",
-        "ロコ",
-        "ロック"
+        "リク",
+        "ルク",
+        "ロ"
       ],
       "exampleWord": "六時（ろくじ）",
+      "maskedReading": "○○じ",
       "meaning": "six"
     },
     {
@@ -337,11 +362,12 @@
       "correctReading": "エン",
       "readingType": "on",
       "distractors": [
-        "エイ",
-        "エム",
-        "オン"
+        "エ",
+        "オン",
+        "エンウ"
       ],
       "exampleWord": "千円（せんえん）",
+      "maskedReading": "せん○○",
       "meaning": "circle, yen"
     },
     {
@@ -350,11 +376,12 @@
       "correctReading": "テン",
       "readingType": "on",
       "distractors": [
+        "テ",
         "トン",
-        "デン",
-        "テツ"
+        "デン"
       ],
       "exampleWord": "天気（てんき）",
+      "maskedReading": "○○き",
       "meaning": "heaven"
     },
     {
@@ -363,11 +390,12 @@
       "correctReading": "シュ",
       "readingType": "on",
       "distractors": [
-        "ス",
-        "シ",
-        "シュウ"
+        "テ",
+        "ジュ",
+        "ス"
       ],
-      "exampleWord": "握手する（あくしゅする）",
+      "exampleWord": "選手（せんしゅ）",
+      "maskedReading": "せん○○",
       "meaning": "hand"
     },
     {
@@ -376,37 +404,40 @@
       "correctReading": "ブン",
       "readingType": "on",
       "distractors": [
-        "ブツ",
-        "ブウ",
-        "プン"
+        "ブ",
+        "ベン",
+        "フン"
       ],
       "exampleWord": "文法（ぶんぽう）",
+      "maskedReading": "○○ぽう",
       "meaning": "letter, writings, sentence"
     },
     {
-      "id": "日-ジツ",
+      "id": "日-ニチ",
       "kanji": "日",
-      "correctReading": "ジツ",
+      "correctReading": "ニチ",
       "readingType": "on",
       "distractors": [
-        "ジン",
-        "ジチ",
-        "ジュ"
+        "ジツ",
+        "ニ",
+        "ジ"
       ],
       "exampleWord": "一日（いちにち）",
+      "maskedReading": "いち○○",
       "meaning": "day, sun, Japan"
     },
     {
-      "id": "月-ガツ",
+      "id": "月-ゲツ",
       "kanji": "月",
-      "correctReading": "ガツ",
+      "correctReading": "ゲツ",
       "readingType": "on",
       "distractors": [
-        "カツ",
-        "ガチ",
-        "ゴツ"
+        "ゲツイ",
+        "ゲツウ",
+        "ゲツエ"
       ],
       "exampleWord": "来月（らいげつ）",
+      "maskedReading": "らい○○",
       "meaning": "moon, month"
     },
     {
@@ -415,11 +446,12 @@
       "correctReading": "ボク",
       "readingType": "on",
       "distractors": [
+        "ブク",
         "ホク",
-        "ポク",
-        "ボウ"
+        "ボキ"
       ],
       "exampleWord": "大木（たいぼく）",
+      "maskedReading": "たい○○",
       "meaning": "tree, wood"
     },
     {
@@ -429,10 +461,11 @@
       "readingType": "on",
       "distractors": [
         "スウ",
-        "ソイ",
-        "ズイ"
+        "ズイ",
+        "シイ"
       ],
       "exampleWord": "水曜日（すいようび）",
+      "maskedReading": "○○ようび",
       "meaning": "water"
     },
     {
@@ -441,11 +474,12 @@
       "correctReading": "カ",
       "readingType": "on",
       "distractors": [
-        "キ",
         "ガ",
-        "ク"
+        "キ",
+        "ケ"
       ],
       "exampleWord": "火事（かじ）",
+      "maskedReading": "○じ",
       "meaning": "fire"
     },
     {
@@ -455,10 +489,11 @@
       "readingType": "on",
       "distractors": [
         "コン",
-        "ケイ",
-        "カン"
+        "ゲン",
+        "キン"
       ],
       "exampleWord": "番犬（ばんけん）",
+      "maskedReading": "ばん○○",
       "meaning": "dog"
     },
     {
@@ -468,23 +503,25 @@
       "readingType": "on",
       "distractors": [
         "オオ",
-        "オク",
-        "オエ"
+        "オツ",
+        "オモ"
       ],
       "exampleWord": "王様（おうさま）",
+      "maskedReading": "○○さま",
       "meaning": "king"
     },
     {
-      "id": "出-シュツ",
+      "id": "出-スイ",
       "kanji": "出",
-      "correctReading": "シュツ",
+      "correctReading": "スイ",
       "readingType": "on",
       "distractors": [
-        "シュ",
-        "スツ",
-        "シュウ"
+        "シイ",
+        "ズイ",
+        "スウ"
       ],
-      "exampleWord": "出身（しゅっしん）",
+      "exampleWord": "出納（すいとう）",
+      "maskedReading": "○○とう",
       "meaning": "go out, put out"
     },
     {
@@ -494,10 +531,11 @@
       "readingType": "on",
       "distractors": [
         "エ",
-        "ユ",
-        "オ"
+        "オ",
+        "ユ"
       ],
       "exampleWord": "右折する（うせつする）",
+      "maskedReading": "○せつする",
       "meaning": "right"
     },
     {
@@ -506,11 +544,12 @@
       "correctReading": "シ",
       "readingType": "on",
       "distractors": [
-        "ス",
         "ジ",
-        "チ"
+        "ス",
+        "ツ"
       ],
       "exampleWord": "四月（しがつ）",
+      "maskedReading": "○がつ",
       "meaning": "four"
     },
     {
@@ -519,11 +558,12 @@
       "correctReading": "サ",
       "readingType": "on",
       "distractors": [
-        "シ",
         "サイ",
-        "サウ"
+        "サウ",
+        "サエ"
       ],
       "exampleWord": "左右する（さゆうする）",
+      "maskedReading": "○ゆうする",
       "meaning": "left"
     },
     {
@@ -532,11 +572,12 @@
       "correctReading": "ホン",
       "readingType": "on",
       "distractors": [
-        "ボン",
         "コン",
+        "ボン",
         "ホウ"
       ],
-      "exampleWord": "本（ほん）",
+      "exampleWord": "本日（ほんじつ）",
+      "maskedReading": "○○じつ",
       "meaning": "basis, book, this"
     },
     {
@@ -545,11 +586,12 @@
       "correctReading": "セイ",
       "readingType": "on",
       "distractors": [
-        "セウ",
         "サイ",
-        "セン"
+        "ジイ",
+        "ゼイ"
       ],
       "exampleWord": "正解（せいかい）",
+      "maskedReading": "○○かい",
       "meaning": "right, correct"
     },
     {
@@ -558,24 +600,26 @@
       "correctReading": "ギョク",
       "readingType": "on",
       "distractors": [
-        "ギュク",
-        "ギョウ",
-        "キョク"
+        "ギョ",
+        "キョク",
+        "ギュク"
       ],
       "exampleWord": "玉座（ぎょくざ）",
+      "maskedReading": "○○○ざ",
       "meaning": "gem, jewel, ball"
     },
     {
-      "id": "生-ショウ",
+      "id": "生-セイ",
       "kanji": "生",
-      "correctReading": "ショウ",
+      "correctReading": "セイ",
       "readingType": "on",
       "distractors": [
-        "ショ",
-        "シュウ",
-        "シャウ"
+        "サイ",
+        "シイ",
+        "ゼイ"
       ],
       "exampleWord": "学生（がくせい）",
+      "maskedReading": "がく○○",
       "meaning": "life, be born, student"
     },
     {
@@ -585,10 +629,11 @@
       "readingType": "on",
       "distractors": [
         "テン",
-        "デツ",
-        "ディン"
+        "トン",
+        "デツ"
       ],
       "exampleWord": "水田（すいでん）",
+      "maskedReading": "すい○○",
       "meaning": "rice field"
     },
     {
@@ -598,10 +643,11 @@
       "readingType": "on",
       "distractors": [
         "バク",
-        "ハツ",
-        "ヒク"
+        "パク",
+        "カク"
       ],
       "exampleWord": "白紙（はくし）",
+      "maskedReading": "○○し",
       "meaning": "white"
     },
     {
@@ -612,9 +658,10 @@
       "distractors": [
         "ボク",
         "モウ",
-        "ムク"
+        "モコ"
       ],
       "exampleWord": "目的地（もくてきち）",
+      "maskedReading": "○○てきち",
       "meaning": "eye, item"
     },
     {
@@ -623,11 +670,12 @@
       "correctReading": "セキ",
       "readingType": "on",
       "distractors": [
-        "セツ",
-        "シキ",
-        "ゼキ"
+        "ゼキ",
+        "サキ",
+        "セツ"
       ],
       "exampleWord": "石像（せきぞう）",
+      "maskedReading": "○○ぞう",
       "meaning": "stone"
     },
     {
@@ -637,10 +685,11 @@
       "readingType": "on",
       "distractors": [
         "リュウ",
-        "リタ",
-        "リキ"
+        "リツウ",
+        "リッ"
       ],
-      "exampleWord": "独立する（どくりつする）",
+      "exampleWord": "国立（こくりつ）",
+      "maskedReading": "こく○○",
       "meaning": "stand, establish"
     },
     {
@@ -649,11 +698,12 @@
       "correctReading": "キュウ",
       "readingType": "on",
       "distractors": [
-        "ギュウ",
-        "キョウ",
+        "キユウ",
+        "キュオ",
         "キュウウ"
       ],
       "exampleWord": "休日（きゅうじつ）",
+      "maskedReading": "○○○じつ",
       "meaning": "rest"
     },
     {
@@ -663,23 +713,25 @@
       "readingType": "on",
       "distractors": [
         "サン",
-        "ゼン",
-        "セツ"
+        "センウ",
+        "ゼン"
       ],
       "exampleWord": "先生（せんせい）",
+      "maskedReading": "○○せい",
       "meaning": "ahead"
     },
     {
-      "id": "名-ミョウ",
+      "id": "名-メイ",
       "kanji": "名",
-      "correctReading": "ミョウ",
+      "correctReading": "メイ",
       "readingType": "on",
       "distractors": [
-        "ミヨウ",
-        "ミュウ",
-        "ビョウ"
+        "ミイ",
+        "マエ",
+        "メウ"
       ],
       "exampleWord": "氏名（しめい）",
+      "maskedReading": "し○○",
       "meaning": "name"
     },
     {
@@ -689,10 +741,11 @@
       "readingType": "on",
       "distractors": [
         "シ",
-        "ヂ",
-        "チ"
+        "ジュ",
+        "ジエ"
       ],
-      "exampleWord": "字（じ）",
+      "exampleWord": "漢字（かんじ）",
+      "maskedReading": "かん○",
       "meaning": "character"
     },
     {
@@ -702,10 +755,11 @@
       "readingType": "on",
       "distractors": [
         "ナン",
-        "ニン",
-        "デン"
+        "ノン",
+        "ニン"
       ],
-      "exampleWord": "一年生（いちねんせい）",
+      "exampleWord": "去年（きょねん）",
+      "maskedReading": "きょ○○",
       "meaning": "year"
     },
     {
@@ -715,10 +769,11 @@
       "readingType": "on",
       "distractors": [
         "ゾウ",
-        "ショウ",
-        "ソウウ"
+        "サウ",
+        "ショウ"
       ],
       "exampleWord": "早朝（そうちょう）",
+      "maskedReading": "○○ちょう",
       "meaning": "early, quick"
     },
     {
@@ -727,11 +782,12 @@
       "correctReading": "キ",
       "readingType": "on",
       "distractors": [
+        "ク",
         "ギ",
-        "シ",
-        "キュ"
+        "カ"
       ],
       "exampleWord": "気候（きこう）",
+      "maskedReading": "○こう",
       "meaning": "gas, spirit"
     },
     {
@@ -740,11 +796,12 @@
       "correctReading": "ヒャク",
       "readingType": "on",
       "distractors": [
-        "ビャク",
+        "ヒャウ",
         "ヒョク",
-        "ヒャツ"
+        "バク"
       ],
-      "exampleWord": "百（ひゃく）",
+      "exampleWord": "百倍（ひゃくばい）",
+      "maskedReading": "○○○ばい",
       "meaning": "hundred"
     },
     {
@@ -753,11 +810,12 @@
       "correctReading": "チク",
       "readingType": "on",
       "distractors": [
-        "チキ",
-        "チュク",
-        "テク"
+        "チュ",
+        "ジク",
+        "ツク"
       ],
       "exampleWord": "竹林（ちくりん）",
+      "maskedReading": "○○りん",
       "meaning": "bamboo"
     },
     {
@@ -766,11 +824,12 @@
       "correctReading": "シ",
       "readingType": "on",
       "distractors": [
+        "ス",
         "ジ",
-        "ツ",
-        "ヂ"
+        "チ"
       ],
       "exampleWord": "綿糸（めんし）",
+      "maskedReading": "めん○",
       "meaning": "thread"
     },
     {
@@ -780,10 +839,11 @@
       "readingType": "on",
       "distractors": [
         "シ",
-        "ヂ",
-        "チ"
+        "ジュ",
+        "ジエ"
       ],
       "exampleWord": "耳鼻科（じびか）",
+      "maskedReading": "○びか",
       "meaning": "ear"
     },
     {
@@ -792,11 +852,12 @@
       "correctReading": "チュウ",
       "readingType": "on",
       "distractors": [
+        "シュウ",
         "ツウ",
-        "ジュウ",
         "チョウ"
       ],
       "exampleWord": "虫害（ちゅうがい）",
+      "maskedReading": "○○○がい",
       "meaning": "insect, bug"
     },
     {
@@ -805,11 +866,12 @@
       "correctReading": "ソン",
       "readingType": "on",
       "distractors": [
-        "サン",
-        "ゾン",
-        "ソウ"
+        "ソウ",
+        "モン",
+        "スン"
       ],
       "exampleWord": "農村（のうそん）",
+      "maskedReading": "のう○○",
       "meaning": "village"
     },
     {
@@ -819,10 +881,11 @@
       "readingType": "on",
       "distractors": [
         "タン",
-        "デン",
-        "ザン"
+        "ナン",
+        "デン"
       ],
       "exampleWord": "男子学生（だんしがくせい）",
+      "maskedReading": "○○しがくせい",
       "meaning": "man"
     },
     {
@@ -836,6 +899,7 @@
         "ショウ"
       ],
       "exampleWord": "町長（ちょうちょう）",
+      "maskedReading": "○○○ちょう",
       "meaning": "town"
     },
     {
@@ -845,10 +909,11 @@
       "readingType": "on",
       "distractors": [
         "ガ",
-        "サ",
-        "タ"
+        "カイ",
+        "ケ"
       ],
       "exampleWord": "花壇（かだん）",
+      "maskedReading": "○だん",
       "meaning": "flower"
     },
     {
@@ -857,11 +922,12 @@
       "correctReading": "ケン",
       "readingType": "on",
       "distractors": [
+        "ケ",
         "コン",
-        "ゲン",
-        "ケイ"
+        "カン"
       ],
       "exampleWord": "見学する（けんがくする）",
+      "maskedReading": "○○がくする",
       "meaning": "see"
     },
     {
@@ -874,7 +940,8 @@
         "がい",
         "かん"
       ],
-      "exampleWord": "貝（かい）",
+      "exampleWord": "貝柱（かいばしら）",
+      "maskedReading": "○○ばしら",
       "meaning": "shellfish, shell"
     },
     {
@@ -884,10 +951,11 @@
       "readingType": "on",
       "distractors": [
         "サキ",
-        "ゼキ",
+        "シキ",
         "セツ"
       ],
       "exampleWord": "赤外線（せきがいせん）",
+      "maskedReading": "○○がいせん",
       "meaning": "red"
     },
     {
@@ -896,11 +964,12 @@
       "correctReading": "ソク",
       "readingType": "on",
       "distractors": [
-        "サク",
-        "ゾク",
-        "ショク"
+        "ソ",
+        "スク",
+        "ソウ"
       ],
       "exampleWord": "足跡（そくせき）",
+      "maskedReading": "○○せき",
       "meaning": "foot, suffice, add"
     },
     {
@@ -910,10 +979,11 @@
       "readingType": "on",
       "distractors": [
         "サ",
-        "シ",
-        "ス"
+        "シュ",
+        "ショ"
       ],
       "exampleWord": "自転車（じてんしゃ）",
+      "maskedReading": "じてん○○",
       "meaning": "vehicle, wheel, car"
     },
     {
@@ -923,10 +993,11 @@
       "readingType": "on",
       "distractors": [
         "カク",
-        "グク",
-        "ガシ"
+        "ギク",
+        "ガ"
       ],
       "exampleWord": "学生（がくせい）",
+      "maskedReading": "○○せい",
       "meaning": "study, educational, institution"
     },
     {
@@ -935,11 +1006,12 @@
       "correctReading": "リン",
       "readingType": "on",
       "distractors": [
-        "リュウ",
-        "ロウ",
-        "リツ"
+        "リ",
+        "ラン",
+        "リュ"
       ],
       "exampleWord": "林業（りんぎょう）",
+      "maskedReading": "○○ぎょう",
       "meaning": "woods, forest"
     },
     {
@@ -948,11 +1020,12 @@
       "correctReading": "クウ",
       "readingType": "on",
       "distractors": [
-        "クオ",
-        "キウ",
-        "クツ"
+        "ク",
+        "コウ",
+        "キュウ"
       ],
       "exampleWord": "空間（くうかん）",
+      "maskedReading": "○○かん",
       "meaning": "sky, air, empty"
     },
     {
@@ -963,9 +1036,10 @@
       "distractors": [
         "コン",
         "ギン",
-        "キュン"
+        "カン"
       ],
       "exampleWord": "金曜日（きんようび）",
+      "maskedReading": "○○ようび",
       "meaning": "metal, gold, money"
     },
     {
@@ -974,11 +1048,12 @@
       "correctReading": "ウ",
       "readingType": "on",
       "distractors": [
-        "エ",
+        "ユ",
         "オ",
-        "ア"
+        "ユウ"
       ],
-      "exampleWord": "降雨量（こううりょう）",
+      "exampleWord": "雨期（うき）",
+      "maskedReading": "○き",
       "meaning": "rain"
     },
     {
@@ -988,10 +1063,11 @@
       "readingType": "on",
       "distractors": [
         "サイ",
-        "シイ",
-        "セウ"
+        "セウ",
+        "ゼイ"
       ],
       "exampleWord": "青春（せいしゅん）",
+      "maskedReading": "○○しゅん",
       "meaning": "blue"
     },
     {
@@ -1000,11 +1076,12 @@
       "correctReading": "ソウ",
       "readingType": "on",
       "distractors": [
-        "ショウ",
+        "ゾウ",
         "サウ",
-        "ゾウ"
+        "ソエ"
       ],
       "exampleWord": "草原（そうげん）",
+      "maskedReading": "○○げん",
       "meaning": "grass"
     },
     {
@@ -1013,11 +1090,12 @@
       "correctReading": "オン",
       "readingType": "on",
       "distractors": [
-        "エン",
         "オウ",
+        "エン",
         "ウン"
       ],
-      "exampleWord": "発音する（はつおんする）",
+      "exampleWord": "音楽（おんがく）",
+      "maskedReading": "○○がく",
       "meaning": "sound"
     },
     {
@@ -1026,11 +1104,12 @@
       "correctReading": "コウ",
       "readingType": "on",
       "distractors": [
-        "コオ",
         "ゴウ",
-        "コツ"
+        "コオ",
+        "コエ"
       ],
       "exampleWord": "学校（がっこう）",
+      "maskedReading": "がっ○○",
       "meaning": "school"
     },
     {
@@ -1044,6 +1123,7 @@
         "シウ"
       ],
       "exampleWord": "森林（しんりん）",
+      "maskedReading": "○○りん",
       "meaning": "forest"
     }
   ]
