@@ -320,6 +320,36 @@ export const KanjiQuizSession = ({
           );
         })}
       </div>
+
+      {/* 選んだ後のフィードバック。ボタンの色（せいかい＝緑・えらんだのが
+          ちがう＝オレンジ）だけだと一目で伝わりづらいことがあるための補強。
+          PracticeSessionのフィードバック（丸背景・文言・ばね／シェイク）と
+          同じ見た目・アニメーションに揃えている。正解は選んだ緑のボタンで
+          すでに見えているため「こたえはXだよ」は繰り返さない */}
+      <div className="flex min-h-14 items-center justify-center" role="status" aria-live="polite">
+        {selected !== null &&
+          (current.choices[selected].correct ? (
+            <motion.p
+              key={currentIndex}
+              initial={{ scale: 0.5 }}
+              animate={{ scale: 1 }}
+              transition={{ type: "spring", stiffness: 300, damping: 12 }}
+              className="rounded-sm bg-success/25 px-5 py-3 text-center text-xl font-bold text-foreground"
+            >
+              せいかい！
+            </motion.p>
+          ) : (
+            <motion.p
+              key={currentIndex}
+              initial={{ x: 0 }}
+              animate={{ x: [0, -8, 8, -8, 8, 0] }}
+              transition={{ duration: 0.4 }}
+              className="rounded-sm bg-warning/25 px-5 py-3 text-center font-bold text-foreground"
+            >
+              ざんねん…
+            </motion.p>
+          ))}
+      </div>
     </div>
   );
 };
