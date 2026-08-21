@@ -43,7 +43,7 @@ const secondaryButtonClass = `${buttonClass} border-2 border-brand bg-white text
 // 選択肢ボタン。正解/不正解が決まった後だけ色を出す
 const choiceClass = (state: "idle" | "correct" | "incorrect" | "faded") => {
   const base =
-    "min-h-11 rounded-full border-2 px-[clamp(1.5rem,4vw,2.5rem)] py-[clamp(0.75rem,1.6vh,1.125rem)] text-[clamp(1.375rem,2.2vh+0.8rem,2rem)] font-bold transition-colors";
+    "flex min-h-11 items-center justify-center rounded-full border-2 px-[clamp(1.5rem,4vw,2.5rem)] py-[clamp(0.75rem,1.6vh,1.125rem)] text-[clamp(1.375rem,2.2vh+0.8rem,2rem)] font-bold transition-colors";
   switch (state) {
     case "correct":
       return `${base} border-success bg-success/20 text-foreground`;
