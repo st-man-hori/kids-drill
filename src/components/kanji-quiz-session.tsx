@@ -320,14 +320,6 @@ export const KanjiQuizSession = ({
           );
         })}
       </div>
-
-      {/* 例で使われる単語をヒントとして出す。読めない漢字を含むが、ふりがな
-          付きの用例をそのまま見せるのは学習コンテンツの一部として自然
-          （design.mdのかな限定ルールは案内・UI文言向けであり、出題対象の
-          漢字そのものやその用例には適用しない） */}
-      <div className="min-h-6 text-center text-sm font-bold text-foreground/50">
-        {answered && current.exampleWord && `つかいかた: ${current.exampleWord}`}
-      </div>
     </div>
   );
 };
