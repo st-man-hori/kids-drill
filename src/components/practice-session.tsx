@@ -375,7 +375,7 @@ export const PracticeSession = ({
                 initial={{ x: 0 }}
                 animate={{ x: [0, -8, 8, -8, 8, 0] }}
                 transition={{ duration: 0.4 }}
-                className="rounded-sm bg-warning/25 px-5 py-3 text-center font-bold text-foreground"
+                className="rounded-sm bg-warning/25 px-5 py-3 text-center text-xl font-bold text-foreground"
               >
                 ざんねん…こたえは {current.answer} だよ
               </motion.p>
