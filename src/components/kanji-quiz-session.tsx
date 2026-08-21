@@ -282,7 +282,7 @@ export const KanjiQuizSession = ({
 
       {/* 熟語そのものも小さく見せる。ふりがなを与えていないので答えは漏れないが、
           「実際はこう書く」という見た目のイメージは持たせられる */}
-      <p className="text-base font-bold text-foreground/40">{kanjiOnlyWord(current.exampleWord)}</p>
+      <p className="text-2xl font-bold text-foreground/50">{kanjiOnlyWord(current.exampleWord)}</p>
 
       {/* 熟語の中でどう読むかを示すヒント。「この字単体の読みは？」だと大のように
           複数の読みを持つ字で問いが一意に決まらないため、文脈を出題に含めている
