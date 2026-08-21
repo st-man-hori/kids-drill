@@ -30,10 +30,13 @@ type KyoikuKanjiResponse = {
 
 const BASE_URL = "https://api.kyoiku-kanji.st-man.com/v1";
 
-// limitを大きめに固定して1ページで取り切る（小1で80件程度。ページングを
-// 実装するほどの件数ではないため、超過時はエラーにして気づけるようにする）
+// limitはAPI側の上限（1026 = 学年配当表1〜6年の合計字数）を指定して1ページで
+// 取り切る。ページングを実装するほどの学年別件数ではないため、
+// 超過時はエラーにして気づけるようにする
+const MAX_LIMIT = 1026;
+
 export const fetchKanjiByGrade = async (grade: number): Promise<KyoikuKanjiEntry[]> => {
-  const url = `${BASE_URL}/kanji?grade=${grade}&limit=2000`;
+  const url = `${BASE_URL}/kanji?grade=${grade}&limit=${MAX_LIMIT}`;
   const res = await fetch(url);
   if (!res.ok) {
     throw new Error(`kyoiku-kanji API ${res.status} ${res.statusText} (${url})`);

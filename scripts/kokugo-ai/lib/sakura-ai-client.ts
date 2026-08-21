@@ -3,6 +3,15 @@
 
 export type ChatMessage = { role: "system" | "user"; content: string };
 
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+// 429（レート制限）は「その字はもう諦める」でフォールバックへ倒すのではなく、
+// Retry-Afterに従って待ってから同じリクエストをやり直す。呼び出し元
+// （build-distractors.tsのリトライ・フォールバック）は「本当にAIが
+// おかしな内容を返した場合」だけを対象にしたいため、一時的な流量制限は
+// ここで吸収してしまう
+const MAX_RATE_LIMIT_RETRIES = 5;
+
 export const chatCompletion = async (
   messages: ChatMessage[],
   options: { temperature?: number } = {},
@@ -16,20 +25,30 @@ export const chatCompletion = async (
     );
   }
 
-  const res = await fetch(`${baseUrl}/chat/completions`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json", Authorization: `Bearer ${apiKey}` },
-    body: JSON.stringify({ model, messages, temperature: options.temperature ?? 0.7 }),
-  });
+  for (let attempt = 0; attempt <= MAX_RATE_LIMIT_RETRIES; attempt++) {
+    const res = await fetch(`${baseUrl}/chat/completions`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${apiKey}` },
+      body: JSON.stringify({ model, messages, temperature: options.temperature ?? 0.7 }),
+    });
 
-  if (!res.ok) {
-    throw new Error(`Sakura AI ${res.status} ${res.statusText}: ${await res.text()}`);
+    if (res.status === 429 && attempt < MAX_RATE_LIMIT_RETRIES) {
+      const retryAfterSeconds = Number(res.headers.get("retry-after")) || 10;
+      await sleep(retryAfterSeconds * 1000 + 500);
+      continue;
+    }
+
+    if (!res.ok) {
+      throw new Error(`Sakura AI ${res.status} ${res.statusText}: ${await res.text()}`);
+    }
+
+    const data = await res.json();
+    const content = data.choices?.[0]?.message?.content;
+    if (typeof content !== "string") {
+      throw new Error(`Sakura AI: unexpected response shape: ${JSON.stringify(data)}`);
+    }
+    return content;
   }
 
-  const data = await res.json();
-  const content = data.choices?.[0]?.message?.content;
-  if (typeof content !== "string") {
-    throw new Error(`Sakura AI: unexpected response shape: ${JSON.stringify(data)}`);
-  }
-  return content;
+  throw new Error("Sakura AI: rate limited past MAX_RATE_LIMIT_RETRIES");
 };

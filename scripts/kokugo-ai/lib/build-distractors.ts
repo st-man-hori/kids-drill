@@ -7,11 +7,21 @@ export type DistractorTarget = {
   readingType: "on" | "kun";
 };
 
-export type DistractorResult = Record<string, string[]>; // id -> ちょうど3件のよみ
+export type DistractorPoolResult = Record<string, string[]>; // id -> 誤答プール
 
-// 1リクエストあたりの問題数。80字を丸ごと1リクエストにすると出力トークンが
-// 膨らみJSONが壊れやすくなるため、数バッチに分けて信頼性を優先する
-const CHUNK_SIZE = 15;
+// 1回の生成では終わらせず、字ごとに複数ラウンドに分けて「すでに選んだ誤答とは
+// 違うものを」と積み増していく。バッチもしない（1字1リクエスト）。理由は2つ:
+// 1. ラウンドを分けることで語彙が広がりやすい（1回で9個ちょうだいと聞くより
+//    多様になりやすい）
+// 2. 学年1〜6ぶん（約1000字）× 3ラウンドで、たまたま「さくらのAI Engine
+//    3000リクエスト」の枠にちょうどよく収まる
+const ROUND_SIZE = 3;
+const ROUNDS_PER_TARGET = 3;
+export const POOL_SIZE = ROUND_SIZE * ROUNDS_PER_TARGET;
+// 同時実行数。8で流したところ429（レート制限）に頻繁に当たり、
+// sakura-ai-client.ts側のリトライで吸収しきれない分がフォールバックに
+// 落ちていた（grade5/6で発生）。4まで落として様子を見る
+const CONCURRENCY = 4;
 
 const isHiragana = (value: string) => /^[ぁ-んー]+$/.test(value);
 const isKatakana = (value: string) => /^[ァ-ヶー]+$/.test(value);
@@ -27,119 +37,127 @@ const extractJsonArray = (text: string): unknown => {
   return JSON.parse(match[0]);
 };
 
-const buildPrompt = (targets: DistractorTarget[]): string => {
-  const lines = targets
-    .map(
-      (t) =>
-        `- id: "${t.id}", かんじ: "${t.kanji}", ただしいよみ: "${t.correctReading}"（${
-          t.readingType === "on" ? "音読み・カタカナ表記" : "訓読み・ひらがな表記"
-        }）`,
-    )
-    .join("\n");
+const buildPrompt = (target: DistractorTarget, exclude: readonly string[]): string => `あなたは小学生向けの漢字よみクイズを作る教材編集者です。
+次の問題について、「ただしいよみ」とまぎらわしい・まちがえそうなダミーの選択肢（誤答）を
+ちょうど3つ考えてください。
 
-  return `あなたは小学1年生向けの漢字よみクイズを作る教材編集者です。
-以下の各問題について、「ただしいよみ」とまぎらわしい・小学1年生がまちがえそうな
-ダミーの選択肢（誤答）をちょうど3つずつ考えてください。
+かんじ: "${target.kanji}"
+ただしいよみ: "${target.correctReading}"（${
+  target.readingType === "on" ? "音読み・カタカナ表記" : "訓読み・ひらがな表記"
+}）
+${exclude.length > 0 ? `すでに使った誤答（これらとは違うものにする）: ${exclude.join("、")}` : ""}
 
 条件:
-- ただしいよみと同じ文字種で答える（音読みの問題ならカタカナのみ、訓読みの問題ならひらがなのみ）
-- ただしいよみ自体、および3つの中での重複は禁止
-- 実在する読み方（他の漢字の読みなど）でも、存在しない読みでもよいが、
-  音の響きが似ている・文字数が近いなど、まぎらわしいものにする
+- ただしいよみと同じ文字種で答える（音読みならカタカナのみ、訓読みならひらがなのみ）
+- ただしいよみ自体、既に使った誤答、3つの中での重複は禁止
+- ただしいよみに文字を継ぎ足しただけ（例: 正解が「ダイ」なら「ダイツ」「ダイジ」など）は禁止。
+  正解の文字列を含む・正解に含まれる誤答は作らない
+- 実在する読み方でも、存在しない読みでもよいが、音の響きが似ている・文字数が近いなど、
+  まぎらわしいものにする
 - 漢字・ローマ字・記号は使わない
 
 出力は次の形式のJSON配列のみ。説明文や前置き、コードブロックは書かない:
-[{"id": "問題のid", "distractors": ["よみ1", "よみ2", "よみ3"]}, ...]
+["よみ1", "よみ2", "よみ3"]`;
 
-問題一覧:
-${lines}`;
-};
+// 後半ラウンドになるほど、AIが「もう違うのが思いつかない」ときに正解へ
+// 文字を継ぎ足しただけの水増し（例:「ダイ」の誤答に「ダイツ」「ダイジ」）を
+// 出しがちになる。長さ1の読みに限っては前方一致で弾くと安全な短い読みまで
+// 巻き込むため、正解が2文字以上のときだけ包含関係をチェックする
+const overlapsWithCorrect = (distractor: string, correctReading: string): boolean =>
+  correctReading.length >= 2 &&
+  (distractor.includes(correctReading) || correctReading.includes(distractor));
 
-const validateDistractors = (
-  distractors: unknown,
+const validateRound = (
+  parsed: unknown,
   target: DistractorTarget,
+  exclude: readonly string[],
 ): string[] | null => {
-  if (!Array.isArray(distractors) || distractors.length !== 3) return null;
+  if (!Array.isArray(parsed) || parsed.length !== ROUND_SIZE) return null;
   const checker = scriptCheckerFor(target.readingType);
-  const cleaned = distractors.map((d) => (typeof d === "string" ? d.trim() : ""));
+  const cleaned = parsed.map((d) => (typeof d === "string" ? d.trim() : ""));
+  const excludeSet = new Set([target.correctReading, ...exclude]);
   const valid =
-    cleaned.every((d) => d.length > 0 && checker(d) && d !== target.correctReading) &&
-    new Set(cleaned).size === 3;
+    cleaned.every(
+      (d) =>
+        d.length > 0 &&
+        checker(d) &&
+        !excludeSet.has(d) &&
+        !overlapsWithCorrect(d, target.correctReading),
+    ) && new Set(cleaned).size === ROUND_SIZE;
   return valid ? cleaned : null;
 };
 
 // AIの出力が最後まで条件を満たさなかった場合の最終手段。パイプライン自体は
-// 必ず完走させる（1件のフォーマット崩れで80件ぶんの生成が無駄になるのを防ぐ）
+// 必ず完走させる（1件のフォーマット崩れで大量のリクエストが無駄になるのを防ぐ）
 const FALLBACK_POOL: Record<"on" | "kun", string[]> = {
-  on: ["カ", "キョウ", "セイ", "トウ", "リン", "ホウ", "シュウ", "モク", "ライ", "ケン"],
-  kun: ["かわ", "みず", "そら", "やま", "つき", "はな", "うみ", "いえ", "くさ", "とり"],
+  on: [
+    "カ", "キョウ", "セイ", "トウ", "リン", "ホウ", "シュウ", "モク", "ライ", "ケン",
+    "ジョウ", "ヒョウ", "ダン", "ロン", "エン", "サク", "テン", "ヨウ", "ギ", "コウ",
+  ],
+  kun: [
+    "かわ", "みず", "そら", "やま", "つき", "はな", "うみ", "いえ", "くさ", "とり",
+    "つち", "いし", "きし", "たに", "はやし", "もり", "たけ", "いと", "むし", "かい",
+  ],
 };
 
-const fallbackDistractors = (target: DistractorTarget): string[] => {
-  const pool = FALLBACK_POOL[target.readingType].filter((r) => r !== target.correctReading);
+const fallbackRound = (target: DistractorTarget, exclude: readonly string[]): string[] => {
+  const excludeSet = new Set([target.correctReading, ...exclude]);
+  const pool = FALLBACK_POOL[target.readingType].filter((r) => !excludeSet.has(r));
   const shuffled = [...pool].sort(() => Math.random() - 0.5);
-  return shuffled.slice(0, 3);
+  return shuffled.slice(0, ROUND_SIZE);
 };
 
-const chunk = <T,>(items: T[], size: number): T[][] =>
-  Array.from({ length: Math.ceil(items.length / size) }, (_, i) =>
-    items.slice(i * size, i * size + size),
-  );
-
-const parseBatchResponse = (content: string): Map<string, unknown> => {
-  const parsed = extractJsonArray(content);
-  if (!Array.isArray(parsed)) return new Map();
-  return new Map(
-    parsed
-      .filter(
-        (item): item is { id: string; distractors: unknown } =>
-          typeof item === "object" && item !== null && typeof (item as { id?: unknown }).id === "string",
-      )
-      .map((item) => [item.id, item.distractors]),
-  );
+const requestRound = async (
+  target: DistractorTarget,
+  exclude: readonly string[],
+): Promise<string[] | null> => {
+  try {
+    const content = await chatCompletion([{ role: "user", content: buildPrompt(target, exclude) }]);
+    return validateRound(extractJsonArray(content), target, exclude);
+  } catch {
+    return null;
+  }
 };
 
-export const generateDistractors = async (
-  targets: DistractorTarget[],
-  log: (message: string) => void = () => {},
-): Promise<DistractorResult> => {
-  const result: DistractorResult = {};
+const buildPoolForTarget = async (
+  target: DistractorTarget,
+  log: (message: string) => void,
+): Promise<string[]> => {
+  const pool: string[] = [];
 
-  for (const batch of chunk(targets, CHUNK_SIZE)) {
-    log(`distractor batch: ${batch.map((t) => t.kanji).join("")}`);
-
-    let byId = new Map<string, unknown>();
-    try {
-      const content = await chatCompletion([{ role: "user", content: buildPrompt(batch) }]);
-      byId = parseBatchResponse(content);
-    } catch (error) {
-      log(`  batch request failed, will retry per item: ${(error as Error).message}`);
+  for (let round = 0; round < ROUNDS_PER_TARGET; round++) {
+    // 失敗したら同じラウンドを1回だけリトライし、それでもダメならフォールバック
+    let result = await requestRound(target, pool);
+    if (!result) result = await requestRound(target, pool);
+    if (!result) {
+      log(`  fallback round for ${target.kanji}(${target.correctReading})`);
+      result = fallbackRound(target, pool);
     }
-
-    for (const target of batch) {
-      const validated = validateDistractors(byId.get(target.id), target);
-      if (validated) {
-        result[target.id] = validated;
-        continue;
-      }
-
-      // バッチ全体、またはこの項目だけ形式が崩れていた場合は単独で1回だけリトライする
-      try {
-        const content = await chatCompletion([{ role: "user", content: buildPrompt([target]) }]);
-        const retryById = parseBatchResponse(content);
-        const retryValidated = validateDistractors(retryById.get(target.id), target);
-        if (retryValidated) {
-          result[target.id] = retryValidated;
-          continue;
-        }
-      } catch {
-        // 単独リトライも失敗したらフォールバックへ
-      }
-
-      log(`  fallback used for ${target.kanji}(${target.correctReading})`);
-      result[target.id] = fallbackDistractors(target);
-    }
+    pool.push(...result);
   }
 
+  return pool;
+};
+
+// 並行数を絞ったワーカープールで全ターゲットを処理する。字ごとのラウンドは
+// （前のラウンドの結果に依存するため）順番に実行するが、字同士は並行して進める
+export const generateDistractorPools = async (
+  targets: DistractorTarget[],
+  log: (message: string) => void = () => {},
+): Promise<DistractorPoolResult> => {
+  const result: DistractorPoolResult = {};
+  let cursor = 0;
+
+  const worker = async () => {
+    while (cursor < targets.length) {
+      const index = cursor++;
+      const target = targets[index];
+      const pool = await buildPoolForTarget(target, log);
+      result[target.id] = pool;
+      log(`[${index + 1}/${targets.length}] ${target.kanji}(${target.correctReading}) -> pool of ${pool.length}`);
+    }
+  };
+
+  await Promise.all(Array.from({ length: Math.min(CONCURRENCY, targets.length) }, worker));
   return result;
 };

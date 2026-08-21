@@ -1,12 +1,21 @@
 // 教育漢字API（api.kyoiku-kanji.st-man.com）の学年別データ + さくらのAI
-// （誤答生成）から、かんじよみクイズの問題データを作るスクリプト。
-// 手動実行が前提（将来的には定期実行での洗い替えを予定）。
+// （誤答プール生成）から、かんじよみクイズの問題データを作るスクリプト。
+// 手動実行が前提。
 //
-//   npx tsx scripts/kokugo-ai/generate-distractors.ts [--grade=1]
+//   npx tsx scripts/kokugo-ai/generate-distractors.ts [--grade=1] [--grades=1-6]
+//
+// --grades=1-6 のように範囲指定すると複数学年をまとめて処理する。1学年ずつ
+// 順に処理し、学年が終わるたびにファイルを書き出すので、途中で落ちても
+// それまでの学年ぶんは残る。省略時は --grade=1 のみを処理する
 //
 // 出力: src/data/kanji-quiz/grade{N}.json （アプリがそのままimportして使う）
 // 生の教育漢字APIレスポンスは scripts/kokugo-ai/output/ にキャッシュする
 // （デバッグ用途。gitでは追跡しない。最終成果物は src/data 側のみ）
+//
+// 誤答は1回の生成で終わらせず、字ごとに複数ラウンド・1字1リクエストで
+// プールを積み増す方式にしている（scripts/kokugo-ai/lib/build-distractors.ts）。
+// アプリ側はプレイのたびにプールから一部をランダムサンプリングして4択を作る
+// （src/lib/kanji-quiz.ts）ので、同じ字でも毎回同じ誤答セットにならない
 //
 // Yahoo!テキスト解析APIは今回使っていない。教育漢字APIが読み仮名を
 // 構造化データとして返すため、形態素解析で読みを抜き出す必要がなかったため
@@ -16,7 +25,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { fetchKanjiByGrade } from "./lib/kyoiku-kanji-client";
 import { selectPrimaryReading } from "./lib/select-reading";
-import { generateDistractors, type DistractorTarget } from "./lib/build-distractors";
+import { generateDistractorPools, type DistractorTarget } from "./lib/build-distractors";
 
 try {
   // next dev/build は自前でenvを読むが、このスクリプトは単体実行のためNode
@@ -31,14 +40,27 @@ const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
 const OUTPUT_CACHE_DIR = path.join(SCRIPT_DIR, "output");
 const DATA_DIR = path.join(SCRIPT_DIR, "..", "..", "src", "data", "kanji-quiz");
 
-const grade = Number(process.argv.find((arg) => arg.startsWith("--grade="))?.split("=")[1] ?? "1");
+const parseGrades = (): number[] => {
+  const rangeArg = process.argv.find((arg) => arg.startsWith("--grades="))?.split("=")[1];
+  if (rangeArg) {
+    const rangeMatch = rangeArg.match(/^(\d+)-(\d+)$/);
+    if (rangeMatch) {
+      const start = Number(rangeMatch[1]);
+      const end = Number(rangeMatch[2]);
+      return Array.from({ length: end - start + 1 }, (_, i) => start + i);
+    }
+    return rangeArg.split(",").map(Number);
+  }
+  const gradeArg = process.argv.find((arg) => arg.startsWith("--grade="))?.split("=")[1];
+  return [Number(gradeArg ?? "1")];
+};
 
 type KanjiQuizQuestion = {
   id: string;
   kanji: string;
   correctReading: string;
   readingType: "on" | "kun";
-  distractors: string[];
+  distractorPool: string[];
   exampleWord: string;
   maskedReading: string;
   meaning: string;
@@ -50,7 +72,9 @@ type Target = DistractorTarget & {
   meaning: string;
 };
 
-const main = async () => {
+const processGrade = async (grade: number): Promise<void> => {
+  console.log(`\n=== grade ${grade} ===`);
+
   console.log(`[1/4] fetching grade ${grade} kanji from kyoiku-kanji API...`);
   const entries = await fetchKanjiByGrade(grade);
   console.log(`  got ${entries.length} kanji`);
@@ -85,8 +109,8 @@ const main = async () => {
   }
   console.log(`  ${targets.length}/${entries.length} kanji have a usable question`);
 
-  console.log("[3/4] generating distractors via Sakura AI...");
-  const distractorsById = await generateDistractors(targets, (message) =>
+  console.log(`[3/4] generating distractor pools via Sakura AI (${targets.length} kanji)...`);
+  const poolsById = await generateDistractorPools(targets, (message) =>
     console.log(`  ${message}`),
   );
 
@@ -96,7 +120,7 @@ const main = async () => {
     kanji: target.kanji,
     correctReading: target.correctReading,
     readingType: target.readingType,
-    distractors: distractorsById[target.id] ?? [],
+    distractorPool: poolsById[target.id] ?? [],
     exampleWord: target.exampleWord,
     maskedReading: target.maskedReading,
     meaning: target.meaning,
@@ -123,6 +147,14 @@ const main = async () => {
   );
 
   console.log(`done: ${outputPath} (${questions.length} questions)`);
+};
+
+const main = async () => {
+  const grades = parseGrades();
+  console.log(`grades to process: ${grades.join(", ")}`);
+  for (const grade of grades) {
+    await processGrade(grade);
+  }
 };
 
 main().catch((error) => {

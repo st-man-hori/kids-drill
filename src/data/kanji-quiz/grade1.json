@@ -1,6 +1,6 @@
 {
   "grade": 1,
-  "generatedAt": "2026-08-20T23:50:23.022Z",
+  "generatedAt": "2026-08-21T05:08:43.226Z",
   "source": {
     "kanjiApi": "https://api.kyoiku-kanji.st-man.com/v1/kanji",
     "distractorModel": "gpt-oss-120b"
@@ -11,10 +11,16 @@
       "kanji": "一",
       "correctReading": "イチ",
       "readingType": "on",
-      "distractors": [
+      "distractorPool": [
         "イツ",
-        "イナ",
-        "ヒチ"
+        "イシ",
+        "キチ",
+        "ヒチ",
+        "シチ",
+        "ニチ",
+        "ウチ",
+        "ミチ",
+        "ロチ"
       ],
       "exampleWord": "一年生（いちねんせい）",
       "maskedReading": "○○ねんせい",
@@ -25,10 +31,16 @@
       "kanji": "七",
       "correctReading": "シチ",
       "readingType": "on",
-      "distractors": [
+      "distractorPool": [
         "シツ",
         "ジチ",
-        "シナ"
+        "シジ",
+        "ジツ",
+        "ニチ",
+        "サチ",
+        "ツチ",
+        "サツ",
+        "ジヒ"
       ],
       "exampleWord": "七時（しちじ）",
       "maskedReading": "○○じ",
@@ -39,10 +51,16 @@
       "kanji": "九",
       "correctReading": "キュウ",
       "readingType": "on",
-      "distractors": [
+      "distractorPool": [
+        "クウ",
+        "ジュー",
+        "キョウ",
+        "キュエ",
         "キュオ",
-        "キュイ",
-        "キュエ"
+        "キュア",
+        "キュフ",
+        "キュプ",
+        "キュス"
       ],
       "exampleWord": "九州（きゅうしゅう）",
       "maskedReading": "○○○しゅう",
@@ -53,10 +71,16 @@
       "kanji": "二",
       "correctReading": "ニ",
       "readingType": "on",
-      "distractors": [
+      "distractorPool": [
         "ジ",
         "ミ",
-        "ヒ"
+        "ヒ",
+        "ナ",
+        "ヌ",
+        "ネ",
+        "リ",
+        "ロ",
+        "レ"
       ],
       "exampleWord": "二時間（にじかん）",
       "maskedReading": "○じかん",
@@ -67,10 +91,16 @@
       "kanji": "人",
       "correctReading": "ジン",
       "readingType": "on",
-      "distractors": [
+      "distractorPool": [
+        "ニン",
         "ジツ",
-        "ジモ",
-        "ジヌ"
+        "ジャン",
+        "シン",
+        "ジュウ",
+        "ジオ",
+        "ジム",
+        "ジマ",
+        "ジレ"
       ],
       "exampleWord": "人類学（じんるいがく）",
       "maskedReading": "○○るいがく",
@@ -81,10 +111,16 @@
       "kanji": "入",
       "correctReading": "ニュウ",
       "readingType": "on",
-      "distractors": [
-        "ニュ",
-        "ニュー",
-        "ニョウ"
+      "distractorPool": [
+        "ジュウ",
+        "ニョウ",
+        "バウ",
+        "フウ",
+        "ブウ",
+        "ドウ",
+        "キュウ",
+        "ヒュウ",
+        "リュウ"
       ],
       "exampleWord": "収入（しゅうにゅう）",
       "maskedReading": "しゅう○○○",
@@ -95,10 +131,16 @@
       "kanji": "八",
       "correctReading": "ハチ",
       "readingType": "on",
-      "distractors": [
-        "ハツ",
+      "distractorPool": [
         "バチ",
-        "ハシ"
+        "ヒチ",
+        "パチ",
+        "フチ",
+        "ヒツ",
+        "バツ",
+        "カチ",
+        "マチ",
+        "ラチ"
       ],
       "exampleWord": "八月（はちがつ）",
       "maskedReading": "○○がつ",
@@ -109,10 +151,16 @@
       "kanji": "力",
       "correctReading": "リョク",
       "readingType": "on",
-      "distractors": [
-        "リク",
+      "distractorPool": [
+        "リョウ",
+        "リュク",
         "ロク",
-        "リョ"
+        "リク",
+        "リョツ",
+        "リョン",
+        "リョバ",
+        "リョシ",
+        "リョジ"
       ],
       "exampleWord": "体力（たいりょく）",
       "maskedReading": "たい○○○",
@@ -123,10 +171,16 @@
       "kanji": "十",
       "correctReading": "ジュウ",
       "readingType": "on",
-      "distractors": [
+      "distractorPool": [
         "ジュツ",
         "ジュー",
-        "ジユウ"
+        "ジュオ",
+        "ジユウ",
+        "ジュン",
+        "ジュエ",
+        "ジウ",
+        "ジュィ",
+        "ジヨウ"
       ],
       "exampleWord": "十年（じゅうねん）",
       "maskedReading": "○○○ねん",
@@ -137,10 +191,16 @@
       "kanji": "三",
       "correctReading": "サン",
       "readingType": "on",
-      "distractors": [
-        "ザン",
+      "distractorPool": [
         "サツ",
-        "サマ"
+        "サブ",
+        "シン",
+        "サリ",
+        "サマ",
+        "サギ",
+        "サミ",
+        "サナ",
+        "サム"
       ],
       "exampleWord": "三人（さんにん）",
       "maskedReading": "○○にん",
@@ -151,10 +211,16 @@
       "kanji": "上",
       "correctReading": "ジョウ",
       "readingType": "on",
-      "distractors": [
+      "distractorPool": [
         "ショウ",
-        "ジュウ",
-        "ジヨウ"
+        "コウ",
+        "キョウ",
+        "チョウ",
+        "トウ",
+        "ブウ",
+        "ゾウ",
+        "ゴウ",
+        "ロウ"
       ],
       "exampleWord": "上下する（じょうげする）",
       "maskedReading": "○○○げする",
@@ -165,10 +231,16 @@
       "kanji": "下",
       "correctReading": "した",
       "readingType": "kun",
-      "distractors": [
+      "distractorPool": [
         "しだ",
+        "しち",
+        "さた",
         "しな",
-        "すた"
+        "しば",
+        "すた",
+        "しが",
+        "しげ",
+        "さだ"
       ],
       "exampleWord": "靴下（くつした）",
       "maskedReading": "くつ○○",
@@ -179,10 +251,16 @@
       "kanji": "千",
       "correctReading": "セン",
       "readingType": "on",
-      "distractors": [
+      "distractorPool": [
+        "ゼン",
         "サン",
         "シン",
-        "センツ"
+        "テン",
+        "ケン",
+        "デン",
+        "セイ",
+        "セツ",
+        "シェン"
       ],
       "exampleWord": "八千（はっせん）",
       "maskedReading": "はっ○○",
@@ -193,10 +271,16 @@
       "kanji": "口",
       "correctReading": "コウ",
       "readingType": "on",
-      "distractors": [
+      "distractorPool": [
+        "コツ",
+        "コエ",
         "コオ",
-        "ゴウ",
-        "コク"
+        "クチ",
+        "コク",
+        "コシ",
+        "コジ",
+        "コブ",
+        "コリ"
       ],
       "exampleWord": "人口（じんこう）",
       "maskedReading": "じん○○",
@@ -207,10 +291,16 @@
       "kanji": "土",
       "correctReading": "ド",
       "readingType": "on",
-      "distractors": [
+      "distractorPool": [
         "ト",
+        "ゾ",
+        "ボ",
+        "ゴ",
+        "パ",
         "ナ",
-        "ヂ"
+        "ロ",
+        "リ",
+        "ツ"
       ],
       "exampleWord": "土曜日（どようび）",
       "maskedReading": "○ようび",
@@ -221,10 +311,16 @@
       "kanji": "夕",
       "correctReading": "セキ",
       "readingType": "on",
-      "distractors": [
-        "ユウ",
-        "ショウ",
-        "サイ"
+      "distractorPool": [
+        "セツ",
+        "サキ",
+        "ゼキ",
+        "シキ",
+        "サエ",
+        "セイ",
+        "セコ",
+        "ゼシ",
+        "サク"
       ],
       "exampleWord": "一朝一夕（いっちょういっせき）",
       "maskedReading": "いっちょういっ○○",
@@ -235,10 +331,16 @@
       "kanji": "大",
       "correctReading": "ダイ",
       "readingType": "on",
-      "distractors": [
+      "distractorPool": [
         "タイ",
-        "チョウ",
-        "バイ"
+        "ダツ",
+        "ジ",
+        "バイ",
+        "ナイ",
+        "サイ",
+        "カイ",
+        "ガイ",
+        "パイ"
       ],
       "exampleWord": "大学（だいがく）",
       "maskedReading": "○○がく",
@@ -249,10 +351,16 @@
       "kanji": "女",
       "correctReading": "ジョ",
       "readingType": "on",
-      "distractors": [
+      "distractorPool": [
         "ニョ",
-        "ニョウ",
-        "ショ"
+        "ショ",
+        "チョ",
+        "ジュ",
+        "ジヨ",
+        "ジオ",
+        "キョ",
+        "ヒョ",
+        "ミョ"
       ],
       "exampleWord": "女性（じょせい）",
       "maskedReading": "○○せい",
@@ -263,10 +371,16 @@
       "kanji": "子",
       "correctReading": "シ",
       "readingType": "on",
-      "distractors": [
-        "ス",
+      "distractorPool": [
         "ジ",
-        "ツ"
+        "ツ",
+        "チ",
+        "ニ",
+        "サ",
+        "キ",
+        "ス",
+        "ヒ",
+        "ミ"
       ],
       "exampleWord": "帽子（ぼうし）",
       "maskedReading": "ぼう○",
@@ -277,10 +391,16 @@
       "kanji": "小",
       "correctReading": "ショウ",
       "readingType": "on",
-      "distractors": [
-        "ショ",
-        "スウ",
-        "ショク"
+      "distractorPool": [
+        "ショオ",
+        "シユウ",
+        "ショク",
+        "シュウ",
+        "シヨウ",
+        "スオウ",
+        "シオウ",
+        "スヨウ",
+        "チョウ"
       ],
       "exampleWord": "小説（しょうせつ）",
       "maskedReading": "○○○せつ",
@@ -291,10 +411,16 @@
       "kanji": "山",
       "correctReading": "サン",
       "readingType": "on",
-      "distractors": [
-        "ヤマ",
-        "セン",
-        "サ"
+      "distractorPool": [
+        "サム",
+        "ザン",
+        "サツ",
+        "サリ",
+        "サブ",
+        "サホ",
+        "サキ",
+        "サビ",
+        "サラ"
       ],
       "exampleWord": "富士山（ふじさん）",
       "maskedReading": "ふじ○○",
@@ -305,10 +431,16 @@
       "kanji": "川",
       "correctReading": "セン",
       "readingType": "on",
-      "distractors": [
-        "カワ",
+      "distractorPool": [
         "サン",
-        "セ"
+        "シン",
+        "ゼン",
+        "コン",
+        "スン",
+        "ツン",
+        "テン",
+        "ケン",
+        "ゲン"
       ],
       "exampleWord": "河川（かせん）",
       "maskedReading": "か○○",
@@ -319,10 +451,16 @@
       "kanji": "中",
       "correctReading": "チュウ",
       "readingType": "on",
-      "distractors": [
+      "distractorPool": [
         "ジュウ",
-        "チュ",
-        "チョウ"
+        "チュエ",
+        "チュツ",
+        "チュオ",
+        "チュン",
+        "チュカ",
+        "チュジ",
+        "チュレ",
+        "チュロ"
       ],
       "exampleWord": "中国（ちゅうごく）",
       "maskedReading": "○○○ごく",
@@ -333,10 +471,16 @@
       "kanji": "五",
       "correctReading": "ゴ",
       "readingType": "on",
-      "distractors": [
+      "distractorPool": [
         "コ",
-        "ゴウ",
-        "カ"
+        "ゾ",
+        "ド",
+        "ジ",
+        "バ",
+        "パ",
+        "ギ",
+        "コウ",
+        "ゾウ"
       ],
       "exampleWord": "五月（ごがつ）",
       "maskedReading": "○がつ",
@@ -347,10 +491,16 @@
       "kanji": "六",
       "correctReading": "ロク",
       "readingType": "on",
-      "distractors": [
+      "distractorPool": [
         "リク",
-        "ルク",
-        "ロ"
+        "ロウ",
+        "ロキ",
+        "ロス",
+        "ロッ",
+        "リョク",
+        "ロジ",
+        "ロツ",
+        "ロバ"
       ],
       "exampleWord": "六時（ろくじ）",
       "maskedReading": "○○じ",
@@ -361,10 +511,16 @@
       "kanji": "円",
       "correctReading": "エン",
       "readingType": "on",
-      "distractors": [
-        "エ",
-        "オン",
-        "エンウ"
+      "distractorPool": [
+        "エム",
+        "エウ",
+        "エツ",
+        "エイ",
+        "エキ",
+        "エリ",
+        "エラ",
+        "エサ",
+        "エタ"
       ],
       "exampleWord": "千円（せんえん）",
       "maskedReading": "せん○○",
@@ -375,10 +531,16 @@
       "kanji": "天",
       "correctReading": "テン",
       "readingType": "on",
-      "distractors": [
-        "テ",
+      "distractorPool": [
+        "デム",
+        "タム",
+        "トウ",
+        "テナ",
         "トン",
-        "デン"
+        "デン",
+        "タン",
+        "チン",
+        "ツン"
       ],
       "exampleWord": "天気（てんき）",
       "maskedReading": "○○き",
@@ -389,10 +551,16 @@
       "kanji": "手",
       "correctReading": "シュ",
       "readingType": "on",
-      "distractors": [
-        "テ",
+      "distractorPool": [
+        "スウ",
+        "シツ",
         "ジュ",
-        "ス"
+        "チュ",
+        "シユ",
+        "ツウ",
+        "スチ",
+        "ツチ",
+        "スツ"
       ],
       "exampleWord": "選手（せんしゅ）",
       "maskedReading": "せん○○",
@@ -403,10 +571,16 @@
       "kanji": "文",
       "correctReading": "ブン",
       "readingType": "on",
-      "distractors": [
-        "ブ",
-        "ベン",
-        "フン"
+      "distractorPool": [
+        "モン",
+        "ブツ",
+        "ブリ",
+        "ブカ",
+        "ブサ",
+        "ブレ",
+        "ブジ",
+        "ブシ",
+        "ブラ"
       ],
       "exampleWord": "文法（ぶんぽう）",
       "maskedReading": "○○ぽう",
@@ -417,10 +591,16 @@
       "kanji": "日",
       "correctReading": "ニチ",
       "readingType": "on",
-      "distractors": [
+      "distractorPool": [
         "ジツ",
-        "ニ",
-        "ジ"
+        "ニツ",
+        "リツ",
+        "ジチ",
+        "ニシ",
+        "ミチ",
+        "ジニ",
+        "ヒツ",
+        "ニサ"
       ],
       "exampleWord": "一日（いちにち）",
       "maskedReading": "いち○○",
@@ -431,10 +611,16 @@
       "kanji": "月",
       "correctReading": "ゲツ",
       "readingType": "on",
-      "distractors": [
-        "ゲツイ",
-        "ゲツウ",
-        "ゲツエ"
+      "distractorPool": [
+        "ケツ",
+        "ゴツ",
+        "ゲン",
+        "ゲリ",
+        "ゲロ",
+        "ゲズ",
+        "ゲス",
+        "ゲチ",
+        "ゲタ"
       ],
       "exampleWord": "来月（らいげつ）",
       "maskedReading": "らい○○",
@@ -445,10 +631,16 @@
       "kanji": "木",
       "correctReading": "ボク",
       "readingType": "on",
-      "distractors": [
-        "ブク",
+      "distractorPool": [
+        "モク",
         "ホク",
-        "ボキ"
+        "ブク",
+        "コク",
+        "ポク",
+        "トク",
+        "バク",
+        "ボサ",
+        "ボジ"
       ],
       "exampleWord": "大木（たいぼく）",
       "maskedReading": "たい○○",
@@ -459,9 +651,15 @@
       "kanji": "水",
       "correctReading": "スイ",
       "readingType": "on",
-      "distractors": [
+      "distractorPool": [
         "スウ",
+        "スエ",
         "ズイ",
+        "ズウ",
+        "スィ",
+        "ツイ",
+        "ズエ",
+        "ツウ",
         "シイ"
       ],
       "exampleWord": "水曜日（すいようび）",
@@ -473,10 +671,16 @@
       "kanji": "火",
       "correctReading": "カ",
       "readingType": "on",
-      "distractors": [
-        "ガ",
+      "distractorPool": [
         "キ",
-        "ケ"
+        "ヒ",
+        "ガ",
+        "ケ",
+        "ク",
+        "コ",
+        "サ",
+        "タ",
+        "パ"
       ],
       "exampleWord": "火事（かじ）",
       "maskedReading": "○じ",
@@ -487,10 +691,16 @@
       "kanji": "犬",
       "correctReading": "ケン",
       "readingType": "on",
-      "distractors": [
+      "distractorPool": [
         "コン",
         "ゲン",
-        "キン"
+        "ケツ",
+        "ケイ",
+        "カン",
+        "キン",
+        "ケブ",
+        "ケホ",
+        "ケミ"
       ],
       "exampleWord": "番犬（ばんけん）",
       "maskedReading": "ばん○○",
@@ -501,10 +711,16 @@
       "kanji": "王",
       "correctReading": "オウ",
       "readingType": "on",
-      "distractors": [
-        "オオ",
+      "distractorPool": [
         "オツ",
-        "オモ"
+        "オン",
+        "オオ",
+        "オク",
+        "オシ",
+        "オロ",
+        "オナ",
+        "オエ",
+        "オカ"
       ],
       "exampleWord": "王様（おうさま）",
       "maskedReading": "○○さま",
@@ -515,10 +731,16 @@
       "kanji": "出",
       "correctReading": "スイ",
       "readingType": "on",
-      "distractors": [
-        "シイ",
+      "distractorPool": [
+        "シュツ",
+        "ツイ",
+        "スウ",
+        "スエ",
+        "スオ",
+        "スア",
         "ズイ",
-        "スウ"
+        "スキ",
+        "スィ"
       ],
       "exampleWord": "出納（すいとう）",
       "maskedReading": "○○とう",
@@ -529,10 +751,16 @@
       "kanji": "右",
       "correctReading": "ウ",
       "readingType": "on",
-      "distractors": [
+      "distractorPool": [
         "エ",
+        "イ",
         "オ",
-        "ユ"
+        "ユ",
+        "ア",
+        "カ",
+        "エイ",
+        "アイ",
+        "エオ"
       ],
       "exampleWord": "右折する（うせつする）",
       "maskedReading": "○せつする",
@@ -543,10 +771,16 @@
       "kanji": "四",
       "correctReading": "シ",
       "readingType": "on",
-      "distractors": [
+      "distractorPool": [
         "ジ",
         "ス",
-        "ツ"
+        "ツ",
+        "サ",
+        "ヨ",
+        "ニ",
+        "チ",
+        "ヒ",
+        "キ"
       ],
       "exampleWord": "四月（しがつ）",
       "maskedReading": "○がつ",
@@ -557,10 +791,16 @@
       "kanji": "左",
       "correctReading": "サ",
       "readingType": "on",
-      "distractors": [
-        "サイ",
-        "サウ",
-        "サエ"
+      "distractorPool": [
+        "ザ",
+        "シャ",
+        "タ",
+        "ジ",
+        "シ",
+        "ツ",
+        "ス",
+        "カ",
+        "ソ"
       ],
       "exampleWord": "左右する（さゆうする）",
       "maskedReading": "○ゆうする",
@@ -571,10 +811,16 @@
       "kanji": "本",
       "correctReading": "ホン",
       "readingType": "on",
-      "distractors": [
-        "コン",
+      "distractorPool": [
         "ボン",
-        "ホウ"
+        "ホウ",
+        "ホツ",
+        "コン",
+        "ホク",
+        "ホミ",
+        "モン",
+        "ホラ",
+        "ポン"
       ],
       "exampleWord": "本日（ほんじつ）",
       "maskedReading": "○○じつ",
@@ -585,10 +831,16 @@
       "kanji": "正",
       "correctReading": "セイ",
       "readingType": "on",
-      "distractors": [
+      "distractorPool": [
+        "ショウ",
         "サイ",
-        "ジイ",
-        "ゼイ"
+        "セツ",
+        "ゼイ",
+        "サエ",
+        "シエ",
+        "スイ",
+        "ジエ",
+        "シウ"
       ],
       "exampleWord": "正解（せいかい）",
       "maskedReading": "○○かい",
@@ -599,10 +851,16 @@
       "kanji": "玉",
       "correctReading": "ギョク",
       "readingType": "on",
-      "distractors": [
-        "ギョ",
+      "distractorPool": [
+        "ギョウ",
+        "ゴク",
         "キョク",
-        "ギュク"
+        "ギョツ",
+        "ギュク",
+        "ジョク",
+        "キョウ",
+        "ジオク",
+        "バク"
       ],
       "exampleWord": "玉座（ぎょくざ）",
       "maskedReading": "○○○ざ",
@@ -613,10 +871,16 @@
       "kanji": "生",
       "correctReading": "セイ",
       "readingType": "on",
-      "distractors": [
+      "distractorPool": [
+        "ショウ",
         "サイ",
-        "シイ",
-        "ゼイ"
+        "シン",
+        "ゼイ",
+        "サエ",
+        "シエ",
+        "ケイ",
+        "テイ",
+        "ヘイ"
       ],
       "exampleWord": "学生（がくせい）",
       "maskedReading": "がく○○",
@@ -627,10 +891,16 @@
       "kanji": "田",
       "correctReading": "デン",
       "readingType": "on",
-      "distractors": [
+      "distractorPool": [
         "テン",
-        "トン",
-        "デツ"
+        "ドン",
+        "ジン",
+        "セン",
+        "ベン",
+        "ネン",
+        "ゲン",
+        "メン",
+        "デュン"
       ],
       "exampleWord": "水田（すいでん）",
       "maskedReading": "すい○○",
@@ -641,10 +911,16 @@
       "kanji": "白",
       "correctReading": "ハク",
       "readingType": "on",
-      "distractors": [
+      "distractorPool": [
         "バク",
         "パク",
-        "カク"
+        "ホク",
+        "ヒク",
+        "フク",
+        "ヘク",
+        "カク",
+        "サク",
+        "タク"
       ],
       "exampleWord": "白紙（はくし）",
       "maskedReading": "○○し",
@@ -655,10 +931,16 @@
       "kanji": "目",
       "correctReading": "モク",
       "readingType": "on",
-      "distractors": [
+      "distractorPool": [
         "ボク",
         "モウ",
-        "モコ"
+        "マク",
+        "モシ",
+        "ムク",
+        "モツ",
+        "ロク",
+        "ミク",
+        "モニ"
       ],
       "exampleWord": "目的地（もくてきち）",
       "maskedReading": "○○てきち",
@@ -669,10 +951,16 @@
       "kanji": "石",
       "correctReading": "セキ",
       "readingType": "on",
-      "distractors": [
-        "ゼキ",
+      "distractorPool": [
         "サキ",
-        "セツ"
+        "シキ",
+        "セツ",
+        "サク",
+        "ジキ",
+        "セイ",
+        "スキ",
+        "ゼキ",
+        "ケキ"
       ],
       "exampleWord": "石像（せきぞう）",
       "maskedReading": "○○ぞう",
@@ -683,10 +971,16 @@
       "kanji": "立",
       "correctReading": "リツ",
       "readingType": "on",
-      "distractors": [
+      "distractorPool": [
         "リュウ",
-        "リツウ",
-        "リッ"
+        "リト",
+        "リラ",
+        "リス",
+        "リジ",
+        "リチ",
+        "リザ",
+        "リサ",
+        "リゾ"
       ],
       "exampleWord": "国立（こくりつ）",
       "maskedReading": "こく○○",
@@ -697,10 +991,16 @@
       "kanji": "休",
       "correctReading": "キュウ",
       "readingType": "on",
-      "distractors": [
-        "キユウ",
+      "distractorPool": [
         "キュオ",
-        "キュウウ"
+        "キュン",
+        "キュエ",
+        "キュロ",
+        "キュツ",
+        "キュバ",
+        "キュア",
+        "キュイ",
+        "キュジ"
       ],
       "exampleWord": "休日（きゅうじつ）",
       "maskedReading": "○○○じつ",
@@ -711,10 +1011,16 @@
       "kanji": "先",
       "correctReading": "セン",
       "readingType": "on",
-      "distractors": [
+      "distractorPool": [
+        "ゼン",
         "サン",
-        "センウ",
-        "ゼン"
+        "テン",
+        "シン",
+        "サキ",
+        "セツ",
+        "ジン",
+        "サイ",
+        "セイ"
       ],
       "exampleWord": "先生（せんせい）",
       "maskedReading": "○○せい",
@@ -725,10 +1031,16 @@
       "kanji": "名",
       "correctReading": "メイ",
       "readingType": "on",
-      "distractors": [
-        "ミイ",
+      "distractorPool": [
+        "ミエ",
+        "ベイ",
+        "マイ",
+        "レイ",
+        "ネイ",
+        "メウ",
         "マエ",
-        "メウ"
+        "ミオ",
+        "モエ"
       ],
       "exampleWord": "氏名（しめい）",
       "maskedReading": "し○○",
@@ -739,10 +1051,16 @@
       "kanji": "字",
       "correctReading": "ジ",
       "readingType": "on",
-      "distractors": [
+      "distractorPool": [
         "シ",
-        "ジュ",
-        "ジエ"
+        "チ",
+        "ツ",
+        "ヂ",
+        "イ",
+        "ヒ",
+        "キ",
+        "ギ",
+        "ニ"
       ],
       "exampleWord": "漢字（かんじ）",
       "maskedReading": "かん○",
@@ -753,10 +1071,16 @@
       "kanji": "年",
       "correctReading": "ネン",
       "readingType": "on",
-      "distractors": [
-        "ナン",
-        "ノン",
-        "ニン"
+      "distractorPool": [
+        "トシ",
+        "メン",
+        "テン",
+        "ケン",
+        "ゲン",
+        "デン",
+        "セン",
+        "ゼン",
+        "ペン"
       ],
       "exampleWord": "去年（きょねん）",
       "maskedReading": "きょ○○",
@@ -767,10 +1091,16 @@
       "kanji": "早",
       "correctReading": "ソウ",
       "readingType": "on",
-      "distractors": [
-        "ゾウ",
+      "distractorPool": [
         "サウ",
-        "ショウ"
+        "ショウ",
+        "スウ",
+        "サオ",
+        "シオ",
+        "ジオ",
+        "ゾウ",
+        "ツウ",
+        "スオ"
       ],
       "exampleWord": "早朝（そうちょう）",
       "maskedReading": "○○ちょう",
@@ -781,10 +1111,16 @@
       "kanji": "気",
       "correctReading": "キ",
       "readingType": "on",
-      "distractors": [
-        "ク",
+      "distractorPool": [
         "ギ",
-        "カ"
+        "シ",
+        "ヒ",
+        "ク",
+        "ケ",
+        "コ",
+        "ジ",
+        "チ",
+        "ミ"
       ],
       "exampleWord": "気候（きこう）",
       "maskedReading": "○こう",
@@ -795,10 +1131,16 @@
       "kanji": "百",
       "correctReading": "ヒャク",
       "readingType": "on",
-      "distractors": [
-        "ヒャウ",
-        "ヒョク",
-        "バク"
+      "distractorPool": [
+        "ビャク",
+        "ヒャツ",
+        "ピャク",
+        "ヒュウ",
+        "ビュク",
+        "ピュク",
+        "ヒヤク",
+        "ヒュク",
+        "ピャグ"
       ],
       "exampleWord": "百倍（ひゃくばい）",
       "maskedReading": "○○○ばい",
@@ -809,9 +1151,15 @@
       "kanji": "竹",
       "correctReading": "チク",
       "readingType": "on",
-      "distractors": [
-        "チュ",
+      "distractorPool": [
+        "テク",
+        "トク",
+        "チョク",
         "ジク",
+        "シク",
+        "ニク",
+        "シツ",
+        "ジツ",
         "ツク"
       ],
       "exampleWord": "竹林（ちくりん）",
@@ -823,10 +1171,16 @@
       "kanji": "糸",
       "correctReading": "シ",
       "readingType": "on",
-      "distractors": [
-        "ス",
+      "distractorPool": [
         "ジ",
-        "チ"
+        "ツ",
+        "ジツ",
+        "ス",
+        "チ",
+        "ツウ",
+        "サ",
+        "サイ",
+        "サツ"
       ],
       "exampleWord": "綿糸（めんし）",
       "maskedReading": "めん○",
@@ -837,10 +1191,16 @@
       "kanji": "耳",
       "correctReading": "ジ",
       "readingType": "on",
-      "distractors": [
+      "distractorPool": [
         "シ",
-        "ジュ",
-        "ジエ"
+        "ミ",
+        "ニ",
+        "キ",
+        "ギ",
+        "ヂ",
+        "ミミ",
+        "シツ",
+        "ヒ"
       ],
       "exampleWord": "耳鼻科（じびか）",
       "maskedReading": "○びか",
@@ -851,10 +1211,16 @@
       "kanji": "虫",
       "correctReading": "チュウ",
       "readingType": "on",
-      "distractors": [
-        "シュウ",
+      "distractorPool": [
+        "ジュウ",
+        "チュン",
+        "チョウ",
         "ツウ",
-        "チョウ"
+        "シュウ",
+        "ズウ",
+        "ジツ",
+        "シツ",
+        "ミツ"
       ],
       "exampleWord": "虫害（ちゅうがい）",
       "maskedReading": "○○○がい",
@@ -865,10 +1231,16 @@
       "kanji": "村",
       "correctReading": "ソン",
       "readingType": "on",
-      "distractors": [
-        "ソウ",
-        "モン",
-        "スン"
+      "distractorPool": [
+        "サン",
+        "ゾン",
+        "スン",
+        "コン",
+        "トン",
+        "ロン",
+        "シン",
+        "ジン",
+        "ミン"
       ],
       "exampleWord": "農村（のうそん）",
       "maskedReading": "のう○○",
@@ -879,10 +1251,16 @@
       "kanji": "男",
       "correctReading": "ダン",
       "readingType": "on",
-      "distractors": [
+      "distractorPool": [
+        "バン",
         "タン",
         "ナン",
-        "デン"
+        "ガン",
+        "サン",
+        "デン",
+        "クン",
+        "ホン",
+        "ジョン"
       ],
       "exampleWord": "男子学生（だんしがくせい）",
       "maskedReading": "○○しがくせい",
@@ -893,10 +1271,16 @@
       "kanji": "町",
       "correctReading": "チョウ",
       "readingType": "on",
-      "distractors": [
+      "distractorPool": [
         "チュウ",
+        "ショウ",
         "ジョウ",
-        "ショウ"
+        "チャウ",
+        "ジオウ",
+        "トウ",
+        "ジュー",
+        "シオウ",
+        "ドウ"
       ],
       "exampleWord": "町長（ちょうちょう）",
       "maskedReading": "○○○ちょう",
@@ -907,10 +1291,16 @@
       "kanji": "花",
       "correctReading": "カ",
       "readingType": "on",
-      "distractors": [
+      "distractorPool": [
+        "バ",
+        "サ",
         "ガ",
-        "カイ",
-        "ケ"
+        "パ",
+        "タ",
+        "ナ",
+        "キ",
+        "ケ",
+        "コ"
       ],
       "exampleWord": "花壇（かだん）",
       "maskedReading": "○だん",
@@ -921,10 +1311,16 @@
       "kanji": "見",
       "correctReading": "ケン",
       "readingType": "on",
-      "distractors": [
-        "ケ",
+      "distractorPool": [
+        "ゲン",
         "コン",
-        "カン"
+        "キン",
+        "ケツ",
+        "ケイ",
+        "ケロ",
+        "ケム",
+        "ケリ",
+        "ケビ"
       ],
       "exampleWord": "見学する（けんがくする）",
       "maskedReading": "○○がくする",
@@ -935,10 +1331,16 @@
       "kanji": "貝",
       "correctReading": "かい",
       "readingType": "kun",
-      "distractors": [
+      "distractorPool": [
         "かく",
         "がい",
-        "かん"
+        "かえ",
+        "がく",
+        "がえ",
+        "かん",
+        "かお",
+        "がお",
+        "がう"
       ],
       "exampleWord": "貝柱（かいばしら）",
       "maskedReading": "○○ばしら",
@@ -949,10 +1351,16 @@
       "kanji": "赤",
       "correctReading": "セキ",
       "readingType": "on",
-      "distractors": [
+      "distractorPool": [
+        "アカ",
+        "カク",
         "サキ",
         "シキ",
-        "セツ"
+        "サツ",
+        "ジキ",
+        "ゼキ",
+        "セツ",
+        "テキ"
       ],
       "exampleWord": "赤外線（せきがいせん）",
       "maskedReading": "○○がいせん",
@@ -963,10 +1371,16 @@
       "kanji": "足",
       "correctReading": "ソク",
       "readingType": "on",
-      "distractors": [
-        "ソ",
-        "スク",
-        "ソウ"
+      "distractorPool": [
+        "ゾク",
+        "サク",
+        "タク",
+        "ロク",
+        "コク",
+        "ホク",
+        "ゴク",
+        "リク",
+        "ブク"
       ],
       "exampleWord": "足跡（そくせき）",
       "maskedReading": "○○せき",
@@ -977,10 +1391,16 @@
       "kanji": "車",
       "correctReading": "シャ",
       "readingType": "on",
-      "distractors": [
-        "サ",
+      "distractorPool": [
+        "サヤ",
+        "シア",
+        "ジャ",
+        "サシ",
+        "シサ",
+        "ツァ",
+        "サァ",
         "シュ",
-        "ショ"
+        "スァ"
       ],
       "exampleWord": "自転車（じてんしゃ）",
       "maskedReading": "じてん○○",
@@ -991,10 +1411,16 @@
       "kanji": "学",
       "correctReading": "ガク",
       "readingType": "on",
-      "distractors": [
+      "distractorPool": [
         "カク",
-        "ギク",
-        "ガ"
+        "バク",
+        "ゴク",
+        "タク",
+        "パク",
+        "サク",
+        "ダク",
+        "ゲク",
+        "ドク"
       ],
       "exampleWord": "学生（がくせい）",
       "maskedReading": "○○せい",
@@ -1005,10 +1431,16 @@
       "kanji": "林",
       "correctReading": "リン",
       "readingType": "on",
-      "distractors": [
-        "リ",
-        "ラン",
-        "リュ"
+      "distractorPool": [
+        "シン",
+        "ジン",
+        "ミン",
+        "リツ",
+        "レイ",
+        "ロウ",
+        "リオ",
+        "リュウ",
+        "リエ"
       ],
       "exampleWord": "林業（りんぎょう）",
       "maskedReading": "○○ぎょう",
@@ -1019,10 +1451,16 @@
       "kanji": "空",
       "correctReading": "クウ",
       "readingType": "on",
-      "distractors": [
-        "ク",
+      "distractorPool": [
+        "クオ",
         "コウ",
-        "キュウ"
+        "キュウ",
+        "クツ",
+        "クイ",
+        "クエ",
+        "グウ",
+        "ウク",
+        "スウ"
       ],
       "exampleWord": "空間（くうかん）",
       "maskedReading": "○○かん",
@@ -1033,10 +1471,16 @@
       "kanji": "金",
       "correctReading": "キン",
       "readingType": "on",
-      "distractors": [
+      "distractorPool": [
         "コン",
         "ギン",
-        "カン"
+        "キョウ",
+        "ジン",
+        "クン",
+        "ケン",
+        "シン",
+        "リン",
+        "ヒン"
       ],
       "exampleWord": "金曜日（きんようび）",
       "maskedReading": "○○ようび",
@@ -1047,10 +1491,16 @@
       "kanji": "雨",
       "correctReading": "ウ",
       "readingType": "on",
-      "distractors": [
-        "ユ",
+      "distractorPool": [
+        "エ",
         "オ",
-        "ユウ"
+        "ユ",
+        "ア",
+        "イ",
+        "エイ",
+        "ヴ",
+        "ヲ",
+        "カ"
       ],
       "exampleWord": "雨期（うき）",
       "maskedReading": "○き",
@@ -1061,10 +1511,16 @@
       "kanji": "青",
       "correctReading": "セイ",
       "readingType": "on",
-      "distractors": [
+      "distractorPool": [
         "サイ",
+        "セツ",
+        "ショウ",
+        "ゼイ",
         "セウ",
-        "ゼイ"
+        "シイ",
+        "サエ",
+        "セオ",
+        "シウ"
       ],
       "exampleWord": "青春（せいしゅん）",
       "maskedReading": "○○しゅん",
@@ -1075,10 +1531,16 @@
       "kanji": "草",
       "correctReading": "ソウ",
       "readingType": "on",
-      "distractors": [
-        "ゾウ",
+      "distractorPool": [
         "サウ",
-        "ソエ"
+        "ゾウ",
+        "ショウ",
+        "スウ",
+        "ソツ",
+        "サオ",
+        "コウ",
+        "ツウ",
+        "ズウ"
       ],
       "exampleWord": "草原（そうげん）",
       "maskedReading": "○○げん",
@@ -1089,10 +1551,16 @@
       "kanji": "音",
       "correctReading": "オン",
       "readingType": "on",
-      "distractors": [
-        "オウ",
+      "distractorPool": [
         "エン",
-        "ウン"
+        "アン",
+        "オウ",
+        "ウン",
+        "オナ",
+        "オツ",
+        "オモ",
+        "オニ",
+        "オロ"
       ],
       "exampleWord": "音楽（おんがく）",
       "maskedReading": "○○がく",
@@ -1103,10 +1571,16 @@
       "kanji": "校",
       "correctReading": "コウ",
       "readingType": "on",
-      "distractors": [
+      "distractorPool": [
+        "コツ",
         "ゴウ",
+        "カウ",
         "コオ",
-        "コエ"
+        "コエ",
+        "トウ",
+        "ショウ",
+        "キョウ",
+        "ホウ"
       ],
       "exampleWord": "学校（がっこう）",
       "maskedReading": "がっ○○",
@@ -1117,10 +1591,16 @@
       "kanji": "森",
       "correctReading": "シン",
       "readingType": "on",
-      "distractors": [
+      "distractorPool": [
+        "セン",
         "ジン",
-        "シュン",
-        "シウ"
+        "シム",
+        "ミン",
+        "コン",
+        "シツ",
+        "チン",
+        "リン",
+        "シチ"
       ],
       "exampleWord": "森林（しんりん）",
       "maskedReading": "○○りん",

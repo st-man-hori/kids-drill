@@ -12,7 +12,10 @@ export type KanjiQuizQuestion = {
   kanji: string;
   correctReading: string;
   readingType: "on" | "kun";
-  distractors: string[];
+  // 誤答の候補プール（生成スクリプトが1字あたり複数ラウンドかけて作る。
+  // scripts/kokugo-ai/lib/build-distractors.ts）。プレイのたびにこの中から
+  // 3件だけランダムサンプリングするので、同じ字でも毎回同じ4択にならない
+  distractorPool: string[];
   exampleWord: string;
   // 対象の字が担う読みだけを○で伏せた熟語のふりがな（例:「○○がく」）。
   // 「この字単体の読みは？」だと複数の読みを持つ字で問いが一意に決まらない
@@ -57,13 +60,21 @@ export const pickKanjiQuestions = (
   bank: readonly KanjiQuizQuestion[] = BANK,
 ): KanjiQuizQuestion[] => shuffle(bank).slice(0, Math.min(count, bank.length));
 
+const DISTRACTOR_COUNT = 3;
+
+const sample = <T,>(items: readonly T[], count: number): T[] =>
+  shuffle(items).slice(0, Math.min(count, items.length));
+
 // 4択の選択肢をシャッフルして返す。サーバー側（ページ）で呼び、Client
 // Componentへは確定済みの配列をpropsとして渡す（Math.randomをクライアント側で
 // 引くとSSRとハイドレーションで食い違うため。practice.tsのgenerateQuestionsと同じ理由）
 export const buildKanjiChoices = (question: KanjiQuizQuestion): KanjiQuizChoice[] =>
   shuffle([
     { text: question.correctReading, correct: true },
-    ...question.distractors.map((text) => ({ text, correct: false })),
+    ...sample(question.distractorPool, DISTRACTOR_COUNT).map((text) => ({
+      text,
+      correct: false,
+    })),
   ]);
 
 export const prepareKanjiQuestions = (

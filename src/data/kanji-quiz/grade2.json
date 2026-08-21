@@ -1,0 +1,3170 @@
+{
+  "grade": 2,
+  "generatedAt": "2026-08-21T05:11:53.750Z",
+  "source": {
+    "kanjiApi": "https://api.kyoiku-kanji.st-man.com/v1/kanji",
+    "distractorModel": "gpt-oss-120b"
+  },
+  "questions": [
+    {
+      "id": "刀-トウ",
+      "kanji": "刀",
+      "correctReading": "トウ",
+      "readingType": "on",
+      "distractorPool": [
+        "ツウ",
+        "トオ",
+        "ドウ",
+        "トツ",
+        "トエ",
+        "トイ",
+        "トス",
+        "トン",
+        "トュ"
+      ],
+      "exampleWord": "刀剣（とうけん）",
+      "maskedReading": "○○けん",
+      "meaning": "sword"
+    },
+    {
+      "id": "万-マン",
+      "kanji": "万",
+      "correctReading": "マン",
+      "readingType": "on",
+      "distractorPool": [
+        "バン",
+        "メン",
+        "ミン",
+        "サン",
+        "ハン",
+        "アン",
+        "カン",
+        "フン",
+        "ギン"
+      ],
+      "exampleWord": "万年筆（まんねんひつ）",
+      "maskedReading": "○○ねんひつ",
+      "meaning": "ten thousand"
+    },
+    {
+      "id": "丸-ガン",
+      "kanji": "丸",
+      "correctReading": "ガン",
+      "readingType": "on",
+      "distractorPool": [
+        "キン",
+        "バン",
+        "サン",
+        "ゲン",
+        "コン",
+        "カン",
+        "ガツ",
+        "ガク",
+        "ガリ"
+      ],
+      "exampleWord": "丸薬（がんやく）",
+      "maskedReading": "○○やく",
+      "meaning": "round, suffix for names of ships/people"
+    },
+    {
+      "id": "工-コウ",
+      "kanji": "工",
+      "correctReading": "コウ",
+      "readingType": "on",
+      "distractorPool": [
+        "ゴウ",
+        "コシ",
+        "コエ",
+        "コツ",
+        "コカ",
+        "コオ",
+        "コン",
+        "コイ",
+        "コサ"
+      ],
+      "exampleWord": "工事（こうじ）",
+      "maskedReading": "○○じ",
+      "meaning": "manufacture, construction"
+    },
+    {
+      "id": "弓-キュウ",
+      "kanji": "弓",
+      "correctReading": "キュウ",
+      "readingType": "on",
+      "distractorPool": [
+        "ギュウ",
+        "キユウ",
+        "クウ",
+        "キョウ",
+        "キンウ",
+        "キシウ",
+        "キュエ",
+        "キュオ",
+        "キュア"
+      ],
+      "exampleWord": "弓道（きゅうどう）",
+      "maskedReading": "○○○どう",
+      "meaning": "bow"
+    },
+    {
+      "id": "才-サイ",
+      "kanji": "才",
+      "correctReading": "サイ",
+      "readingType": "on",
+      "distractorPool": [
+        "サツ",
+        "サエ",
+        "サウ",
+        "サニ",
+        "サヒ",
+        "サギ",
+        "サジ",
+        "サキ",
+        "サリ"
+      ],
+      "exampleWord": "十八才（じゅうはっさい）",
+      "maskedReading": "じゅうはっ○○",
+      "meaning": "talent, counter for age"
+    },
+    {
+      "id": "今-コン",
+      "kanji": "今",
+      "correctReading": "コン",
+      "readingType": "on",
+      "distractorPool": [
+        "コウ",
+        "ゴン",
+        "キン",
+        "コツ",
+        "コモ",
+        "コレ",
+        "カン",
+        "コム",
+        "トン"
+      ],
+      "exampleWord": "今月（こんげつ）",
+      "maskedReading": "○○げつ",
+      "meaning": "present, this"
+    },
+    {
+      "id": "元-ゲン",
+      "kanji": "元",
+      "correctReading": "ゲン",
+      "readingType": "on",
+      "distractorPool": [
+        "ゴン",
+        "ゲツ",
+        "ケン",
+        "ゼン",
+        "デン",
+        "ヘン",
+        "ガン",
+        "コン",
+        "ゲイ"
+      ],
+      "exampleWord": "元気な（げんきな）",
+      "maskedReading": "○○きな",
+      "meaning": "origin"
+    },
+    {
+      "id": "公-コウ",
+      "kanji": "公",
+      "correctReading": "コウ",
+      "readingType": "on",
+      "distractorPool": [
+        "ホウ",
+        "ゴウ",
+        "コエ",
+        "コオ",
+        "コツ",
+        "コリ",
+        "コナ",
+        "コミ",
+        "コハ"
+      ],
+      "exampleWord": "公園（こうえん）",
+      "maskedReading": "○○えん",
+      "meaning": "public, official"
+    },
+    {
+      "id": "内-ナイ",
+      "kanji": "内",
+      "correctReading": "ナイ",
+      "readingType": "on",
+      "distractorPool": [
+        "バイ",
+        "マイ",
+        "ナウ",
+        "カイ",
+        "サイ",
+        "ヒイ",
+        "ジイ",
+        "リイ",
+        "テイ"
+      ],
+      "exampleWord": "内容（ないよう）",
+      "maskedReading": "○○よう",
+      "meaning": "inside"
+    },
+    {
+      "id": "分-ブン",
+      "kanji": "分",
+      "correctReading": "ブン",
+      "readingType": "on",
+      "distractorPool": [
+        "フン",
+        "ブミ",
+        "ブレ",
+        "プン",
+        "ブァ",
+        "ブザ",
+        "ブツ",
+        "ブリ",
+        "ブロ"
+      ],
+      "exampleWord": "随分（ずいぶん）",
+      "maskedReading": "ずい○○",
+      "meaning": "divide, part, minute"
+    },
+    {
+      "id": "切-セツ",
+      "kanji": "切",
+      "correctReading": "セツ",
+      "readingType": "on",
+      "distractorPool": [
+        "ケツ",
+        "シツ",
+        "サツ",
+        "ゼツ",
+        "テツ",
+        "ネツ",
+        "ゲツ",
+        "コツ",
+        "ホツ"
+      ],
+      "exampleWord": "切断する（せつだんする）",
+      "maskedReading": "○○だんする",
+      "meaning": "cut"
+    },
+    {
+      "id": "午-ゴ",
+      "kanji": "午",
+      "correctReading": "ゴ",
+      "readingType": "on",
+      "distractorPool": [
+        "コ",
+        "ゲ",
+        "ゾ",
+        "モ",
+        "ド",
+        "ロ",
+        "ガ",
+        "グ",
+        "ジ"
+      ],
+      "exampleWord": "午前（ごぜん）",
+      "maskedReading": "○ぜん",
+      "meaning": "noon"
+    },
+    {
+      "id": "友-ユウ",
+      "kanji": "友",
+      "correctReading": "ユウ",
+      "readingType": "on",
+      "distractorPool": [
+        "ユオ",
+        "ユツ",
+        "ユン",
+        "ユエ",
+        "ユイ",
+        "ユカ",
+        "ユリ",
+        "ユマ",
+        "ユタ"
+      ],
+      "exampleWord": "友人（ゆうじん）",
+      "maskedReading": "○○じん",
+      "meaning": "friend"
+    },
+    {
+      "id": "太-タイ",
+      "kanji": "太",
+      "correctReading": "タイ",
+      "readingType": "on",
+      "distractorPool": [
+        "ダイ",
+        "テイ",
+        "パイ",
+        "バイ",
+        "カイ",
+        "サイ",
+        "ティ",
+        "トイ",
+        "ナイ"
+      ],
+      "exampleWord": "太陽（たいよう）",
+      "maskedReading": "○○よう",
+      "meaning": "great, thick"
+    },
+    {
+      "id": "少-ショウ",
+      "kanji": "少",
+      "correctReading": "ショウ",
+      "readingType": "on",
+      "distractorPool": [
+        "シユウ",
+        "シオウ",
+        "ショク",
+        "シュウ",
+        "シヨウ",
+        "ジュー",
+        "シコウ",
+        "スウ",
+        "ショエ"
+      ],
+      "exampleWord": "少々（しょうしょう）",
+      "maskedReading": "○○○しょう",
+      "meaning": "little"
+    },
+    {
+      "id": "引-イン",
+      "kanji": "引",
+      "correctReading": "イン",
+      "readingType": "on",
+      "distractorPool": [
+        "エン",
+        "イム",
+        "ユン",
+        "エイ",
+        "イヌ",
+        "イオ",
+        "アン",
+        "イナ",
+        "ウィン"
+      ],
+      "exampleWord": "引力（いんりょく）",
+      "maskedReading": "○○りょく",
+      "meaning": "draw, pull"
+    },
+    {
+      "id": "心-シン",
+      "kanji": "心",
+      "correctReading": "シン",
+      "readingType": "on",
+      "distractorPool": [
+        "ジン",
+        "シツ",
+        "シマ",
+        "シュウ",
+        "シキ",
+        "シロ",
+        "サン",
+        "シュン",
+        "セン"
+      ],
+      "exampleWord": "心理学（しんりがく）",
+      "maskedReading": "○○りがく",
+      "meaning": "heart"
+    },
+    {
+      "id": "戸-コ",
+      "kanji": "戸",
+      "correctReading": "コ",
+      "readingType": "on",
+      "distractorPool": [
+        "ゴ",
+        "ト",
+        "ホ",
+        "キ",
+        "ク",
+        "ケ",
+        "サ",
+        "ゾ",
+        "チ"
+      ],
+      "exampleWord": "戸籍（こせき）",
+      "maskedReading": "○せき",
+      "meaning": "door, household"
+    },
+    {
+      "id": "方-ホウ",
+      "kanji": "方",
+      "correctReading": "ホウ",
+      "readingType": "on",
+      "distractorPool": [
+        "フウ",
+        "ボウ",
+        "ホク",
+        "ホス",
+        "ホツ",
+        "ホリ",
+        "ホエ",
+        "ホオ",
+        "ホン"
+      ],
+      "exampleWord": "方向（ほうこう）",
+      "maskedReading": "○○こう",
+      "meaning": "direction, way, square"
+    },
+    {
+      "id": "毛-モウ",
+      "kanji": "毛",
+      "correctReading": "モウ",
+      "readingType": "on",
+      "distractorPool": [
+        "ボウ",
+        "モオ",
+        "ミウ",
+        "マウ",
+        "モツ",
+        "ムウ",
+        "コウ",
+        "ホウ",
+        "ロウ"
+      ],
+      "exampleWord": "毛布（もうふ）",
+      "maskedReading": "○○ふ",
+      "meaning": "hair, fur, feather, down"
+    },
+    {
+      "id": "父-フ",
+      "kanji": "父",
+      "correctReading": "フ",
+      "readingType": "on",
+      "distractorPool": [
+        "ブ",
+        "ホ",
+        "プ",
+        "ヒ",
+        "ヘ",
+        "ベ",
+        "ペ",
+        "バ",
+        "パ"
+      ],
+      "exampleWord": "父母（ふぼ）",
+      "maskedReading": "○ぼ",
+      "meaning": "father"
+    },
+    {
+      "id": "牛-ギュウ",
+      "kanji": "牛",
+      "correctReading": "ギュウ",
+      "readingType": "on",
+      "distractorPool": [
+        "キュウ",
+        "ジュウ",
+        "ギョウ",
+        "キョウ",
+        "ビュウ",
+        "ジユウ",
+        "ヒュウ",
+        "ミュウ",
+        "リュウ"
+      ],
+      "exampleWord": "牛乳（ぎゅうにゅう）",
+      "maskedReading": "○○○にゅう",
+      "meaning": "cattle, cow, ox"
+    },
+    {
+      "id": "兄-ケイ",
+      "kanji": "兄",
+      "correctReading": "ケイ",
+      "readingType": "on",
+      "distractorPool": [
+        "ゲイ",
+        "ケン",
+        "ケツ",
+        "ケウ",
+        "ケオ",
+        "ケア",
+        "ケキ",
+        "ケジ",
+        "ケリ"
+      ],
+      "exampleWord": "父兄（ふけい）",
+      "maskedReading": "ふ○○",
+      "meaning": "older brother"
+    },
+    {
+      "id": "冬-トウ",
+      "kanji": "冬",
+      "correctReading": "トウ",
+      "readingType": "on",
+      "distractorPool": [
+        "トオ",
+        "トン",
+        "ドウ",
+        "トク",
+        "トツ",
+        "ドン",
+        "ツウ",
+        "ドオ",
+        "トエ"
+      ],
+      "exampleWord": "冬期（とうき）",
+      "maskedReading": "○○き",
+      "meaning": "winter"
+    },
+    {
+      "id": "北-ホク",
+      "kanji": "北",
+      "correctReading": "ホク",
+      "readingType": "on",
+      "distractorPool": [
+        "ホウ",
+        "フク",
+        "ホキ",
+        "ホケ",
+        "ボク",
+        "ホツ",
+        "ホコ",
+        "ヒク",
+        "ホジ"
+      ],
+      "exampleWord": "北部（ほくぶ）",
+      "maskedReading": "○○ぶ",
+      "meaning": "north"
+    },
+    {
+      "id": "半-ハン",
+      "kanji": "半",
+      "correctReading": "ハン",
+      "readingType": "on",
+      "distractorPool": [
+        "バン",
+        "パン",
+        "サン",
+        "ガン",
+        "カン",
+        "タン",
+        "ホン",
+        "ヒン",
+        "ヘン"
+      ],
+      "exampleWord": "半分（はんぶん）",
+      "maskedReading": "○○ぶん",
+      "meaning": "half"
+    },
+    {
+      "id": "古-コ",
+      "kanji": "古",
+      "correctReading": "コ",
+      "readingType": "on",
+      "distractorPool": [
+        "ゴ",
+        "ク",
+        "ツ",
+        "サ",
+        "キ",
+        "カ",
+        "シ",
+        "ス",
+        "ケ"
+      ],
+      "exampleWord": "古典（こてん）",
+      "maskedReading": "○てん",
+      "meaning": "old"
+    },
+    {
+      "id": "台-ダイ",
+      "kanji": "台",
+      "correctReading": "ダイ",
+      "readingType": "on",
+      "distractorPool": [
+        "タイ",
+        "ナイ",
+        "サイ",
+        "バイ",
+        "パイ",
+        "マイ",
+        "カイ",
+        "ガイ",
+        "ライ"
+      ],
+      "exampleWord": "台座（だいざ）",
+      "maskedReading": "○○ざ",
+      "meaning": "stand, counter for machinery"
+    },
+    {
+      "id": "外-ガイ",
+      "kanji": "外",
+      "correctReading": "ガイ",
+      "readingType": "on",
+      "distractorPool": [
+        "カイ",
+        "ゴウ",
+        "ゲイ",
+        "バイ",
+        "サイ",
+        "タイ",
+        "カウ",
+        "ゲン",
+        "ジン"
+      ],
+      "exampleWord": "外国（がいこく）",
+      "maskedReading": "○○こく",
+      "meaning": "outside"
+    },
+    {
+      "id": "市-シ",
+      "kanji": "市",
+      "correctReading": "シ",
+      "readingType": "on",
+      "distractorPool": [
+        "ジ",
+        "ツ",
+        "サ",
+        "ス",
+        "ニ",
+        "ヒ",
+        "チ",
+        "ミ",
+        "キ"
+      ],
+      "exampleWord": "横浜市（よこはまし）",
+      "maskedReading": "よこはま○",
+      "meaning": "city, market"
+    },
+    {
+      "id": "広-コウ",
+      "kanji": "広",
+      "correctReading": "コウ",
+      "readingType": "on",
+      "distractorPool": [
+        "ホウ",
+        "コツ",
+        "ヒロ",
+        "ゴウ",
+        "クウ",
+        "コオ",
+        "コジ",
+        "コエ",
+        "コサ"
+      ],
+      "exampleWord": "広大な（こうだいな）",
+      "maskedReading": "○○だいな",
+      "meaning": "wide"
+    },
+    {
+      "id": "母-ボ",
+      "kanji": "母",
+      "correctReading": "ボ",
+      "readingType": "on",
+      "distractorPool": [
+        "ホ",
+        "モ",
+        "ポ",
+        "バ",
+        "パ",
+        "ベ",
+        "ビ",
+        "ブ",
+        "ペ"
+      ],
+      "exampleWord": "母国語（ぼこくご）",
+      "maskedReading": "○こくご",
+      "meaning": "mother"
+    },
+    {
+      "id": "用-ヨウ",
+      "kanji": "用",
+      "correctReading": "ヨウ",
+      "readingType": "on",
+      "distractorPool": [
+        "ユウ",
+        "ヨオ",
+        "ユオ",
+        "コウ",
+        "ロウ",
+        "ホウ",
+        "トウ",
+        "ゴウ",
+        "ゾウ"
+      ],
+      "exampleWord": "用事（ようじ）",
+      "maskedReading": "○○じ",
+      "meaning": "employ, things to do"
+    },
+    {
+      "id": "矢-シ",
+      "kanji": "矢",
+      "correctReading": "シ",
+      "readingType": "on",
+      "distractorPool": [
+        "ジ",
+        "サ",
+        "ツ",
+        "ス",
+        "ヤ",
+        "ニ",
+        "ヒ",
+        "チ",
+        "ジュ"
+      ],
+      "exampleWord": "一矢（いっし）",
+      "maskedReading": "いっ○",
+      "meaning": "arrow"
+    },
+    {
+      "id": "交-コウ",
+      "kanji": "交",
+      "correctReading": "コウ",
+      "readingType": "on",
+      "distractorPool": [
+        "カツ",
+        "ゴウ",
+        "コツ",
+        "コク",
+        "コエ",
+        "コオ",
+        "キョウ",
+        "ゴク",
+        "コン"
+      ],
+      "exampleWord": "交通（こうつう）",
+      "maskedReading": "○○つう",
+      "meaning": "intercourse, interchange"
+    },
+    {
+      "id": "会-カイ",
+      "kanji": "会",
+      "correctReading": "カイ",
+      "readingType": "on",
+      "distractorPool": [
+        "ガイ",
+        "ケイ",
+        "サイ",
+        "パイ",
+        "ハイ",
+        "タイ",
+        "マイ",
+        "ライ",
+        "ナイ"
+      ],
+      "exampleWord": "会話（かいわ）",
+      "maskedReading": "○○わ",
+      "meaning": "meet, society"
+    },
+    {
+      "id": "光-コウ",
+      "kanji": "光",
+      "correctReading": "コウ",
+      "readingType": "on",
+      "distractorPool": [
+        "キョウ",
+        "ゴウ",
+        "ヒカリ",
+        "ミツ",
+        "ホウ",
+        "クウ",
+        "ソウ",
+        "トウ",
+        "ノウ"
+      ],
+      "exampleWord": "光線（こうせん）",
+      "maskedReading": "○○せん",
+      "meaning": "light"
+    },
+    {
+      "id": "合-ゴウ",
+      "kanji": "合",
+      "correctReading": "ゴウ",
+      "readingType": "on",
+      "distractorPool": [
+        "コウ",
+        "ゴオ",
+        "ドウ",
+        "トウ",
+        "ホウ",
+        "ロウ",
+        "ゴエ",
+        "ゴツ",
+        "ゴヤ"
+      ],
+      "exampleWord": "合計する（ごうけいする）",
+      "maskedReading": "○○けいする",
+      "meaning": "combine, fit, match"
+    },
+    {
+      "id": "同-ドウ",
+      "kanji": "同",
+      "correctReading": "ドウ",
+      "readingType": "on",
+      "distractorPool": [
+        "トウ",
+        "ドン",
+        "ロウ",
+        "ドオ",
+        "ゾウ",
+        "ショウ",
+        "モウ",
+        "ドー",
+        "バウ"
+      ],
+      "exampleWord": "同一（どういつ）",
+      "maskedReading": "○○いつ",
+      "meaning": "same"
+    },
+    {
+      "id": "回-カイ",
+      "kanji": "回",
+      "correctReading": "カイ",
+      "readingType": "on",
+      "distractorPool": [
+        "ガイ",
+        "ケイ",
+        "サイ",
+        "タイ",
+        "マイ",
+        "パイ",
+        "バイ",
+        "ジイ",
+        "レイ"
+      ],
+      "exampleWord": "回数券（かいすうけん）",
+      "maskedReading": "○○すうけん",
+      "meaning": "turn round, time"
+    },
+    {
+      "id": "地-チ",
+      "kanji": "地",
+      "correctReading": "チ",
+      "readingType": "on",
+      "distractorPool": [
+        "ジ",
+        "シ",
+        "ニ",
+        "テ",
+        "ツ",
+        "ト",
+        "キ",
+        "ヒ",
+        "ティ"
+      ],
+      "exampleWord": "地下（ちか）",
+      "maskedReading": "○か",
+      "meaning": "ground, place, base, earth, land"
+    },
+    {
+      "id": "多-タ",
+      "kanji": "多",
+      "correctReading": "タ",
+      "readingType": "on",
+      "distractorPool": [
+        "パ",
+        "ラ",
+        "ナ",
+        "ダ",
+        "バ",
+        "カ",
+        "サ",
+        "ト",
+        "チ"
+      ],
+      "exampleWord": "多分（たぶん）",
+      "maskedReading": "○ぶん",
+      "meaning": "many"
+    },
+    {
+      "id": "寺-ジ",
+      "kanji": "寺",
+      "correctReading": "ジ",
+      "readingType": "on",
+      "distractorPool": [
+        "シ",
+        "チ",
+        "ヂ",
+        "テラ",
+        "デ",
+        "ツ",
+        "リ",
+        "ヒ",
+        "ビ"
+      ],
+      "exampleWord": "寺院（じいん）",
+      "maskedReading": "○いん",
+      "meaning": "Buddhist temple"
+    },
+    {
+      "id": "当-トウ",
+      "kanji": "当",
+      "correctReading": "トウ",
+      "readingType": "on",
+      "distractorPool": [
+        "トオ",
+        "ドウ",
+        "トュウ",
+        "ツウ",
+        "トツ",
+        "トエ",
+        "ドオ",
+        "トゥ",
+        "テウ"
+      ],
+      "exampleWord": "当日（とうじつ）",
+      "maskedReading": "○○じつ",
+      "meaning": "present, hit"
+    },
+    {
+      "id": "毎-マイ",
+      "kanji": "毎",
+      "correctReading": "マイ",
+      "readingType": "on",
+      "distractorPool": [
+        "ミイ",
+        "マウ",
+        "マエ",
+        "バイ",
+        "ミア",
+        "マホ",
+        "ミウ",
+        "バウ",
+        "モイ"
+      ],
+      "exampleWord": "毎朝（まいあさ）",
+      "maskedReading": "○○あさ",
+      "meaning": "every"
+    },
+    {
+      "id": "池-チ",
+      "kanji": "池",
+      "correctReading": "チ",
+      "readingType": "on",
+      "distractorPool": [
+        "ジ",
+        "シ",
+        "ツ",
+        "ニ",
+        "キ",
+        "ヒ",
+        "テ",
+        "ト",
+        "フ"
+      ],
+      "exampleWord": "電池（でんち）",
+      "maskedReading": "でん○",
+      "meaning": "pond"
+    },
+    {
+      "id": "米-ベイ",
+      "kanji": "米",
+      "correctReading": "ベイ",
+      "readingType": "on",
+      "distractorPool": [
+        "ヘイ",
+        "ベツ",
+        "ベン",
+        "ペイ",
+        "バイ",
+        "ビエ",
+        "ベウ",
+        "ベオ",
+        "ベア"
+      ],
+      "exampleWord": "米価（べいか）",
+      "maskedReading": "○○か",
+      "meaning": "rice, America"
+    },
+    {
+      "id": "羽-ウ",
+      "kanji": "羽",
+      "correctReading": "ウ",
+      "readingType": "on",
+      "distractorPool": [
+        "オ",
+        "ユ",
+        "エ",
+        "ア",
+        "イ",
+        "ヴ",
+        "カ",
+        "キ",
+        "ケ"
+      ],
+      "exampleWord": "羽毛（うもう）",
+      "maskedReading": "○もう",
+      "meaning": "feather, wing"
+    },
+    {
+      "id": "考-コウ",
+      "kanji": "考",
+      "correctReading": "コウ",
+      "readingType": "on",
+      "distractorPool": [
+        "コツ",
+        "ゴウ",
+        "コエ",
+        "コク",
+        "コオ",
+        "コイ",
+        "コュウ",
+        "コョウ",
+        "コン"
+      ],
+      "exampleWord": "考古学（こうこがく）",
+      "maskedReading": "○○こがく",
+      "meaning": "think"
+    },
+    {
+      "id": "肉-ニク",
+      "kanji": "肉",
+      "correctReading": "ニク",
+      "readingType": "on",
+      "distractorPool": [
+        "ミク",
+        "シク",
+        "ジク",
+        "ヒク",
+        "リク",
+        "ビク",
+        "ヂク",
+        "ヌク",
+        "ピク"
+      ],
+      "exampleWord": "肉屋（にくや）",
+      "maskedReading": "○○や",
+      "meaning": "flesh, meat"
+    },
+    {
+      "id": "自-ジ",
+      "kanji": "自",
+      "correctReading": "ジ",
+      "readingType": "on",
+      "distractorPool": [
+        "シ",
+        "ヂ",
+        "ズ",
+        "ゼ",
+        "チ",
+        "ディ",
+        "ツ",
+        "ス",
+        "ヅ"
+      ],
+      "exampleWord": "自慢する（じまんする）",
+      "maskedReading": "○まんする",
+      "meaning": "self"
+    },
+    {
+      "id": "色-ショク",
+      "kanji": "色",
+      "correctReading": "ショク",
+      "readingType": "on",
+      "distractorPool": [
+        "シキ",
+        "ショウ",
+        "サク",
+        "シユク",
+        "シツ",
+        "シコウ",
+        "ソク",
+        "セク",
+        "ジク"
+      ],
+      "exampleWord": "地方色（ちほうしょく）",
+      "maskedReading": "ちほう○○○",
+      "meaning": "color"
+    },
+    {
+      "id": "行-コウ",
+      "kanji": "行",
+      "correctReading": "コウ",
+      "readingType": "on",
+      "distractorPool": [
+        "ゴウ",
+        "コオ",
+        "ショウ",
+        "コツ",
+        "クウ",
+        "コエ",
+        "ギョウ",
+        "コク",
+        "コト"
+      ],
+      "exampleWord": "銀行（ぎんこう）",
+      "maskedReading": "ぎん○○",
+      "meaning": "go, act, line"
+    },
+    {
+      "id": "西-セイ",
+      "kanji": "西",
+      "correctReading": "セイ",
+      "readingType": "on",
+      "distractorPool": [
+        "サイ",
+        "ゼイ",
+        "ケイ",
+        "テイ",
+        "ヘイ",
+        "ベイ",
+        "シイ",
+        "スイ",
+        "シエ"
+      ],
+      "exampleWord": "西部（せいぶ）",
+      "maskedReading": "○○ぶ",
+      "meaning": "west"
+    },
+    {
+      "id": "体-タイ",
+      "kanji": "体",
+      "correctReading": "タイ",
+      "readingType": "on",
+      "distractorPool": [
+        "テイ",
+        "ダイ",
+        "タウ",
+        "サイ",
+        "パイ",
+        "ジイ",
+        "チイ",
+        "トイ",
+        "ヒイ"
+      ],
+      "exampleWord": "体重（たいじゅう）",
+      "maskedReading": "○○じゅう",
+      "meaning": "body, form"
+    },
+    {
+      "id": "何-なに",
+      "kanji": "何",
+      "correctReading": "なに",
+      "readingType": "kun",
+      "distractorPool": [
+        "なん",
+        "にん",
+        "なみ",
+        "にに",
+        "なむ",
+        "には",
+        "なぬ",
+        "にま",
+        "むな"
+      ],
+      "exampleWord": "何色（なにいろ）",
+      "maskedReading": "○○いろ",
+      "meaning": "what, how many"
+    },
+    {
+      "id": "作-サク",
+      "kanji": "作",
+      "correctReading": "サク",
+      "readingType": "on",
+      "distractorPool": [
+        "サツ",
+        "サン",
+        "サキ",
+        "サゲ",
+        "サバ",
+        "サウ",
+        "サゴ",
+        "サコ",
+        "サグ"
+      ],
+      "exampleWord": "作成する（さくせいする）",
+      "maskedReading": "○○せいする",
+      "meaning": "make, work"
+    },
+    {
+      "id": "図-ズ",
+      "kanji": "図",
+      "correctReading": "ズ",
+      "readingType": "on",
+      "distractorPool": [
+        "ス",
+        "ジ",
+        "ツ",
+        "ヅ",
+        "ド",
+        "ヂ",
+        "サ",
+        "シ",
+        "ソ"
+      ],
+      "exampleWord": "地図（ちず）",
+      "maskedReading": "ち○",
+      "meaning": "drawing"
+    },
+    {
+      "id": "声-セイ",
+      "kanji": "声",
+      "correctReading": "セイ",
+      "readingType": "on",
+      "distractorPool": [
+        "サイ",
+        "ゼイ",
+        "シン",
+        "ケイ",
+        "ネイ",
+        "テイ",
+        "セウ",
+        "サエ",
+        "セオ"
+      ],
+      "exampleWord": "音声（おんせい）",
+      "maskedReading": "おん○○",
+      "meaning": "voice"
+    },
+    {
+      "id": "売-バイ",
+      "kanji": "売",
+      "correctReading": "バイ",
+      "readingType": "on",
+      "distractorPool": [
+        "バウ",
+        "ハイ",
+        "マイ",
+        "パイ",
+        "ブイ",
+        "ベイ",
+        "カイ",
+        "サイ",
+        "タイ"
+      ],
+      "exampleWord": "売買する（ばいばいする）",
+      "maskedReading": "○○ばいする",
+      "meaning": "sell"
+    },
+    {
+      "id": "弟-テイ",
+      "kanji": "弟",
+      "correctReading": "テイ",
+      "readingType": "on",
+      "distractorPool": [
+        "タイ",
+        "デイ",
+        "レイ",
+        "セイ",
+        "ネイ",
+        "ヘイ",
+        "ベイ",
+        "ペイ",
+        "ケイ"
+      ],
+      "exampleWord": "師弟（してい）",
+      "maskedReading": "し○○",
+      "meaning": "younger brother"
+    },
+    {
+      "id": "形-ケイ",
+      "kanji": "形",
+      "correctReading": "ケイ",
+      "readingType": "on",
+      "distractorPool": [
+        "ゲイ",
+        "ケン",
+        "ケツ",
+        "ケア",
+        "ケウ",
+        "ケジ",
+        "ケラ",
+        "ケミ",
+        "ケホ"
+      ],
+      "exampleWord": "形容詞（けいようし）",
+      "maskedReading": "○○ようし",
+      "meaning": "shape"
+    },
+    {
+      "id": "来-ライ",
+      "kanji": "来",
+      "correctReading": "ライ",
+      "readingType": "on",
+      "distractorPool": [
+        "カイ",
+        "レイ",
+        "ラウ",
+        "リョウ",
+        "マイ",
+        "ラツ",
+        "サイ",
+        "タイ",
+        "リャ"
+      ],
+      "exampleWord": "来月（らいげつ）",
+      "maskedReading": "○○げつ",
+      "meaning": "come"
+    },
+    {
+      "id": "汽-キ",
+      "kanji": "汽",
+      "correctReading": "キ",
+      "readingType": "on",
+      "distractorPool": [
+        "シ",
+        "ギ",
+        "ジ",
+        "ク",
+        "ケ",
+        "コ",
+        "ヒ",
+        "ニ",
+        "リ"
+      ],
+      "exampleWord": "汽車（きしゃ）",
+      "maskedReading": "○しゃ",
+      "meaning": "steam"
+    },
+    {
+      "id": "社-シャ",
+      "kanji": "社",
+      "correctReading": "シャ",
+      "readingType": "on",
+      "distractorPool": [
+        "ジャ",
+        "シヤ",
+        "サヤ",
+        "シア",
+        "シエ",
+        "ジア",
+        "サウ",
+        "シュ",
+        "ジュ"
+      ],
+      "exampleWord": "社会（しゃかい）",
+      "maskedReading": "○○かい",
+      "meaning": "company, society"
+    },
+    {
+      "id": "角-カク",
+      "kanji": "角",
+      "correctReading": "カク",
+      "readingType": "on",
+      "distractorPool": [
+        "キョク",
+        "カツ",
+        "コク",
+        "ガク",
+        "サク",
+        "タク",
+        "キク",
+        "ケン",
+        "カン"
+      ],
+      "exampleWord": "角度（かくど）",
+      "maskedReading": "○○ど",
+      "meaning": "angle, horn, corner"
+    },
+    {
+      "id": "言-ゲン",
+      "kanji": "言",
+      "correctReading": "ゲン",
+      "readingType": "on",
+      "distractorPool": [
+        "コン",
+        "ケン",
+        "ゴン",
+        "ゲイ",
+        "ゲツ",
+        "ケツ",
+        "カン",
+        "ジン",
+        "ケイ"
+      ],
+      "exampleWord": "言語学（げんごがく）",
+      "maskedReading": "○○ごがく",
+      "meaning": "say, speech"
+    },
+    {
+      "id": "谷-コク",
+      "kanji": "谷",
+      "correctReading": "コク",
+      "readingType": "on",
+      "distractorPool": [
+        "ゴク",
+        "トク",
+        "コウ",
+        "カク",
+        "キク",
+        "サク",
+        "ホク",
+        "リク",
+        "ヌク"
+      ],
+      "exampleWord": "渓谷（けいこく）",
+      "maskedReading": "けい○○",
+      "meaning": "valley"
+    },
+    {
+      "id": "近-キン",
+      "kanji": "近",
+      "correctReading": "キン",
+      "readingType": "on",
+      "distractorPool": [
+        "コン",
+        "ケン",
+        "カン",
+        "ジン",
+        "シン",
+        "リン",
+        "ギン",
+        "クン",
+        "キュン"
+      ],
+      "exampleWord": "近視（きんし）",
+      "maskedReading": "○○し",
+      "meaning": "near, recent"
+    },
+    {
+      "id": "里-リ",
+      "kanji": "里",
+      "correctReading": "リ",
+      "readingType": "on",
+      "distractorPool": [
+        "ミ",
+        "ジ",
+        "シ",
+        "ロ",
+        "レ",
+        "ラ",
+        "ニ",
+        "ヒ",
+        "チ"
+      ],
+      "exampleWord": "郷里（きょうり）",
+      "maskedReading": "きょう○",
+      "meaning": "countryside, league, hometown, village, town"
+    },
+    {
+      "id": "麦-バク",
+      "kanji": "麦",
+      "correctReading": "バク",
+      "readingType": "on",
+      "distractorPool": [
+        "マク",
+        "パク",
+        "ハク",
+        "ブク",
+        "ビク",
+        "ベク",
+        "カク",
+        "ダク",
+        "ガク"
+      ],
+      "exampleWord": "麦秋（ばくしゅう）",
+      "maskedReading": "○○しゅう",
+      "meaning": "wheat"
+    },
+    {
+      "id": "京-キョウ",
+      "kanji": "京",
+      "correctReading": "キョウ",
+      "readingType": "on",
+      "distractorPool": [
+        "キョオ",
+        "キュウ",
+        "キョエ",
+        "キョン",
+        "キョカ",
+        "キョシ",
+        "キョフ",
+        "キョグ",
+        "キョツ"
+      ],
+      "exampleWord": "東京（とうきょう）",
+      "maskedReading": "とう○○○",
+      "meaning": "capital"
+    },
+    {
+      "id": "国-コク",
+      "kanji": "国",
+      "correctReading": "コク",
+      "readingType": "on",
+      "distractorPool": [
+        "ゴク",
+        "コツ",
+        "コウ",
+        "カク",
+        "コサ",
+        "コブ",
+        "サク",
+        "ホク",
+        "トク"
+      ],
+      "exampleWord": "国際（こくさい）",
+      "maskedReading": "○○さい",
+      "meaning": "country"
+    },
+    {
+      "id": "夜-ヤ",
+      "kanji": "夜",
+      "correctReading": "ヤ",
+      "readingType": "on",
+      "distractorPool": [
+        "ヨ",
+        "エ",
+        "ユ",
+        "イ",
+        "ア",
+        "オ",
+        "ワ",
+        "エイ",
+        "レ"
+      ],
+      "exampleWord": "今夜（こんや）",
+      "maskedReading": "こん○",
+      "meaning": "night"
+    },
+    {
+      "id": "妹-マイ",
+      "kanji": "妹",
+      "correctReading": "マイ",
+      "readingType": "on",
+      "distractorPool": [
+        "ミイ",
+        "マウ",
+        "バイ",
+        "マエ",
+        "ミウ",
+        "マオ",
+        "ミエ",
+        "メイ",
+        "ミュ"
+      ],
+      "exampleWord": "姉妹（しまい）",
+      "maskedReading": "し○○",
+      "meaning": "younger sister"
+    },
+    {
+      "id": "姉-シ",
+      "kanji": "姉",
+      "correctReading": "シ",
+      "readingType": "on",
+      "distractorPool": [
+        "ジ",
+        "チ",
+        "サ",
+        "ツ",
+        "ナ",
+        "ヒ",
+        "ス",
+        "ミ",
+        "リ"
+      ],
+      "exampleWord": "姉妹（しまい）",
+      "maskedReading": "○まい",
+      "meaning": "older sister"
+    },
+    {
+      "id": "岩-ガン",
+      "kanji": "岩",
+      "correctReading": "ガン",
+      "readingType": "on",
+      "distractorPool": [
+        "カン",
+        "コン",
+        "バン",
+        "サン",
+        "タン",
+        "パン",
+        "ガツ",
+        "ゲン",
+        "ゴン"
+      ],
+      "exampleWord": "岩石（がんせき）",
+      "maskedReading": "○○せき",
+      "meaning": "rock"
+    },
+    {
+      "id": "店-テン",
+      "kanji": "店",
+      "correctReading": "テン",
+      "readingType": "on",
+      "distractorPool": [
+        "テイ",
+        "デン",
+        "テツ",
+        "トン",
+        "セン",
+        "ケン",
+        "ジン",
+        "タン",
+        "チン"
+      ],
+      "exampleWord": "商店（しょうてん）",
+      "maskedReading": "しょう○○",
+      "meaning": "shop, store"
+    },
+    {
+      "id": "明-メイ",
+      "kanji": "明",
+      "correctReading": "メイ",
+      "readingType": "on",
+      "distractorPool": [
+        "ベイ",
+        "マイ",
+        "ミョウ",
+        "レイ",
+        "ケイ",
+        "ヘイ",
+        "ネイ",
+        "ミエ",
+        "デイ"
+      ],
+      "exampleWord": "明治（めいじ）",
+      "maskedReading": "○○じ",
+      "meaning": "bright, clear"
+    },
+    {
+      "id": "東-トウ",
+      "kanji": "東",
+      "correctReading": "トウ",
+      "readingType": "on",
+      "distractorPool": [
+        "ドウ",
+        "トオ",
+        "トエ",
+        "トー",
+        "ツウ",
+        "トゥ",
+        "トツ",
+        "ツオ",
+        "ドオ"
+      ],
+      "exampleWord": "東京（とうきょう）",
+      "maskedReading": "○○きょう",
+      "meaning": "east"
+    },
+    {
+      "id": "歩-ホ",
+      "kanji": "歩",
+      "correctReading": "ホ",
+      "readingType": "on",
+      "distractorPool": [
+        "ボウ",
+        "フウ",
+        "ヒ",
+        "コ",
+        "バ",
+        "ミ",
+        "フ",
+        "コウ",
+        "ベ"
+      ],
+      "exampleWord": "歩道（ほどう）",
+      "maskedReading": "○どう",
+      "meaning": "walk"
+    },
+    {
+      "id": "画-ガ",
+      "kanji": "画",
+      "correctReading": "ガ",
+      "readingType": "on",
+      "distractorPool": [
+        "カ",
+        "ギャ",
+        "パ",
+        "カク",
+        "ギ",
+        "バ",
+        "ゲ",
+        "ゴ",
+        "ザ"
+      ],
+      "exampleWord": "映画（えいが）",
+      "maskedReading": "えい○",
+      "meaning": "picture"
+    },
+    {
+      "id": "直-チョク",
+      "kanji": "直",
+      "correctReading": "チョク",
+      "readingType": "on",
+      "distractorPool": [
+        "ジョク",
+        "ショク",
+        "チュク",
+        "チョウ",
+        "ジョウ",
+        "トク",
+        "サク",
+        "ジュク",
+        "ジク"
+      ],
+      "exampleWord": "直接（ちょくせつ）",
+      "maskedReading": "○○○せつ",
+      "meaning": "straight, fix, repair"
+    },
+    {
+      "id": "知-チ",
+      "kanji": "知",
+      "correctReading": "チ",
+      "readingType": "on",
+      "distractorPool": [
+        "ジ",
+        "シ",
+        "ツ",
+        "ティ",
+        "ディ",
+        "ニ",
+        "キ",
+        "テ",
+        "ト"
+      ],
+      "exampleWord": "知識（ちしき）",
+      "maskedReading": "○しき",
+      "meaning": "know"
+    },
+    {
+      "id": "長-チョウ",
+      "kanji": "長",
+      "correctReading": "チョウ",
+      "readingType": "on",
+      "distractorPool": [
+        "ショウ",
+        "ジョウ",
+        "チュウ",
+        "チョク",
+        "チョン",
+        "チョイ",
+        "ヒョウ",
+        "チョオ",
+        "チョエ"
+      ],
+      "exampleWord": "身長（しんちょう）",
+      "maskedReading": "しん○○○",
+      "meaning": "long, chief"
+    },
+    {
+      "id": "門-モン",
+      "kanji": "門",
+      "correctReading": "モン",
+      "readingType": "on",
+      "distractorPool": [
+        "ボン",
+        "モウ",
+        "ミン",
+        "コン",
+        "トン",
+        "ポン",
+        "サン",
+        "ホン",
+        "ナン"
+      ],
+      "exampleWord": "正門（せいもん）",
+      "maskedReading": "せい○○",
+      "meaning": "gate"
+    },
+    {
+      "id": "前-ゼン",
+      "kanji": "前",
+      "correctReading": "ゼン",
+      "readingType": "on",
+      "distractorPool": [
+        "セン",
+        "ゼイ",
+        "テン",
+        "サン",
+        "コン",
+        "ポン",
+        "ゲン",
+        "デン",
+        "ベン"
+      ],
+      "exampleWord": "午前（ごぜん）",
+      "maskedReading": "ご○○",
+      "meaning": "before, front"
+    },
+    {
+      "id": "南-ナン",
+      "kanji": "南",
+      "correctReading": "ナン",
+      "readingType": "on",
+      "distractorPool": [
+        "ミン",
+        "バン",
+        "ハン",
+        "ナツ",
+        "ナリ",
+        "ナミ",
+        "サン",
+        "タン",
+        "ラン"
+      ],
+      "exampleWord": "南極（なんきょく）",
+      "maskedReading": "○○きょく",
+      "meaning": "south"
+    },
+    {
+      "id": "室-シツ",
+      "kanji": "室",
+      "correctReading": "シツ",
+      "readingType": "on",
+      "distractorPool": [
+        "ジツ",
+        "シュツ",
+        "サツ",
+        "シチ",
+        "ジチ",
+        "ツシ",
+        "ジュツ",
+        "シュウ",
+        "ジシ"
+      ],
+      "exampleWord": "教室（きょうしつ）",
+      "maskedReading": "きょう○○",
+      "meaning": "room"
+    },
+    {
+      "id": "後-ゴ",
+      "kanji": "後",
+      "correctReading": "ゴ",
+      "readingType": "on",
+      "distractorPool": [
+        "コ",
+        "ギ",
+        "ゾ",
+        "サ",
+        "タ",
+        "ジ",
+        "ド",
+        "ボ",
+        "ポ"
+      ],
+      "exampleWord": "午後（ごご）",
+      "maskedReading": "ご○",
+      "meaning": "after, back"
+    },
+    {
+      "id": "思-シ",
+      "kanji": "思",
+      "correctReading": "シ",
+      "readingType": "on",
+      "distractorPool": [
+        "ジ",
+        "サ",
+        "ツ",
+        "ス",
+        "チ",
+        "ヒ",
+        "セ",
+        "ミ",
+        "リ"
+      ],
+      "exampleWord": "思考する（しこうする）",
+      "maskedReading": "○こうする",
+      "meaning": "think"
+    },
+    {
+      "id": "星-セイ",
+      "kanji": "星",
+      "correctReading": "セイ",
+      "readingType": "on",
+      "distractorPool": [
+        "サイ",
+        "ゼイ",
+        "シエ",
+        "サウ",
+        "ゼウ",
+        "シオ",
+        "テイ",
+        "ヘイ",
+        "ベイ"
+      ],
+      "exampleWord": "星座（せいざ）",
+      "maskedReading": "○○ざ",
+      "meaning": "star"
+    },
+    {
+      "id": "春-シュン",
+      "kanji": "春",
+      "correctReading": "シュン",
+      "readingType": "on",
+      "distractorPool": [
+        "シン",
+        "ジュン",
+        "ハン",
+        "スン",
+        "チュン",
+        "ズン",
+        "ツン",
+        "ジン",
+        "サン"
+      ],
+      "exampleWord": "春分の日（しゅんぶんのひ）",
+      "maskedReading": "○○○ぶんのひ",
+      "meaning": "spring"
+    },
+    {
+      "id": "昼-チュウ",
+      "kanji": "昼",
+      "correctReading": "チュウ",
+      "readingType": "on",
+      "distractorPool": [
+        "ジュウ",
+        "チュオ",
+        "チュエ",
+        "チュッ",
+        "チュロ",
+        "チュジ",
+        "チュカ",
+        "チュナ",
+        "チュヒ"
+      ],
+      "exampleWord": "昼食（ちゅうしょく）",
+      "maskedReading": "○○○しょく",
+      "meaning": "daytime"
+    },
+    {
+      "id": "活-カツ",
+      "kanji": "活",
+      "correctReading": "カツ",
+      "readingType": "on",
+      "distractorPool": [
+        "カン",
+        "カリ",
+        "カジ",
+        "イキ",
+        "コツ",
+        "キツ",
+        "カチ",
+        "カト",
+        "カラ"
+      ],
+      "exampleWord": "活字（かつじ）",
+      "maskedReading": "○○じ",
+      "meaning": "active, live"
+    },
+    {
+      "id": "海-カイ",
+      "kanji": "海",
+      "correctReading": "カイ",
+      "readingType": "on",
+      "distractorPool": [
+        "サイ",
+        "ケイ",
+        "タイ",
+        "バイ",
+        "パイ",
+        "マイ",
+        "ジイ",
+        "ヒイ",
+        "リイ"
+      ],
+      "exampleWord": "日本海（にほんかい）",
+      "maskedReading": "にほん○○",
+      "meaning": "sea, ocean"
+    },
+    {
+      "id": "点-テン",
+      "kanji": "点",
+      "correctReading": "テン",
+      "readingType": "on",
+      "distractorPool": [
+        "デン",
+        "テツ",
+        "トン",
+        "テラ",
+        "テリ",
+        "テフ",
+        "テキ",
+        "テナ",
+        "テム"
+      ],
+      "exampleWord": "点線（てんせん）",
+      "maskedReading": "○○せん",
+      "meaning": "point"
+    },
+    {
+      "id": "秋-シュウ",
+      "kanji": "秋",
+      "correctReading": "シュウ",
+      "readingType": "on",
+      "distractorPool": [
+        "スウ",
+        "シュツ",
+        "シュオ",
+        "ジュー",
+        "スエ",
+        "スオ",
+        "ジュウ",
+        "シュン",
+        "シユウ"
+      ],
+      "exampleWord": "秋分（しゅうぶん）",
+      "maskedReading": "○○○ぶん",
+      "meaning": "autumn"
+    },
+    {
+      "id": "科-カ",
+      "kanji": "科",
+      "correctReading": "カ",
+      "readingType": "on",
+      "distractorPool": [
+        "サ",
+        "タ",
+        "ガ",
+        "キ",
+        "ケ",
+        "コ",
+        "パ",
+        "バ",
+        "ラ"
+      ],
+      "exampleWord": "科学（かがく）",
+      "maskedReading": "○がく",
+      "meaning": "subject of study"
+    },
+    {
+      "id": "茶-チャ",
+      "kanji": "茶",
+      "correctReading": "チャ",
+      "readingType": "on",
+      "distractorPool": [
+        "ジャ",
+        "チョ",
+        "サ",
+        "チュ",
+        "シア",
+        "ニャ",
+        "チラ",
+        "タラ",
+        "シラ"
+      ],
+      "exampleWord": "紅茶（こうちゃ）",
+      "maskedReading": "こう○○",
+      "meaning": "tea"
+    },
+    {
+      "id": "計-ケイ",
+      "kanji": "計",
+      "correctReading": "ケイ",
+      "readingType": "on",
+      "distractorPool": [
+        "ゲイ",
+        "ケツ",
+        "ケン",
+        "ケロ",
+        "ケウ",
+        "ケオ",
+        "ケコ",
+        "ケホ",
+        "ケジ"
+      ],
+      "exampleWord": "時計（とけい）",
+      "maskedReading": "と○○",
+      "meaning": "plan, compute, measure"
+    },
+    {
+      "id": "風-フウ",
+      "kanji": "風",
+      "correctReading": "フウ",
+      "readingType": "on",
+      "distractorPool": [
+        "ブウ",
+        "フオ",
+        "プウ",
+        "フツ",
+        "フエ",
+        "フィ",
+        "フア",
+        "フイ",
+        "フカ"
+      ],
+      "exampleWord": "風習（ふうしゅう）",
+      "maskedReading": "○○しゅう",
+      "meaning": "wind, manner"
+    },
+    {
+      "id": "食-ショク",
+      "kanji": "食",
+      "correctReading": "ショク",
+      "readingType": "on",
+      "distractorPool": [
+        "ショウ",
+        "シキ",
+        "シュン",
+        "ジョウ",
+        "チョク",
+        "ビョク",
+        "ショツ",
+        "シオク",
+        "シュク"
+      ],
+      "exampleWord": "食堂（しょくどう）",
+      "maskedReading": "○○○どう",
+      "meaning": "eat, food"
+    },
+    {
+      "id": "首-シュ",
+      "kanji": "首",
+      "correctReading": "シュ",
+      "readingType": "on",
+      "distractorPool": [
+        "スウ",
+        "シツ",
+        "スオ",
+        "ツウ",
+        "ジュ",
+        "スエ",
+        "スカ",
+        "シラ",
+        "スリ"
+      ],
+      "exampleWord": "首都（しゅと）",
+      "maskedReading": "○○と",
+      "meaning": "head, neck, leader"
+    },
+    {
+      "id": "原-ゲン",
+      "kanji": "原",
+      "correctReading": "ゲン",
+      "readingType": "on",
+      "distractorPool": [
+        "カン",
+        "ケン",
+        "ゲツ",
+        "ジン",
+        "コン",
+        "バン",
+        "ガン",
+        "ゲイ",
+        "ゲロ"
+      ],
+      "exampleWord": "原稿（げんこう）",
+      "maskedReading": "○○こう",
+      "meaning": "plain, original"
+    },
+    {
+      "id": "夏-カ",
+      "kanji": "夏",
+      "correctReading": "カ",
+      "readingType": "on",
+      "distractorPool": [
+        "ガ",
+        "サ",
+        "タ",
+        "キ",
+        "ケ",
+        "ク",
+        "ナ",
+        "ハ",
+        "マ"
+      ],
+      "exampleWord": "夏期講座（かきこうざ）",
+      "maskedReading": "○きこうざ",
+      "meaning": "summer"
+    },
+    {
+      "id": "家-カ",
+      "kanji": "家",
+      "correctReading": "カ",
+      "readingType": "on",
+      "distractorPool": [
+        "ガ",
+        "キ",
+        "サ",
+        "タ",
+        "ナ",
+        "ハ",
+        "ケ",
+        "コ",
+        "シ"
+      ],
+      "exampleWord": "家族（かぞく）",
+      "maskedReading": "○ぞく",
+      "meaning": "house, family"
+    },
+    {
+      "id": "帰-キ",
+      "kanji": "帰",
+      "correctReading": "キ",
+      "readingType": "on",
+      "distractorPool": [
+        "ギ",
+        "シ",
+        "ジ",
+        "ク",
+        "ケ",
+        "コ",
+        "ヒ",
+        "テ",
+        "リ"
+      ],
+      "exampleWord": "帰国する（きこくする）",
+      "maskedReading": "○こくする",
+      "meaning": "return"
+    },
+    {
+      "id": "弱-ジャク",
+      "kanji": "弱",
+      "correctReading": "ジャク",
+      "readingType": "on",
+      "distractorPool": [
+        "ジャツ",
+        "ジャジ",
+        "ジャホ",
+        "ジャゲ",
+        "ジャグ",
+        "ジャコ",
+        "ジャブ",
+        "ジャフ",
+        "ジャレ"
+      ],
+      "exampleWord": "弱点（じゃくてん）",
+      "maskedReading": "○○○てん",
+      "meaning": "weak"
+    },
+    {
+      "id": "時-ジ",
+      "kanji": "時",
+      "correctReading": "ジ",
+      "readingType": "on",
+      "distractorPool": [
+        "シ",
+        "ヂ",
+        "ギ",
+        "チ",
+        "ツ",
+        "トキ",
+        "チュ",
+        "ヂュ",
+        "ツィ"
+      ],
+      "exampleWord": "時間（じかん）",
+      "maskedReading": "○かん",
+      "meaning": "time"
+    },
+    {
+      "id": "書-ショ",
+      "kanji": "書",
+      "correctReading": "ショ",
+      "readingType": "on",
+      "distractorPool": [
+        "シヨ",
+        "スホ",
+        "ジユ",
+        "シオ",
+        "シコ",
+        "シツ",
+        "シュ",
+        "スヨ",
+        "チョ"
+      ],
+      "exampleWord": "書庫（しょこ）",
+      "maskedReading": "○○こ",
+      "meaning": "write, book"
+    },
+    {
+      "id": "紙-シ",
+      "kanji": "紙",
+      "correctReading": "シ",
+      "readingType": "on",
+      "distractorPool": [
+        "ジ",
+        "ツ",
+        "チ",
+        "サ",
+        "ス",
+        "ズ",
+        "ニ",
+        "ヒ",
+        "キ"
+      ],
+      "exampleWord": "白紙（はくし）",
+      "maskedReading": "はく○",
+      "meaning": "paper"
+    },
+    {
+      "id": "記-キ",
+      "kanji": "記",
+      "correctReading": "キ",
+      "readingType": "on",
+      "distractorPool": [
+        "ギ",
+        "ク",
+        "ケ",
+        "ジ",
+        "シ",
+        "ヒ",
+        "ツ",
+        "チ",
+        "サ"
+      ],
+      "exampleWord": "記事（きじ）",
+      "maskedReading": "○じ",
+      "meaning": "write down"
+    },
+    {
+      "id": "通-ツウ",
+      "kanji": "通",
+      "correctReading": "ツウ",
+      "readingType": "on",
+      "distractorPool": [
+        "ツオ",
+        "ツン",
+        "ツィ",
+        "ツキ",
+        "ツサ",
+        "ツェ",
+        "ツイ",
+        "ツエ",
+        "ツュ"
+      ],
+      "exampleWord": "普通（ふつう）",
+      "maskedReading": "ふ○○",
+      "meaning": "pass, communicate, commute"
+    },
+    {
+      "id": "馬-バ",
+      "kanji": "馬",
+      "correctReading": "バ",
+      "readingType": "on",
+      "distractorPool": [
+        "パ",
+        "マ",
+        "ハ",
+        "ビ",
+        "ブ",
+        "ベ",
+        "ボ",
+        "カ",
+        "タ"
+      ],
+      "exampleWord": "馬車（ばしゃ）",
+      "maskedReading": "○しゃ",
+      "meaning": "horse"
+    },
+    {
+      "id": "高-コウ",
+      "kanji": "高",
+      "correctReading": "コウ",
+      "readingType": "on",
+      "distractorPool": [
+        "ゴウ",
+        "トウ",
+        "コエ",
+        "カウ",
+        "クウ",
+        "コツ",
+        "コク",
+        "コオ",
+        "コサ"
+      ],
+      "exampleWord": "高校生（こうこうせい）",
+      "maskedReading": "○○こうせい",
+      "meaning": "high"
+    },
+    {
+      "id": "強-キョウ",
+      "kanji": "強",
+      "correctReading": "キョウ",
+      "readingType": "on",
+      "distractorPool": [
+        "ギョウ",
+        "キュウ",
+        "ショウ",
+        "ゴウ",
+        "コウ",
+        "ホウ",
+        "ジョウ",
+        "ヒョウ",
+        "パオウ"
+      ],
+      "exampleWord": "強化する（きょうかする）",
+      "maskedReading": "○○○かする",
+      "meaning": "strong"
+    },
+    {
+      "id": "教-キョウ",
+      "kanji": "教",
+      "correctReading": "キョウ",
+      "readingType": "on",
+      "distractorPool": [
+        "キョエ",
+        "キョク",
+        "キュウ",
+        "キョン",
+        "キョオ",
+        "キョセ",
+        "キョア",
+        "キョサ",
+        "キョタ"
+      ],
+      "exampleWord": "教育する（きょういくする）",
+      "maskedReading": "○○○いくする",
+      "meaning": "teach, religion"
+    },
+    {
+      "id": "理-リ",
+      "kanji": "理",
+      "correctReading": "リ",
+      "readingType": "on",
+      "distractorPool": [
+        "ロ",
+        "ジ",
+        "ヒ",
+        "ミ",
+        "ニ",
+        "キ",
+        "レ",
+        "ラ",
+        "ル"
+      ],
+      "exampleWord": "理解する（りかいする）",
+      "maskedReading": "○かいする",
+      "meaning": "reason, basic principle"
+    },
+    {
+      "id": "細-サイ",
+      "kanji": "細",
+      "correctReading": "サイ",
+      "readingType": "on",
+      "distractorPool": [
+        "サツ",
+        "サキ",
+        "サウ",
+        "サシ",
+        "サジ",
+        "サレ",
+        "サミ",
+        "サリ",
+        "サナ"
+      ],
+      "exampleWord": "細胞（さいぼう）",
+      "maskedReading": "○○ぼう",
+      "meaning": "slender, minute, narrow, fine, detailed"
+    },
+    {
+      "id": "組-ソ",
+      "kanji": "組",
+      "correctReading": "ソ",
+      "readingType": "on",
+      "distractorPool": [
+        "ス",
+        "ゾ",
+        "ショ",
+        "サ",
+        "ズ",
+        "ツ",
+        "コ",
+        "ト",
+        "キ"
+      ],
+      "exampleWord": "組織する（そしきする）",
+      "maskedReading": "○しきする",
+      "meaning": "organize, assemble, group, class, gang"
+    },
+    {
+      "id": "船-セン",
+      "kanji": "船",
+      "correctReading": "セン",
+      "readingType": "on",
+      "distractorPool": [
+        "ゼン",
+        "サン",
+        "シン",
+        "テン",
+        "ケン",
+        "メン",
+        "ジン",
+        "コン",
+        "リン"
+      ],
+      "exampleWord": "船舶（せんぱく）",
+      "maskedReading": "○○ぱく",
+      "meaning": "ship, boat, vessel"
+    },
+    {
+      "id": "週-シュウ",
+      "kanji": "週",
+      "correctReading": "シュウ",
+      "readingType": "on",
+      "distractorPool": [
+        "スウ",
+        "シュー",
+        "シュツ",
+        "シュエ",
+        "シュイ",
+        "シュオ",
+        "ズウ",
+        "スュウ",
+        "ジュウ"
+      ],
+      "exampleWord": "今週（こんしゅう）",
+      "maskedReading": "こん○○○",
+      "meaning": "week"
+    },
+    {
+      "id": "野-ヤ",
+      "kanji": "野",
+      "correctReading": "ヤ",
+      "readingType": "on",
+      "distractorPool": [
+        "ナ",
+        "ヨ",
+        "リ",
+        "イ",
+        "エ",
+        "ユ",
+        "バ",
+        "ラ",
+        "サ"
+      ],
+      "exampleWord": "野球（やきゅう）",
+      "maskedReading": "○きゅう",
+      "meaning": "field"
+    },
+    {
+      "id": "雪-セツ",
+      "kanji": "雪",
+      "correctReading": "セツ",
+      "readingType": "on",
+      "distractorPool": [
+        "サツ",
+        "セイ",
+        "ゼツ",
+        "シツ",
+        "スツ",
+        "ゼイ",
+        "ソツ",
+        "ジツ",
+        "セッ"
+      ],
+      "exampleWord": "積雪（せきせつ）",
+      "maskedReading": "せき○○",
+      "meaning": "snow"
+    },
+    {
+      "id": "魚-ギョ",
+      "kanji": "魚",
+      "correctReading": "ギョ",
+      "readingType": "on",
+      "distractorPool": [
+        "キョ",
+        "ジョ",
+        "ギュ",
+        "キョウ",
+        "ジョウ",
+        "ギュウ",
+        "ゴウ",
+        "キュウ",
+        "ジン"
+      ],
+      "exampleWord": "魚類（ぎょるい）",
+      "maskedReading": "○○るい",
+      "meaning": "fish"
+    },
+    {
+      "id": "鳥-チョウ",
+      "kanji": "鳥",
+      "correctReading": "チョウ",
+      "readingType": "on",
+      "distractorPool": [
+        "チュウ",
+        "ショウ",
+        "ツウ",
+        "ホウ",
+        "ベツ",
+        "レツ",
+        "ジョウ",
+        "トウ",
+        "チヨウ"
+      ],
+      "exampleWord": "鳥類（ちょうるい）",
+      "maskedReading": "○○○るい",
+      "meaning": "bird, fowl, poultry"
+    },
+    {
+      "id": "黄-コウ",
+      "kanji": "黄",
+      "correctReading": "コウ",
+      "readingType": "on",
+      "distractorPool": [
+        "ゴウ",
+        "コツ",
+        "キョウ",
+        "ホウ",
+        "コオ",
+        "クウ",
+        "トウ",
+        "ボウ",
+        "モウ"
+      ],
+      "exampleWord": "黄砂（こうさ）",
+      "maskedReading": "○○さ",
+      "meaning": "yellow"
+    },
+    {
+      "id": "黒-コク",
+      "kanji": "黒",
+      "correctReading": "コク",
+      "readingType": "on",
+      "distractorPool": [
+        "ゴク",
+        "コウ",
+        "コツ",
+        "コジ",
+        "コバ",
+        "コホ",
+        "カク",
+        "キク",
+        "ケク"
+      ],
+      "exampleWord": "黒板（こくばん）",
+      "maskedReading": "○○ばん",
+      "meaning": "black"
+    },
+    {
+      "id": "場-ジョウ",
+      "kanji": "場",
+      "correctReading": "ジョウ",
+      "readingType": "on",
+      "distractorPool": [
+        "ショウ",
+        "チョウ",
+        "ヒョウ",
+        "トウ",
+        "コウ",
+        "ホウ",
+        "ゾウ",
+        "ニョウ",
+        "キョウ"
+      ],
+      "exampleWord": "会場（かいじょう）",
+      "maskedReading": "かい○○○",
+      "meaning": "place"
+    },
+    {
+      "id": "晴-セイ",
+      "kanji": "晴",
+      "correctReading": "セイ",
+      "readingType": "on",
+      "distractorPool": [
+        "サイ",
+        "ゼイ",
+        "シエ",
+        "セウ",
+        "シウ",
+        "ゼウ",
+        "テイ",
+        "ジイ",
+        "セオ"
+      ],
+      "exampleWord": "晴天（せいてん）",
+      "maskedReading": "○○てん",
+      "meaning": "fine weather, clear up"
+    },
+    {
+      "id": "朝-チョウ",
+      "kanji": "朝",
+      "correctReading": "チョウ",
+      "readingType": "on",
+      "distractorPool": [
+        "ショウ",
+        "ジョウ",
+        "チュウ",
+        "チョク",
+        "チョエ",
+        "チョン",
+        "チョロ",
+        "チョモ",
+        "チョヘ"
+      ],
+      "exampleWord": "朝食（ちょうしょく）",
+      "maskedReading": "○○○しょく",
+      "meaning": "morning, dynasty"
+    },
+    {
+      "id": "番-バン",
+      "kanji": "番",
+      "correctReading": "バン",
+      "readingType": "on",
+      "distractorPool": [
+        "ハン",
+        "パン",
+        "ベン",
+        "バツ",
+        "バリ",
+        "バク",
+        "バナ",
+        "バラ",
+        "バレ"
+      ],
+      "exampleWord": "番号（ばんごう）",
+      "maskedReading": "○○ごう",
+      "meaning": "numerical order, watch"
+    },
+    {
+      "id": "答-トウ",
+      "kanji": "答",
+      "correctReading": "トウ",
+      "readingType": "on",
+      "distractorPool": [
+        "ドウ",
+        "トク",
+        "コウ",
+        "トツ",
+        "トン",
+        "トエ",
+        "ツウ",
+        "トオ",
+        "トイ"
+      ],
+      "exampleWord": "答案（とうあん）",
+      "maskedReading": "○○あん",
+      "meaning": "answer"
+    },
+    {
+      "id": "絵-カイ",
+      "kanji": "絵",
+      "correctReading": "カイ",
+      "readingType": "on",
+      "distractorPool": [
+        "ガイ",
+        "ケイ",
+        "サイ",
+        "タイ",
+        "パイ",
+        "バイ",
+        "マイ",
+        "ナイ",
+        "ライ"
+      ],
+      "exampleWord": "絵画（かいが）",
+      "maskedReading": "○○が",
+      "meaning": "picture"
+    },
+    {
+      "id": "買-バイ",
+      "kanji": "買",
+      "correctReading": "バイ",
+      "readingType": "on",
+      "distractorPool": [
+        "パイ",
+        "マイ",
+        "ハイ",
+        "サイ",
+        "タイ",
+        "ナイ",
+        "カイ",
+        "ケイ",
+        "ピイ"
+      ],
+      "exampleWord": "買収する（ばいしゅうする）",
+      "maskedReading": "○○しゅうする",
+      "meaning": "buy"
+    },
+    {
+      "id": "道-ドウ",
+      "kanji": "道",
+      "correctReading": "ドウ",
+      "readingType": "on",
+      "distractorPool": [
+        "トウ",
+        "ノウ",
+        "ツウ",
+        "ホウ",
+        "ショウ",
+        "ロウ",
+        "ボウ",
+        "ゴウ",
+        "モウ"
+      ],
+      "exampleWord": "道路（どうろ）",
+      "maskedReading": "○○ろ",
+      "meaning": "way, street, road"
+    },
+    {
+      "id": "間-カン",
+      "kanji": "間",
+      "correctReading": "カン",
+      "readingType": "on",
+      "distractorPool": [
+        "コン",
+        "ゲン",
+        "カム",
+        "ケン",
+        "カイ",
+        "サン",
+        "ガン",
+        "キン",
+        "カツ"
+      ],
+      "exampleWord": "一週間（いっしゅうかん）",
+      "maskedReading": "いっしゅう○○",
+      "meaning": "interval, between"
+    },
+    {
+      "id": "雲-ウン",
+      "kanji": "雲",
+      "correctReading": "ウン",
+      "readingType": "on",
+      "distractorPool": [
+        "エン",
+        "オウ",
+        "ウム",
+        "ウナ",
+        "アン",
+        "ユン",
+        "エウ",
+        "ウエ",
+        "オン"
+      ],
+      "exampleWord": "雲海（うんかい）",
+      "maskedReading": "○○かい",
+      "meaning": "cloud"
+    },
+    {
+      "id": "園-エン",
+      "kanji": "園",
+      "correctReading": "エン",
+      "readingType": "on",
+      "distractorPool": [
+        "オン",
+        "エツ",
+        "エイ",
+        "エム",
+        "エリ",
+        "エフ",
+        "エウ",
+        "エロ",
+        "エバ"
+      ],
+      "exampleWord": "園芸（えんげい）",
+      "maskedReading": "○○げい",
+      "meaning": "garden"
+    },
+    {
+      "id": "数-スウ",
+      "kanji": "数",
+      "correctReading": "スウ",
+      "readingType": "on",
+      "distractorPool": [
+        "ズウ",
+        "スオ",
+        "スツ",
+        "サウ",
+        "スィ",
+        "スカ",
+        "スエ",
+        "スア",
+        "スユ"
+      ],
+      "exampleWord": "数学（すうがく）",
+      "maskedReading": "○○がく",
+      "meaning": "number, count"
+    },
+    {
+      "id": "新-シン",
+      "kanji": "新",
+      "correctReading": "シン",
+      "readingType": "on",
+      "distractorPool": [
+        "ジン",
+        "シミ",
+        "ジツ",
+        "サン",
+        "セン",
+        "シツ",
+        "シロ",
+        "ジュウ",
+        "シキ"
+      ],
+      "exampleWord": "新聞（しんぶん）",
+      "maskedReading": "○○ぶん",
+      "meaning": "new"
+    },
+    {
+      "id": "楽-ガク",
+      "kanji": "楽",
+      "correctReading": "ガク",
+      "readingType": "on",
+      "distractorPool": [
+        "ガツ",
+        "ゴク",
+        "カク",
+        "カツ",
+        "ギク",
+        "ガジ",
+        "カキ",
+        "ゲク",
+        "グク"
+      ],
+      "exampleWord": "音楽（おんがく）",
+      "maskedReading": "おん○○",
+      "meaning": "pleasure, comfortable, music"
+    },
+    {
+      "id": "話-ワ",
+      "kanji": "話",
+      "correctReading": "ワ",
+      "readingType": "on",
+      "distractorPool": [
+        "カ",
+        "バ",
+        "パ",
+        "ダ",
+        "ハ",
+        "ラ",
+        "タ",
+        "サ",
+        "ガ"
+      ],
+      "exampleWord": "電話（でんわ）",
+      "maskedReading": "でん○",
+      "meaning": "speak"
+    },
+    {
+      "id": "遠-エン",
+      "kanji": "遠",
+      "correctReading": "エン",
+      "readingType": "on",
+      "distractorPool": [
+        "エツ",
+        "エミ",
+        "エム",
+        "エキ",
+        "エリ",
+        "エロ",
+        "エラ",
+        "エウ",
+        "エホ"
+      ],
+      "exampleWord": "遠慮する（えんりょする）",
+      "maskedReading": "○○りょする",
+      "meaning": "distant, far"
+    },
+    {
+      "id": "電-デン",
+      "kanji": "電",
+      "correctReading": "デン",
+      "readingType": "on",
+      "distractorPool": [
+        "テン",
+        "ゼン",
+        "デイ",
+        "エン",
+        "ケン",
+        "ヘン",
+        "デジ",
+        "デツ",
+        "デキ"
+      ],
+      "exampleWord": "電話する（でんわする）",
+      "maskedReading": "○○わする",
+      "meaning": "electricity"
+    },
+    {
+      "id": "歌-カ",
+      "kanji": "歌",
+      "correctReading": "カ",
+      "readingType": "on",
+      "distractorPool": [
+        "ガ",
+        "ケ",
+        "キ",
+        "サ",
+        "タ",
+        "ナ",
+        "コ",
+        "シ",
+        "チ"
+      ],
+      "exampleWord": "歌手（かしゅ）",
+      "maskedReading": "○しゅ",
+      "meaning": "song"
+    },
+    {
+      "id": "算-サン",
+      "kanji": "算",
+      "correctReading": "サン",
+      "readingType": "on",
+      "distractorPool": [
+        "サム",
+        "サツ",
+        "ザン",
+        "サリ",
+        "サウ",
+        "シン",
+        "サナ",
+        "サク",
+        "サバ"
+      ],
+      "exampleWord": "算数（さんすう）",
+      "maskedReading": "○○すう",
+      "meaning": "calculate"
+    },
+    {
+      "id": "聞-ブン",
+      "kanji": "聞",
+      "correctReading": "ブン",
+      "readingType": "on",
+      "distractorPool": [
+        "ブツ",
+        "ブリ",
+        "フン",
+        "ブロ",
+        "ビン",
+        "ボン",
+        "ブム",
+        "プン",
+        "ブナ"
+      ],
+      "exampleWord": "新聞（しんぶん）",
+      "maskedReading": "しん○○",
+      "meaning": "hear, listen, ask"
+    },
+    {
+      "id": "語-ゴ",
+      "kanji": "語",
+      "correctReading": "ゴ",
+      "readingType": "on",
+      "distractorPool": [
+        "コ",
+        "キョ",
+        "カ",
+        "グ",
+        "ギャ",
+        "コウ",
+        "ギ",
+        "ジ",
+        "ゾ"
+      ],
+      "exampleWord": "単語（たんご）",
+      "maskedReading": "たん○",
+      "meaning": "language, word, tell"
+    },
+    {
+      "id": "読-ドク",
+      "kanji": "読",
+      "correctReading": "ドク",
+      "readingType": "on",
+      "distractorPool": [
+        "トク",
+        "ドウ",
+        "ドキ",
+        "ドジ",
+        "ドグ",
+        "ドツ",
+        "ドサ",
+        "ドバ",
+        "ドヘ"
+      ],
+      "exampleWord": "読者（どくしゃ）",
+      "maskedReading": "○○しゃ",
+      "meaning": "read"
+    },
+    {
+      "id": "鳴-メイ",
+      "kanji": "鳴",
+      "correctReading": "メイ",
+      "readingType": "on",
+      "distractorPool": [
+        "ベイ",
+        "マイ",
+        "ネイ",
+        "レイ",
+        "ヘイ",
+        "セイ",
+        "デイ",
+        "ミエ",
+        "ケイ"
+      ],
+      "exampleWord": "悲鳴（ひめい）",
+      "maskedReading": "ひ○○",
+      "meaning": "cry, sound, ring, sing, howl"
+    },
+    {
+      "id": "線-セン",
+      "kanji": "線",
+      "correctReading": "セン",
+      "readingType": "on",
+      "distractorPool": [
+        "ゼン",
+        "サン",
+        "テン",
+        "シン",
+        "ケン",
+        "コン",
+        "ジン",
+        "ソン",
+        "ツン"
+      ],
+      "exampleWord": "線路（せんろ）",
+      "maskedReading": "○○ろ",
+      "meaning": "line"
+    },
+    {
+      "id": "親-シン",
+      "kanji": "親",
+      "correctReading": "シン",
+      "readingType": "on",
+      "distractorPool": [
+        "ジン",
+        "シツ",
+        "シリ",
+        "シミ",
+        "スン",
+        "シブ",
+        "セン",
+        "サン",
+        "ジツ"
+      ],
+      "exampleWord": "両親（りょうしん）",
+      "maskedReading": "りょう○○",
+      "meaning": "parent, relatives, intimate"
+    },
+    {
+      "id": "頭-トウ",
+      "kanji": "頭",
+      "correctReading": "トウ",
+      "readingType": "on",
+      "distractorPool": [
+        "ツウ",
+        "トオ",
+        "ドウ",
+        "コウ",
+        "ホウ",
+        "ノウ",
+        "チュウ",
+        "ジュウ",
+        "トン"
+      ],
+      "exampleWord": "頭部（とうぶ）",
+      "maskedReading": "○○ぶ",
+      "meaning": "head"
+    },
+    {
+      "id": "曜-ヨウ",
+      "kanji": "曜",
+      "correctReading": "ヨウ",
+      "readingType": "on",
+      "distractorPool": [
+        "ロウ",
+        "ヨツ",
+        "ヨリ",
+        "コウ",
+        "ショウ",
+        "ミョウ",
+        "ユウ",
+        "キョウ",
+        "ヨエ"
+      ],
+      "exampleWord": "曜日（ようび）",
+      "maskedReading": "○○び",
+      "meaning": "day of the week"
+    },
+    {
+      "id": "顔-ガン",
+      "kanji": "顔",
+      "correctReading": "ガン",
+      "readingType": "on",
+      "distractorPool": [
+        "カン",
+        "ゲン",
+        "バン",
+        "サン",
+        "タン",
+        "ジン",
+        "ゴン",
+        "ガツ",
+        "グン"
+      ],
+      "exampleWord": "童顔（どうがん）",
+      "maskedReading": "どう○○",
+      "meaning": "face"
+    }
+  ]
+}
