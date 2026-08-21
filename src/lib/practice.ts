@@ -28,7 +28,7 @@ export const COMBO_THRESHOLD = 3;
 // 不正解のときは正しい答えに目をやる時間が要るので長めに取る
 // （シェイク演出0.4秒 + 答えを見る時間）。
 export const CORRECT_ADVANCE_DELAY_MS = 800;
-export const INCORRECT_ADVANCE_DELAY_MS = 2500;
+export const INCORRECT_ADVANCE_DELAY_MS = 1100;
 
 export type LevelConfig = {
   minA: number;
@@ -91,7 +91,10 @@ export const generateQuestion = (config: LevelConfig): Question => {
   return { a, b, answer: a + b };
 };
 
-export const generateQuestions = (config: LevelConfig, count: number): Question[] => {
+export const generateQuestions = (
+  config: LevelConfig,
+  count: number,
+): Question[] => {
   const questions: Question[] = [];
 
   for (let i = 0; i < count; i++) {
@@ -99,7 +102,10 @@ export const generateQuestions = (config: LevelConfig, count: number): Question[
     const previous = questions[questions.length - 1];
     for (
       let redraw = 0;
-      redraw < MAX_REDRAWS && previous && previous.a === question.a && previous.b === question.b;
+      redraw < MAX_REDRAWS &&
+      previous &&
+      previous.a === question.a &&
+      previous.b === question.b;
       redraw++
     ) {
       question = generateQuestion(config);
@@ -153,5 +159,7 @@ export const celebrationTier = (
 export const calculatePoints = (results: readonly boolean[]): number => {
   const correctCount = results.filter(Boolean).length;
   const perfect = results.length > 0 && correctCount === results.length;
-  return correctCount * POINTS_PER_CORRECT + (perfect ? PERFECT_BONUS_POINTS : 0);
+  return (
+    correctCount * POINTS_PER_CORRECT + (perfect ? PERFECT_BONUS_POINTS : 0)
+  );
 };
