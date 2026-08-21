@@ -37,6 +37,10 @@ yarn-error.log*
 # vercel
 .vercel
 
+# scripts/kokugo-ai: 教育漢字APIの生レスポンスのキャッシュ（デバッグ用）。
+# 最終成果物は src/data/kanji-quiz/ 側でコミットする
+/scripts/kokugo-ai/output/
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts

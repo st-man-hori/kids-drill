@@ -4,44 +4,40 @@ import { eq, sql } from "drizzle-orm";
 import { db } from "@/db";
 import { childProfiles, practiceSessions } from "@/db/schema";
 import { auth } from "@/auth";
+import { calculatePoints, shouldLevelUp } from "@/lib/practice";
 import {
-  ADD_SKILL_TYPE,
-  TOTAL_QUESTIONS,
-  calculatePoints,
-  shouldLevelUp,
-  type LevelConfig,
-} from "@/lib/practice";
+  KANJI_QUIZ_QUESTION_COUNT,
+  isKanjiSupportedGrade,
+  kanjiSkillType,
+  type KanjiLevelConfig,
+} from "@/lib/kanji-quiz";
 import {
   advanceToNextLevel,
   demoteIfStruggling,
   getCurrentLevel,
-  getMathSubjectId,
+  getKokugoSubjectId,
 } from "@/lib/practice-progress";
 import { grantUnlockedFreeItems } from "@/lib/wardrobe-store";
 
-export type PracticeSessionResult = {
+export type KanjiQuizSessionResult = {
   pointsEarned: number;
-  // 今回の記録で新しく手に入った着せ替えアイテムの名前
   unlockedItems: string[];
   leveledUp: boolean;
-  // レベルが変わった場合は変更後のレベル、変わらなければ今のレベル。
-  // クライアントは「もっとやる」で出す次の10問をこのconfigから生成する。
-  // 降級した場合もここが下のレベルになるが、leveledUpはfalseのまま
-  levelNumber: number;
-  config: LevelConfig;
 };
 
-// クライアントから受け取るのは「各問に正解したかどうか」だけにしている。
-// レベル（＝どの問題を解いたか）と獲得ポイントはサーバー側でchild_progressから
-// 導出する。Server Actionは直接POSTできてしまうため、点数やレベルIDを
-// クライアント申告のまま信用しないこと（docs: Next.jsのServer Actionsガイド）。
-export const submitPracticeSession = async ({
+// たしざん練習（practice/add/actions.ts）と同じ流れ（記録→加点→レベル判定→
+// 着せ替え解放）をそのまま使う。かんじよみクイズの難易度軸は画数
+// （KanjiLevelConfig.maxStrokeCount。docs/architecture.md「かんじよみクイズ」）。
+//
+// クライアントから受け取るのは正誤の配列のみ。点数・レベルはサーバー側で
+// child_progressから導出する（申告のまま信用しない。practice/add/actions.tsと同じ理由）
+export const submitKanjiQuizSession = async ({
   results,
   startedAt,
 }: {
   results: boolean[];
   startedAt: string;
-}): Promise<PracticeSessionResult | null> => {
+}): Promise<KanjiQuizSessionResult | null> => {
   const session = await auth();
   const childId = session?.user?.id;
   if (!childId) return null;
@@ -49,22 +45,30 @@ export const submitPracticeSession = async ({
   if (
     !Array.isArray(results) ||
     results.length === 0 ||
-    results.length > TOTAL_QUESTIONS ||
+    results.length > KANJI_QUIZ_QUESTION_COUNT ||
     results.some((result) => typeof result !== "boolean")
   ) {
     return null;
   }
 
+  const child = await db.query.childProfiles.findFirst({
+    where: eq(childProfiles.id, childId),
+    columns: { grade: true },
+  });
+  // 5・6年生はまだ問題バンクが無く、そもそも画面まで到達しない
+  // （practice/kanji/page.tsx）。Server Actionは直接呼び出せるため念のため弾く
+  if (!child || !isKanjiSupportedGrade(child.grade)) return null;
+  const skillType = kanjiSkillType(child.grade);
+
   const finishedAt = new Date();
   const parsedStartedAt = new Date(startedAt);
-  // 不正な値・未来の日時が来たら終了時刻で代替する（記録が壊れるのを防ぐ）
   const startedAtDate =
     Number.isNaN(parsedStartedAt.getTime()) || parsedStartedAt > finishedAt
       ? finishedAt
       : parsedStartedAt;
 
-  const subjectId = await getMathSubjectId();
-  const level = await getCurrentLevel<LevelConfig>(childId, subjectId, ADD_SKILL_TYPE);
+  const subjectId = await getKokugoSubjectId();
+  const level = await getCurrentLevel<KanjiLevelConfig>(childId, subjectId, skillType);
 
   await db.insert(practiceSessions).values({
     childId,
@@ -86,16 +90,14 @@ export const submitPracticeSession = async ({
 
   // レベル変更の判定は「このセッションを終えた時点」で行う。practice_sessionsは
   // 変更前のレベルで記録済みなので、先に記録→後で判定の順にしている
-  // （降級判定は今回のセッションを含む直近の記録を見るため、この順序が必要）。
   const leveledUp = shouldLevelUp(results);
   const nextLevel = leveledUp
-    ? await advanceToNextLevel<LevelConfig>(childId, subjectId, ADD_SKILL_TYPE, level.levelNumber)
-    : await demoteIfStruggling<LevelConfig>(childId, subjectId, ADD_SKILL_TYPE, level);
+    ? await advanceToNextLevel<KanjiLevelConfig>(childId, subjectId, skillType, level.levelNumber)
+    : await demoteIfStruggling<KanjiLevelConfig>(childId, subjectId, skillType, level);
 
   // 解放条件つきの着せ替えアイテムを配る。累計正解数を条件にするものがあるため、
   // 今回のセッションを記録し終えたこの時点で判定する（docs/game-design.md）。
-  // 配布に失敗してもゲーム自体は続けられるようにする（次のセッション終了時、
-  // またはきせかえ画面を開いたときに配り直される）
+  // 配布に失敗してもゲーム自体は続けられるようにする
   let unlockedItems: string[] = [];
   try {
     const granted = await grantUnlockedFreeItems(childId);
@@ -110,7 +112,5 @@ export const submitPracticeSession = async ({
     // 降級は演出しない（レベルが下がったことを子どもに告げない）ため、
     // 昇級したときだけtrueにする
     leveledUp: leveledUp && nextLevel !== null,
-    levelNumber: (nextLevel ?? level).levelNumber,
-    config: (nextLevel ?? level).config,
   };
 };

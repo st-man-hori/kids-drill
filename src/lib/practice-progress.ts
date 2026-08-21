@@ -6,54 +6,63 @@ import {
   practiceSessions,
   subjects,
 } from "@/db/schema";
-import {
-  LEVEL_DOWN_STREAK,
-  isStrugglingSession,
-  type LevelConfig,
-} from "@/lib/practice";
+import { LEVEL_DOWN_STREAK, isStrugglingSession } from "@/lib/practice";
 
 // child_progress（子どもごとの現在レベル）の読み書き。DBに触るためClient
-// Componentからは読み込まないこと（出題ロジックの純粋な部分は practice.ts）。
+// Componentからは読み込まないこと（出題ロジックの純粋な部分は practice.ts /
+// kanji-quiz.ts）。算数・かんじよみクイズなど複数のスキルがこのレベル昇降の
+// 仕組みを共有するため、configの型はジェネリクスにして呼び出し側に委ねている
 
-export type PracticeLevel = {
+export type PracticeLevel<TConfig = unknown> = {
   id: string;
   levelNumber: number;
-  config: LevelConfig;
+  config: TConfig;
 };
 
 const MATH_SUBJECT_SLUG = "math";
+const KOKUGO_SUBJECT_SLUG = "kokugo";
 
 // マイグレーション未適用の環境で「なぜ動かないのか」が分かるようにする。
-// レベルのマスタデータはマイグレーションで投入される（docs/architecture.md参照）
+// マスタデータはマイグレーションで投入される（docs/architecture.md参照）
 const LEVELS_MISSING_MESSAGE =
-  "算数のレベルデータが見つかりません。npm run db:migrate を実行してください。";
+  "レベルデータが見つかりません。npm run db:migrate を実行してください。";
 
-const toPracticeLevel = (level: {
-  id: string;
-  levelNumber: number;
-  config: unknown;
-}): PracticeLevel => ({
-  id: level.id,
-  levelNumber: level.levelNumber,
-  // configはjsonb（unknown）。中身の妥当性はマイグレーション側で担保している前提
-  config: level.config as LevelConfig,
-});
+const subjectMissingMessage = (name: string) =>
+  `${name}のマスタデータが見つかりません。npm run db:migrate を実行してください。`;
 
-// タイムアタックの記録（time-attack/actions.ts）も同じ「算数」subject_idを
-// 使うため、ここから公開する
-export const getMathSubjectId = async (): Promise<string> => {
+const getSubjectIdBySlug = async (slug: string, label: string): Promise<string> => {
   const subject = await db.query.subjects.findFirst({
-    where: eq(subjects.slug, MATH_SUBJECT_SLUG),
+    where: eq(subjects.slug, slug),
   });
-  if (!subject) throw new Error(LEVELS_MISSING_MESSAGE);
+  if (!subject) throw new Error(subjectMissingMessage(label));
   return subject.id;
 };
 
-const findLevelByNumber = async (
+// タイムアタックの記録（time-attack/actions.ts）も同じ「算数」subject_idを
+// 使うため、ここから公開する
+export const getMathSubjectId = (): Promise<string> =>
+  getSubjectIdBySlug(MATH_SUBJECT_SLUG, "算数");
+
+// かんじよみクイズ（practice/kanji/actions.ts, page.tsx）用
+export const getKokugoSubjectId = (): Promise<string> =>
+  getSubjectIdBySlug(KOKUGO_SUBJECT_SLUG, "国語");
+
+const toPracticeLevel = <TConfig>(level: {
+  id: string;
+  levelNumber: number;
+  config: unknown;
+}): PracticeLevel<TConfig> => ({
+  id: level.id,
+  levelNumber: level.levelNumber,
+  // configはjsonb（unknown）。中身の妥当性はマイグレーション側で担保している前提
+  config: level.config as TConfig,
+});
+
+const findLevelByNumber = async <TConfig>(
   subjectId: string,
   skillType: string,
   levelNumber: number,
-): Promise<PracticeLevel | null> => {
+): Promise<PracticeLevel<TConfig> | null> => {
   const level = await db.query.difficultyLevels.findFirst({
     where: and(
       eq(difficultyLevels.subjectId, subjectId),
@@ -61,18 +70,17 @@ const findLevelByNumber = async (
       eq(difficultyLevels.levelNumber, levelNumber),
     ),
   });
-  return level ? toPracticeLevel(level) : null;
+  return level ? toPracticeLevel<TConfig>(level) : null;
 };
 
 // 現在のレベルを返す。child_progressの行がまだ無い子どもはLv1から。
 // ここでは行を作らない（表示のためのGETで書き込みを起こさないため）。
 // 行はレベルアップ時にupsertで初めて作られる。
-export const getCurrentLevel = async (
+export const getCurrentLevel = async <TConfig>(
   childId: string,
+  subjectId: string,
   skillType: string,
-): Promise<PracticeLevel> => {
-  const subjectId = await getMathSubjectId();
-
+): Promise<PracticeLevel<TConfig>> => {
   const progress = await db.query.childProgress.findFirst({
     where: and(
       eq(childProgress.childId, childId),
@@ -85,10 +93,10 @@ export const getCurrentLevel = async (
     const level = await db.query.difficultyLevels.findFirst({
       where: eq(difficultyLevels.id, progress.currentLevelId),
     });
-    if (level) return toPracticeLevel(level);
+    if (level) return toPracticeLevel<TConfig>(level);
   }
 
-  const firstLevel = await findLevelByNumber(subjectId, skillType, 1);
+  const firstLevel = await findLevelByNumber<TConfig>(subjectId, skillType, 1);
   if (!firstLevel) throw new Error(LEVELS_MISSING_MESSAGE);
   return firstLevel;
 };
@@ -115,13 +123,13 @@ const setCurrentLevel = async (
 
 // 次のレベルへ進める。最高レベルに到達済みで次が無ければnullを返す
 // （その場合はchild_progressを更新しない）。
-export const advanceToNextLevel = async (
+export const advanceToNextLevel = async <TConfig>(
   childId: string,
+  subjectId: string,
   skillType: string,
   currentLevelNumber: number,
-): Promise<PracticeLevel | null> => {
-  const subjectId = await getMathSubjectId();
-  const nextLevel = await findLevelByNumber(subjectId, skillType, currentLevelNumber + 1);
+): Promise<PracticeLevel<TConfig> | null> => {
+  const nextLevel = await findLevelByNumber<TConfig>(subjectId, skillType, currentLevelNumber + 1);
   if (!nextLevel) return null;
 
   await setCurrentLevel(childId, subjectId, skillType, nextLevel.id);
@@ -137,11 +145,12 @@ export const advanceToNextLevel = async (
 //
 // 判定対象を「今のレベルで解いたセッション」に絞っているため、降級した直後は
 // 対象セッションが0件になり、連続で下げ続けることはない。
-export const demoteIfStruggling = async (
+export const demoteIfStruggling = async <TConfig>(
   childId: string,
+  subjectId: string,
   skillType: string,
-  currentLevel: PracticeLevel,
-): Promise<PracticeLevel | null> => {
+  currentLevel: PracticeLevel<TConfig>,
+): Promise<PracticeLevel<TConfig> | null> => {
   if (currentLevel.levelNumber <= 1) return null;
 
   const recentSessions = await db
@@ -163,8 +172,7 @@ export const demoteIfStruggling = async (
   if (recentSessions.length < LEVEL_DOWN_STREAK) return null;
   if (!recentSessions.every(isStrugglingSession)) return null;
 
-  const subjectId = await getMathSubjectId();
-  const previousLevel = await findLevelByNumber(
+  const previousLevel = await findLevelByNumber<TConfig>(
     subjectId,
     skillType,
     currentLevel.levelNumber - 1,

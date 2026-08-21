@@ -38,7 +38,7 @@ const MyPage = async () => {
       <GreetingAvatar
         equipped={equipped}
         greeting={pickGreeting()}
-        className="h-[clamp(6rem,20vh,10rem)]"
+        className="h-[clamp(6rem,20vh,10rem)] shrink-0"
       />
 
       <p className="rounded-sm bg-brand/15 px-5 py-2 font-bold text-foreground">
@@ -51,6 +51,9 @@ const MyPage = async () => {
         </LinkButton>
         <LinkButton href="/time-attack" variant="primary">
           たいむあたっく
+        </LinkButton>
+        <LinkButton href="/practice/kanji" variant="primary">
+          かんじクイズ
         </LinkButton>
         <LinkButton href="/wardrobe" variant="secondary">
           きせかえ

@@ -1,0 +1,155 @@
+import { expect, test } from "vitest";
+import {
+  KANJI_LEVELS_BY_GRADE,
+  KANJI_SUPPORTED_GRADES,
+  buildKanjiChoices,
+  isKanjiSupportedGrade,
+  kanjiBankForGrade,
+  kanjiBankForLevel,
+  kanjiOnlyWord,
+  kanjiSkillType,
+  pickKanjiQuestions,
+  prepareKanjiQuestions,
+  type KanjiQuizQuestion,
+} from "@/lib/kanji-quiz";
+
+const question = (over: Partial<KanjiQuizQuestion> = {}): KanjiQuizQuestion => ({
+  id: "八-ハチ",
+  kanji: "八",
+  correctReading: "ハチ",
+  readingType: "on",
+  strokeCount: 2,
+  distractorPool: ["バチ", "ハツ", "ハイ", "ハン", "パチ", "カチ", "ラチ", "ワチ", "ガチ"],
+  exampleWord: "八月（はちがつ）",
+  maskedReading: "○○がつ",
+  meaning: "eight",
+  ...over,
+});
+
+test("buildKanjiChoices returns exactly one correct choice among 4, sampled from the pool", () => {
+  const q = question();
+  const choices = buildKanjiChoices(q);
+
+  expect(choices).toHaveLength(4);
+  expect(choices.filter((c) => c.correct)).toHaveLength(1);
+  expect(choices.find((c) => c.correct)?.text).toBe(q.correctReading);
+  expect(new Set(choices.map((c) => c.text)).size).toBe(4);
+  for (const choice of choices.filter((c) => !c.correct)) {
+    expect(q.distractorPool).toContain(choice.text);
+  }
+});
+
+test("buildKanjiChoices samples different distractors across calls (given a large enough pool)", () => {
+  const q = question();
+  const seenSets = new Set<string>();
+  for (let i = 0; i < 30; i++) {
+    const distractorText = buildKanjiChoices(q)
+      .filter((c) => !c.correct)
+      .map((c) => c.text)
+      .sort()
+      .join(",");
+    seenSets.add(distractorText);
+  }
+  // 9択中3件のサンプリングを30回やって毎回まったく同じ組み合わせにはならないはず
+  expect(seenSets.size).toBeGreaterThan(1);
+});
+
+test("buildKanjiChoices degrades gracefully when the pool has fewer than 3 distractors", () => {
+  const q = question({ distractorPool: ["バチ"] });
+  const choices = buildKanjiChoices(q);
+
+  expect(choices).toHaveLength(2);
+  expect(choices.filter((c) => c.correct)).toHaveLength(1);
+});
+
+test("pickKanjiQuestions never returns more than the bank size and never duplicates", () => {
+  const bank = Array.from({ length: 5 }, (_, i) => question({ id: `q${i}`, kanji: `${i}` }));
+
+  const picked = pickKanjiQuestions(10, bank);
+
+  expect(picked).toHaveLength(5);
+  expect(new Set(picked.map((q) => q.id)).size).toBe(5);
+});
+
+test("pickKanjiQuestions respects a count smaller than the bank", () => {
+  const bank = Array.from({ length: 20 }, (_, i) => question({ id: `q${i}`, kanji: `${i}` }));
+
+  const picked = pickKanjiQuestions(10, bank);
+
+  expect(picked).toHaveLength(10);
+});
+
+test("prepareKanjiQuestions attaches ready-to-render choices to each question", () => {
+  const bank = [question()];
+
+  const [prepared] = prepareKanjiQuestions(1, bank);
+
+  expect(prepared.choices).toHaveLength(4);
+  expect(prepared.choices.some((c) => c.correct && c.text === prepared.correctReading)).toBe(
+    true,
+  );
+});
+
+test("kanjiOnlyWord strips the furigana without revealing the masked reading", () => {
+  expect(kanjiOnlyWord("七時（しちじ）")).toBe("七時");
+  expect(kanjiOnlyWord("大学（だいがく）")).toBe("大学");
+  expect(kanjiOnlyWord("八")).toBe("八");
+});
+
+test("kanjiBankForLevel keeps only questions at or below the stroke count cap", () => {
+  const bank = [
+    question({ id: "a", strokeCount: 2 }),
+    question({ id: "b", strokeCount: 3 }),
+    question({ id: "c", strokeCount: 4 }),
+  ];
+
+  const filtered = kanjiBankForLevel({ maxStrokeCount: 3 }, bank);
+
+  expect(filtered.map((q) => q.id)).toEqual(["a", "b"]);
+});
+
+test("kanjiBankForLevel returns the whole bank when there is no stroke count cap", () => {
+  const bank = [question({ id: "a", strokeCount: 2 }), question({ id: "b", strokeCount: 20 })];
+
+  const filtered = kanjiBankForLevel({ maxStrokeCount: null }, bank);
+
+  expect(filtered).toHaveLength(2);
+});
+
+test("kanjiSkillType is namespaced per grade", () => {
+  expect(kanjiSkillType(1)).toBe("kanji_reading_grade1");
+  expect(kanjiSkillType(4)).toBe("kanji_reading_grade4");
+});
+
+test("isKanjiSupportedGrade reflects which banks are generated", () => {
+  for (const grade of KANJI_SUPPORTED_GRADES) {
+    expect(isKanjiSupportedGrade(grade)).toBe(true);
+  }
+  expect(isKanjiSupportedGrade(5)).toBe(false);
+  expect(isKanjiSupportedGrade(6)).toBe(false);
+});
+
+test("kanjiBankForGrade returns an empty bank for an unsupported grade", () => {
+  expect(kanjiBankForGrade(5)).toEqual([]);
+});
+
+test("every supported grade has a bundled bank and a matching level table", () => {
+  for (const grade of KANJI_SUPPORTED_GRADES) {
+    expect(kanjiBankForGrade(grade).length).toBeGreaterThan(0);
+    expect(KANJI_LEVELS_BY_GRADE[grade]?.length).toBeGreaterThan(0);
+    // 最後のレベルは上限なし＝その学年の全字が出題対象になる
+    const lastLevel = KANJI_LEVELS_BY_GRADE[grade].at(-1);
+    expect(lastLevel?.maxStrokeCount).toBeNull();
+  }
+});
+
+test("the bundled grade1 question bank loads and has 4 distinct choices per question", () => {
+  const questions = prepareKanjiQuestions(80);
+
+  expect(questions.length).toBeGreaterThan(0);
+  for (const q of questions) {
+    expect(q.choices).toHaveLength(4);
+    expect(new Set(q.choices.map((c) => c.text)).size).toBe(4);
+    expect(q.choices.filter((c) => c.correct)).toHaveLength(1);
+  }
+});
