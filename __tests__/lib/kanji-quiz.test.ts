@@ -1,8 +1,13 @@
 import { expect, test } from "vitest";
 import {
+  KANJI_LEVELS_BY_GRADE,
+  KANJI_SUPPORTED_GRADES,
   buildKanjiChoices,
+  isKanjiSupportedGrade,
+  kanjiBankForGrade,
   kanjiBankForLevel,
   kanjiOnlyWord,
+  kanjiSkillType,
   pickKanjiQuestions,
   prepareKanjiQuestions,
   type KanjiQuizQuestion,
@@ -109,6 +114,33 @@ test("kanjiBankForLevel returns the whole bank when there is no stroke count cap
   const filtered = kanjiBankForLevel({ maxStrokeCount: null }, bank);
 
   expect(filtered).toHaveLength(2);
+});
+
+test("kanjiSkillType is namespaced per grade", () => {
+  expect(kanjiSkillType(1)).toBe("kanji_reading_grade1");
+  expect(kanjiSkillType(4)).toBe("kanji_reading_grade4");
+});
+
+test("isKanjiSupportedGrade reflects which banks are generated", () => {
+  for (const grade of KANJI_SUPPORTED_GRADES) {
+    expect(isKanjiSupportedGrade(grade)).toBe(true);
+  }
+  expect(isKanjiSupportedGrade(5)).toBe(false);
+  expect(isKanjiSupportedGrade(6)).toBe(false);
+});
+
+test("kanjiBankForGrade returns an empty bank for an unsupported grade", () => {
+  expect(kanjiBankForGrade(5)).toEqual([]);
+});
+
+test("every supported grade has a bundled bank and a matching level table", () => {
+  for (const grade of KANJI_SUPPORTED_GRADES) {
+    expect(kanjiBankForGrade(grade).length).toBeGreaterThan(0);
+    expect(KANJI_LEVELS_BY_GRADE[grade]?.length).toBeGreaterThan(0);
+    // 最後のレベルは上限なし＝その学年の全字が出題対象になる
+    const lastLevel = KANJI_LEVELS_BY_GRADE[grade].at(-1);
+    expect(lastLevel?.maxStrokeCount).toBeNull();
+  }
 });
 
 test("the bundled grade1 question bank loads and has 4 distinct choices per question", () => {

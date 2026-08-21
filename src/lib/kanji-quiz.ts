@@ -1,4 +1,4 @@
-// 漢字よみクイズ（国語・小1）の出題ロジック。純粋関数のみを置く
+// 漢字よみクイズ（国語）の出題ロジック。純粋関数のみを置く
 // （KanjiQuizSessionというClient Componentからも読み込むため、DBアクセスや
 // node専用APIは持ち込まないこと。practice.tsと同じ方針）。
 //
@@ -6,13 +6,16 @@
 // の再実行で作る（教育漢字API + さくらのAIによる誤答生成）。
 
 import grade1Bank from "@/data/kanji-quiz/grade1.json";
+import grade2Bank from "@/data/kanji-quiz/grade2.json";
+import grade3Bank from "@/data/kanji-quiz/grade3.json";
+import grade4Bank from "@/data/kanji-quiz/grade4.json";
 
 export type KanjiQuizQuestion = {
   id: string;
   kanji: string;
   correctReading: string;
   readingType: "on" | "kun";
-  // 教育漢字APIが返す画数。難易度レベルの区切り（KANJI_LEVELS）に使う
+  // 教育漢字APIが返す画数。難易度レベルの区切り（KANJI_LEVELS_BY_GRADE）に使う
   strokeCount: number;
   // 誤答の候補プール（生成スクリプトが1字あたり複数ラウンドかけて作る。
   // scripts/kokugo-ai/lib/build-distractors.ts）。プレイのたびにこの中から
@@ -43,31 +46,54 @@ export type KanjiQuizQuestionWithChoices = KanjiQuizQuestion & {
 // 練習モードのTOTAL_QUESTIONS(10)に揃える。1回のプレイ感を他モードと揃えるため
 export const KANJI_QUIZ_QUESTION_COUNT = 10;
 
-// practice_sessions / difficulty_levels の skill_type に記録する値
-export const KANJI_SKILL_TYPE = "kanji_reading";
+// 問題バンクが生成済み＝出題可能な学年。5・6年生ぶんはまだ生成していないため
+// 対象外（docs/architecture.md「かんじよみクイズ」）
+export const KANJI_SUPPORTED_GRADES: readonly number[] = [1, 2, 3, 4];
+
+export const isKanjiSupportedGrade = (grade: number): boolean =>
+  KANJI_SUPPORTED_GRADES.includes(grade);
+
+// practice_sessions / difficulty_levels の skill_type に記録する値。学年ごとに
+// バンク・レベルのしきい値が違う（下記KANJI_LEVELS_BY_GRADE）ため、学年別に分けている
+export const kanjiSkillType = (grade: number): string => `kanji_reading_grade${grade}`;
 
 export type KanjiLevelConfig = {
-  // このレベルで出題してよい画数の上限。nullは上限なし（＝そのグレードの
-  // 全字が対象）。難易度軸に画数を使うのは、どの字を学校で習ったかは
-  // アプリから分からない（docs/architecture.md「かんじよみクイズ」）が、
-  // 画数はどの子にも共通して測れる指標だから（たし算の「繰り上がりの有無」と
-  // 同じ発想）
+  // このレベルで出題してよい画数の上限。nullは上限なし（＝その学年の全字が対象）。
+  // 難易度軸に画数を使うのは、どの字を学校で習ったかはアプリから分からない
+  // （docs/architecture.md「かんじよみクイズ」）が、画数はどの子にも共通して
+  // 測れる指標だから（たし算の「繰り上がりの有無」と同じ発想）
   maxStrokeCount: number | null;
 };
 
-// grade1（配当漢字80字）の画数分布から決めた区切り。上のレベルほど画数の上限が
-// 上がるが、下限は設けていない＝レベルが上がるほど出題プールが広がる
-// （すでに解けるようになった易しい字も引き続き出題対象に残る。累積方式）。
-// 実行時にアプリが読むのはDBのdifficulty_levels.config（ADD_LEVELSと同じ扱い。
-// practice.ts参照）で、この配列は設計の原稿とテスト用の値
-export const KANJI_LEVELS: readonly KanjiLevelConfig[] = [
-  { maxStrokeCount: 3 }, // Lv1: 1〜3画
-  { maxStrokeCount: 4 }, // Lv2: 1〜4画
-  { maxStrokeCount: 6 }, // Lv3: 1〜6画
-  { maxStrokeCount: null }, // Lv4: 全字
-];
+// 学年ごとの画数分布から、各学年をおよそ4等分するしきい値を決めている
+// （累計字数がtotal*1/4, 2/4, 3/4に最も近い画数を境目に選ぶ）。学年が上がるほど
+// 字数も画数も増えるため、しきい値は学年ごとに別々に持つ必要がある
+// （grade1の3/4/6画をそのまま他学年に流用すると、grade2以降は偏った区切りになる）。
+// 上のレベルほど画数の上限が上がるが下限は設けていない＝レベルが上がるほど
+// 出題プールが広がる（すでに解けるようになった易しい字も引き続き出題対象に
+// 残る。累積方式）。実行時にアプリが読むのはDBのdifficulty_levels.config
+// （ADD_LEVELSと同じ扱い。practice.ts参照）で、この定義は設計の原稿とテスト用の値
+export const KANJI_LEVELS_BY_GRADE: Readonly<Record<number, readonly KanjiLevelConfig[]>> = {
+  1: [{ maxStrokeCount: 3 }, { maxStrokeCount: 4 }, { maxStrokeCount: 6 }, { maxStrokeCount: null }],
+  2: [{ maxStrokeCount: 5 }, { maxStrokeCount: 7 }, { maxStrokeCount: 10 }, { maxStrokeCount: null }],
+  3: [{ maxStrokeCount: 7 }, { maxStrokeCount: 9 }, { maxStrokeCount: 11 }, { maxStrokeCount: null }],
+  4: [{ maxStrokeCount: 7 }, { maxStrokeCount: 9 }, { maxStrokeCount: 12 }, { maxStrokeCount: null }],
+};
 
-const BANK: KanjiQuizQuestion[] = (grade1Bank as { questions: KanjiQuizQuestion[] }).questions;
+const KANJI_BANKS_BY_GRADE: Readonly<Record<number, KanjiQuizQuestion[]>> = {
+  1: (grade1Bank as { questions: KanjiQuizQuestion[] }).questions,
+  2: (grade2Bank as { questions: KanjiQuizQuestion[] }).questions,
+  3: (grade3Bank as { questions: KanjiQuizQuestion[] }).questions,
+  4: (grade4Bank as { questions: KanjiQuizQuestion[] }).questions,
+};
+
+const BANK = KANJI_BANKS_BY_GRADE[1];
+
+// その学年の問題バンクを返す。未生成の学年（5・6年生）は空配列——KanjiQuizSession
+// は問題が0件のとき「もんだいが まだ ないみたい」と案内するだけなので、
+// 呼び出し側で特別扱いしなくても安全に空のまま流せる
+export const kanjiBankForGrade = (grade: number): readonly KanjiQuizQuestion[] =>
+  KANJI_BANKS_BY_GRADE[grade] ?? [];
 
 // 現在のレベルで出題してよい字だけに絞る。generateQuestions（practice.ts）が
 // レベルのconfigから問題を生成するのと同じ位置づけで、こちらは固定バンクを

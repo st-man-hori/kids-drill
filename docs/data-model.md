@@ -46,7 +46,7 @@ DBスキーマの概念設計（Drizzle実装前のたたき台）。詳細な�
 - `correct_count`
 - `started_at` / `finished_at`
 
-`level_id`は算数・かんじよみクイズ（`skill_type = "kanji_reading"`）を含め、すべてのスキルで必須。「レベルを持たないスキル」のために`subject_id`・`skill_type`をこのテーブルに直接持たせる案も検討したが、`practice_sessions`の汎用性を落とすより、レベルを持たないスキルの方を無くして既存の仕組みに揃える方針にした（[architecture.md](./architecture.md)「かんじよみクイズ」）。かんじよみクイズの難易度軸は画数（`strokeCount`）——どの漢字を学校で習ったかはアプリから分からないため、算数の「繰り上がりの有無」と同じく、どの子にも共通して測れる指標を使っている。
+`level_id`は算数・かんじよみクイズ（`skill_type = "kanji_reading_grade1"`〜`"kanji_reading_grade4"`）を含め、すべてのスキルで必須。「レベルを持たないスキル」のために`subject_id`・`skill_type`をこのテーブルに直接持たせる案も検討したが、`practice_sessions`の汎用性を落とすより、レベルを持たないスキルの方を無くして既存の仕組みに揃える方針にした（[architecture.md](./architecture.md)「かんじよみクイズ」）。かんじよみクイズの難易度軸は画数（`strokeCount`）——どの漢字を学校で習ったかはアプリから分からないため、算数の「繰り上がりの有無」と同じく、どの子にも共通して測れる指標を使っている。`skill_type`を学年ごとに分けているのは、学年ごとに配当漢字のバンク・画数分布が違い、レベルのしきい値も学年別に決めているため。
 
 レベル昇降のロジック（`src/lib/practice-progress.ts`）はスキルをまたいで共有している（`getCurrentLevel` / `advanceToNextLevel` / `demoteIfStruggling`はすべて`subjectId`・`skillType`を引数に取るジェネリックな実装）。
 

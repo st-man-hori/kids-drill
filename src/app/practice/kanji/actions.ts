@@ -7,7 +7,8 @@ import { auth } from "@/auth";
 import { calculatePoints, shouldLevelUp } from "@/lib/practice";
 import {
   KANJI_QUIZ_QUESTION_COUNT,
-  KANJI_SKILL_TYPE,
+  isKanjiSupportedGrade,
+  kanjiSkillType,
   type KanjiLevelConfig,
 } from "@/lib/kanji-quiz";
 import {
@@ -50,6 +51,15 @@ export const submitKanjiQuizSession = async ({
     return null;
   }
 
+  const child = await db.query.childProfiles.findFirst({
+    where: eq(childProfiles.id, childId),
+    columns: { grade: true },
+  });
+  // 5・6年生はまだ問題バンクが無く、そもそも画面まで到達しない
+  // （practice/kanji/page.tsx）。Server Actionは直接呼び出せるため念のため弾く
+  if (!child || !isKanjiSupportedGrade(child.grade)) return null;
+  const skillType = kanjiSkillType(child.grade);
+
   const finishedAt = new Date();
   const parsedStartedAt = new Date(startedAt);
   const startedAtDate =
@@ -58,7 +68,7 @@ export const submitKanjiQuizSession = async ({
       : parsedStartedAt;
 
   const subjectId = await getKokugoSubjectId();
-  const level = await getCurrentLevel<KanjiLevelConfig>(childId, subjectId, KANJI_SKILL_TYPE);
+  const level = await getCurrentLevel<KanjiLevelConfig>(childId, subjectId, skillType);
 
   await db.insert(practiceSessions).values({
     childId,
@@ -82,8 +92,8 @@ export const submitKanjiQuizSession = async ({
   // 変更前のレベルで記録済みなので、先に記録→後で判定の順にしている
   const leveledUp = shouldLevelUp(results);
   const nextLevel = leveledUp
-    ? await advanceToNextLevel<KanjiLevelConfig>(childId, subjectId, KANJI_SKILL_TYPE, level.levelNumber)
-    : await demoteIfStruggling<KanjiLevelConfig>(childId, subjectId, KANJI_SKILL_TYPE, level);
+    ? await advanceToNextLevel<KanjiLevelConfig>(childId, subjectId, skillType, level.levelNumber)
+    : await demoteIfStruggling<KanjiLevelConfig>(childId, subjectId, skillType, level);
 
   // 解放条件つきの着せ替えアイテムを配る。累計正解数を条件にするものがあるため、
   // 今回のセッションを記録し終えたこの時点で判定する（docs/game-design.md）。

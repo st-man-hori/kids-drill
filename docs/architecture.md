@@ -31,11 +31,13 @@ Yahoo!テキスト解析APIは未使用。教育漢字APIが読みを構造化�
 
 **v1のスコープ**: ポイント・`practice_sessions`への記録・レベル昇降・着せ替え解放のすべてを、既存の報酬経済（`src/lib/practice-progress.ts`）にそのまま接続している。`practice_sessions.level_id`は算数もかんじも共通で必須のまま——`subject_id`・`skill_type`をテーブルに直接持たせる設計も一度検討したが、「レベルを持たないスキル」という特殊ケースのために`practice_sessions`の汎用性を落とすより、かんじにもレベルを持たせて既存の仕組みにそのまま乗せる方がシンプルと判断した。
 
-**かんじの難易度軸には画数（`strokeCount`）を使う。** どの漢字を学校で習ったかはアプリから分からないため、算数の「繰り上がりの有無」のように**どの子にも共通して測れる指標**が要る。教育漢字APIは元々`strokeCount`を返しており、`src/data/kanji-quiz/grade{N}.json`の各設問にも持たせてある（`scripts/kokugo-ai/lib/kyoiku-kanji-client.ts`）。レベルは`KanjiLevelConfig.maxStrokeCount`（`src/lib/kanji-quiz.ts`）による画数の上限で区切り、**下限は設けない累積方式**（レベルが上がるほど出題プールが広がる＝すでに解けるようになった易しい字も引き続き出題対象に残る）。grade1（80字）は`maxStrokeCount = 3 / 4 / 6 / null`の4レベルで運用する（`drizzle/0006_kanji_reading_levels.sql`、`subjects`に国語＝`kokugo`を追加し`skill_type = "kanji_reading"`で`difficulty_levels`に投入）。
+**かんじの難易度軸には画数（`strokeCount`）を使う。** どの漢字を学校で習ったかはアプリから分からないため、算数の「繰り上がりの有無」のように**どの子にも共通して測れる指標**が要る。教育漢字APIは元々`strokeCount`を返しており、`src/data/kanji-quiz/grade{N}.json`の各設問にも持たせてある（`scripts/kokugo-ai/lib/kyoiku-kanji-client.ts`）。レベルは`KanjiLevelConfig.maxStrokeCount`（`src/lib/kanji-quiz.ts`）による画数の上限で区切り、**下限は設けない累積方式**（レベルが上がるほど出題プールが広がる＝すでに解けるようになった易しい字も引き続き出題対象に残る）。
+
+**`practice_sessions.child_profiles.grade`と連動しており、学年ごとに別々のスキル・レベル表を持つ。** `skill_type`は`kanji_reading_grade1`〜`kanji_reading_grade4`のように学年でnamespaceしている（`kanjiSkillType(grade)`）。理由は学年ごとに配当漢字のバンク・画数分布がまったく違うため——`KANJI_LEVELS_BY_GRADE`（`src/lib/kanji-quiz.ts`）は学年ごとの画数分布をおよそ4等分する位置（累計字数がその学年の1/4・2/4・3/4に最も近い画数）から個別に決めている。grade1の区切り（3/4/6画）をそのまま他学年に使うと、学年が上がるほど字数・画数が増えるぶん偏った区切りになるため。5・6年生ぶんは問題バンクが未生成（`KANJI_SUPPORTED_GRADES = [1,2,3,4]`）で、対象外の学年は`difficulty_levels`の行も無いため`getCurrentLevel`を呼ばず、空の問題リストを返して既存の「もんだいが まだ ないみたい」表示に委ねている（`practice/kanji/page.tsx`・`actions.ts`）。`drizzle/0006_kanji_reading_levels.sql`が`subjects`に国語＝`kokugo`を追加し、学年別`skill_type`ぶんの`difficulty_levels`を投入する。
 
 かんじの出題は算数のように無限生成ではなく固定バンクからの抽選（`prepareKanjiQuestions`）なので、`practice.ts`の`LevelConfig`のような「問題を生成するパラメータ」ではなく「固定バンクをフィルタする条件」としてconfigを使っている（`kanjiBankForLevel`）。レベル昇降の判定ロジック自体（`shouldLevelUp`・`isStrugglingSession`・`advanceToNextLevel`・`demoteIfStruggling`）は算数と共有しており、かんじ専用の実装は持たない。
 
-結果画面の演出（`Celebration`・`celebrationTier`）も`src/lib/practice.ts`から流用している。ゲーム画面（`/practice/kanji`）は現状grade1のバンクのみを参照しており、学年2〜6ぶんのデータは生成済みでも未接続（学年選択・子どもの`grade`との連動は今後の検討課題。これはレベル昇降とは別の軸で、あくまで「どの学年の配当漢字を出題するか」というコンテンツ選択の話）。報酬ループへの統合含め[game-design.md](./game-design.md)を参照。
+結果画面の演出（`Celebration`・`celebrationTier`）も`src/lib/practice.ts`から流用している。報酬ループへの統合含め[game-design.md](./game-design.md)を参照。
 
 ## ターゲット
 
