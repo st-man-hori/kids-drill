@@ -3,7 +3,7 @@
 // node専用APIは持ち込まないこと。practice.tsと同じ方針）。
 //
 // 問題データ自体はコード変更ではなく scripts/kokugo-ai/generate-distractors.ts
-// の再実行で作る（教育漢字API + さくらのAIによる誤答生成）。
+// の再実行で作る（教育漢字API + さくらのAIによる例文の難易度選定・誤答生成）。
 
 import grade1Bank from "@/data/kanji-quiz/grade1.json";
 import grade2Bank from "@/data/kanji-quiz/grade2.json";

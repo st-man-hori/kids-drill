@@ -1,6 +1,6 @@
 // 教育漢字API（api.kyoiku-kanji.st-man.com）の学年別データ + さくらのAI
-// （誤答プール生成）から、かんじよみクイズの問題データを作るスクリプト。
-// 手動実行が前提。
+// （例文の難易度選定・誤答プール生成）から、かんじよみクイズの問題データを
+// 作るスクリプト。手動実行が前提。
 //
 //   npx tsx scripts/kokugo-ai/generate-distractors.ts [--grade=1] [--grades=1-6]
 //
@@ -24,7 +24,8 @@ import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { fetchKanjiByGrade } from "./lib/kyoiku-kanji-client";
-import { selectPrimaryReading } from "./lib/select-reading";
+import { selectReadingCandidates } from "./lib/select-reading";
+import { pickEasiestExample } from "./lib/select-example-difficulty";
 import { generateDistractorPools, type DistractorTarget } from "./lib/build-distractors";
 
 try {
@@ -91,14 +92,18 @@ const processGrade = async (grade: number): Promise<void> => {
   console.log("[2/4] selecting a reading + disambiguating example for each kanji...");
   const targets: Target[] = [];
   for (const entry of entries) {
-    const selected = selectPrimaryReading(entry);
+    const candidates = selectReadingCandidates(entry);
     // 用例から読みを一意に切り出せなかった字は出題しない（文脈なしで「この字の
     // 読みは？」と聞くと、複数の読みを持つ字で誤答が実は別の場面の正しい読み
     // だった、という事故が起きるため。詳細はselect-reading.tsのコメント参照）
-    if (!selected || !selected.example) {
+    if (candidates.length === 0) {
       console.warn(`  skip ${entry.kanji}: no unambiguous example-based reading found`);
       continue;
     }
+    // 候補が2つ以上あるときだけ、どれがその学年に一番やさしいかをAIに選ばせる
+    // （四字熟語のような学年不相応な用例が選ばれるのを防ぐ。詳細は
+    // select-example-difficulty.tsのコメント参照）。1件しかなければ即決
+    const selected = await pickEasiestExample(entry.kanji, grade, candidates);
     targets.push({
       id: `${entry.kanji}-${selected.reading}`,
       kanji: entry.kanji,
