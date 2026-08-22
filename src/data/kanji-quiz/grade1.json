@@ -322,23 +322,23 @@
       "strokeCount": 3
     },
     {
-      "id": "夕-セキ",
+      "id": "夕-ユウ",
       "kanji": "夕",
-      "correctReading": "セキ",
-      "readingType": "on",
+      "correctReading": "ゆう",
+      "readingType": "kun",
       "distractorPool": [
-        "セツ",
-        "サキ",
-        "ゼキ",
-        "シキ",
-        "サエ",
-        "セイ",
-        "セコ",
-        "ゼシ",
-        "サク"
+        "よう",
+        "ゆい",
+        "ゆえ",
+        "ゆあ",
+        "むう",
+        "るう",
+        "ぬう",
+        "ふう",
+        "すう"
       ],
-      "exampleWord": "一朝一夕（いっちょういっせき）",
-      "maskedReading": "いっちょういっ○○",
+      "exampleWord": "夕方（ゆうがた）",
+      "maskedReading": "○○がた",
       "meaning": "evening",
       "strokeCount": 3
     },
