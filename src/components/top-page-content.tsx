@@ -46,8 +46,8 @@ export const TopPageContent = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
             キャラクターをそだてよう！
           </h1>
           <p className="max-w-md text-[clamp(0.875rem,1.5vh+0.5rem,1.125rem)] text-foreground/80">
-            しょうがく1ねんせいの さんすう（たしざん・ひきざん）から
-            はじめられる、けいさんれんしゅうアプリです。
+            しょうがく1ねんせいから はじめられる、
+            たのしい がくしゅうアプリです。
             タブレット・スマホ・パソコンで つかえます。
           </p>
           <div className="flex flex-col items-center gap-3 sm:flex-row">
