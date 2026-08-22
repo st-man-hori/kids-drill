@@ -14,8 +14,8 @@ const SIMPLE_ENOUGH_LENGTH = 3;
 
 // AIに判定させるのは「どの候補も4字以上（＝短い代替がそもそも無い）」字だけ。
 // 実測では962字中22字のみがこれに該当し、AI呼び出しをここまで絞れる
-// （誤答生成: 1字あたり最大9リクエスト、build-distractors.ts と合わせても
-// さくらのAI Engineの予算を大きくは圧迫しない）
+// （誤答生成: 1字あたり最大6リクエスト、build-distractors.ts と合わせても
+// さくらのAI Engineの予算に収まる）
 const buildPrompt = (kanji: string, grade: number, candidates: SelectedReading[]): string => `あなたは小学${grade}年生向けの漢字よみクイズを作る教材編集者です。
 次の漢字の出題に使う例文（熟語）の候補から、小学${grade}年生が読んでイメージしやすい、
 いちばんやさしいものを1つ選んでください。
