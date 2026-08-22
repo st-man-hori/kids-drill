@@ -9,8 +9,7 @@ export type SelectedReadingExample = {
 export type SelectedReading = {
   reading: string; // 元の表記のまま（音読みはカタカナ、訓読みはひらがな）
   readingType: "on" | "kun";
-  // 文脈なしでは選べなかった場合はnull（呼び出し側はその字の出題を諦める）
-  example: SelectedReadingExample | null;
+  example: SelectedReadingExample;
 };
 
 // 「（つ）」のような送り仮名注記を含む表記（例:「や(つ)」）は、単独の字の読みとしては
@@ -35,9 +34,14 @@ const parseExampleWord = (word: string): { base: string; furigana: string } | nu
 // これを避けるため、用例（実際にその読みで使われる熟語）を文脈として出題する。
 // 対象の字が熟語の先頭または末尾にあり、ふりがな全体の前方一致・後方一致で
 // 対象の字ぶんの読みを切り出せる用例だけを採用する（中間位置は境界が
-// 一意に決まらないため対象外）。どの用例からも切り出せなかった場合は
-// 文脈なしでの出題を諦める（呼び出し側でスキップする）
-export const selectPrimaryReading = (entry: KyoikuKanjiEntry): SelectedReading | null => {
+// 一意に決まらないため対象外）。
+//
+// 用例は教育漢字APIが返す順の中で条件を満たすものを「すべて」集めて返す
+// （以前は最初の1件で打ち切っていたが、複数の用例候補があるときにどれを
+// 出題に使うかは呼び出し側がAIで難易度判定できるようにするため。
+// select-example-difficulty.ts参照）。1件も見つからなければ空配列を返し、
+// 呼び出し側はその字の出題を諦める
+export const selectReadingCandidates = (entry: KyoikuKanjiEntry): SelectedReading[] => {
   const candidates: { reading: string; readingType: "on" | "kun" }[] = [
     ...bareReadings(entry.onyomi.ja).map((reading) => ({ reading, readingType: "on" as const })),
     ...bareReadings(entry.kunyomi.ja).map((reading) => ({
@@ -45,9 +49,10 @@ export const selectPrimaryReading = (entry: KyoikuKanjiEntry): SelectedReading |
       readingType: "kun" as const,
     })),
   ];
-  if (candidates.length === 0) return null;
+  if (candidates.length === 0) return [];
 
   const sortedCandidates = [...candidates].sort((a, b) => b.reading.length - a.reading.length);
+  const results: SelectedReading[] = [];
 
   for (const example of entry.examples) {
     const parsed = parseExampleWord(example.word);
@@ -67,7 +72,7 @@ export const selectPrimaryReading = (entry: KyoikuKanjiEntry): SelectedReading |
 
       if (isPrefix && furigana.startsWith(hiraganaReading)) {
         const rest = furigana.slice(hiraganaReading.length);
-        return {
+        results.push({
           reading: candidate.reading,
           readingType: candidate.readingType,
           example: {
@@ -75,11 +80,12 @@ export const selectPrimaryReading = (entry: KyoikuKanjiEntry): SelectedReading |
             fullReading: furigana,
             maskedReading: `${"○".repeat(hiraganaReading.length)}${rest}`,
           },
-        };
+        });
+        break; // この用例に対しては（最長一致の）1候補だけを採用し、次の用例へ
       }
       if (isSuffix && furigana.endsWith(hiraganaReading)) {
         const head = furigana.slice(0, furigana.length - hiraganaReading.length);
-        return {
+        results.push({
           reading: candidate.reading,
           readingType: candidate.readingType,
           example: {
@@ -87,10 +93,16 @@ export const selectPrimaryReading = (entry: KyoikuKanjiEntry): SelectedReading |
             fullReading: furigana,
             maskedReading: `${head}${"○".repeat(hiraganaReading.length)}`,
           },
-        };
+        });
+        break;
       }
     }
   }
 
-  return null;
+  return results;
 };
+
+// 後方互換・単純なケース用: 最初に見つかった候補だけでよい呼び出し側向け
+// （テスト、および候補選定にAIを使わない用途）
+export const selectPrimaryReading = (entry: KyoikuKanjiEntry): SelectedReading | null =>
+  selectReadingCandidates(entry)[0] ?? null;
