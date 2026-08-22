@@ -6,7 +6,7 @@ import { SiteFooter } from "@/components/site-footer";
 
 export const metadata: Metadata = {
   title: "キッズドリルゲーム",
-  description: "算数ドリルアプリ",
+  description: "小学生向け学習ドリルアプリ",
   // iPadのホーム画面から起動したときにフルスクリーンで開くための指定
   // （メインターゲットがiPadなので、マニフェストだけでなくこちらも要る）。
   // titleはアイコンの下に出る名前で、マニフェストのshort_nameと揃える
