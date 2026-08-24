@@ -4,9 +4,19 @@ import "./globals.css";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 
+const siteName = "キッズドリルゲーム";
+const siteUrl = "https://kids-drill-game.st-man.com";
+
 export const metadata: Metadata = {
-  title: "キッズドリルゲーム",
+  metadataBase: new URL(siteUrl),
+  title: siteName,
   description: "小学生向け学習ドリルアプリ",
+  // Google検索結果のサイト名表示はog:site_nameよりJSON-LDのWebSite構造化データが
+  // 優先されるため、下のscriptタグと合わせて指定している
+  openGraph: {
+    siteName,
+    url: siteUrl,
+  },
   // iPadのホーム画面から起動したときにフルスクリーンで開くための指定
   // （メインターゲットがiPadなので、マニフェストだけでなくこちらも要る）。
   // titleはアイコンの下に出る名前で、マニフェストのshort_nameと揃える
@@ -28,6 +38,15 @@ export const viewport: Viewport = {
   themeColor: "#fff9f0",
 };
 
+// Google検索結果のサイト名表示で最優先される情報源。titleタグやog:site_nameだけだと
+// ドメイン名がそのまま表示されてしまうことがあるための保険
+const websiteJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: siteName,
+  url: siteUrl,
+};
+
 const RootLayout = ({ children }: LayoutProps<"/">) => {
   return (
     <html lang="ja" className="h-full antialiased">
@@ -39,6 +58,10 @@ const RootLayout = ({ children }: LayoutProps<"/">) => {
         <link
           href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700;800&display=swap"
           rel="stylesheet"
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
         />
       </head>
       <body className="h-dvh flex flex-col overflow-hidden overscroll-none">
