@@ -32,7 +32,7 @@ const SwatchRow = <T extends string>({ label, options, value, onPick, disabled }
             disabled={disabled}
             onClick={() => onPick(option)}
             aria-pressed={value === option}
-            className={`min-h-11 min-w-11 rounded-full p-1 ${
+            className={`flex min-h-11 min-w-11 items-center justify-center rounded-full p-1 ${
               value === option ? "bg-brand/25 ring-2 ring-brand" : "bg-white/70"
             }`}
           >
