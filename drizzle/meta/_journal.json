@@ -85,6 +85,13 @@
       "when": 1787640074007,
       "tag": "0011_necklace_charm_motifs_complete",
       "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1787640656688,
+      "tag": "0012_hair_style_motifs",
+      "breakpoints": true
     }
   ]
 }
