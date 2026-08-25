@@ -168,15 +168,22 @@ export const compareItems = <T extends { status: ItemStatus; pricePoints: number
   a.name.localeCompare(b.name, "ja");
 
 // ダミーのアセット表現。実画像を用意するまでの暫定で、asset_refに
-// 「バリアント名 色」を入れておき、図形はコード側のバリアントで描く。
+// 「バリアント名 [モチーフ] 色」を入れておき、図形はコード側のバリアントで描く。
 // この形式なら、同じバリアントで色違いのアイテムを足すのはレコード追加だけで済む
 // （docs/game-design.md: 新アイテム追加はレコード1件で足りる、という要件）
-export type AvatarAsset = { variant: string; color: string };
+//
+// motifは3トークン目がある場合だけ使う（今のところネックレスのチャーム形の指定用。
+// 「星のペンダント」のような名前でも実際は丸しか描けなかった問題への対応。
+// src/components/avatar.tsx の Charm 参照）。他スロットは無視してよい
+export type AvatarAsset = { variant: string; color: string; motif?: string };
 
 const FALLBACK_ASSET: AvatarAsset = { variant: "a", color: "#cbd5e1" };
 
 export const parseAssetRef = (assetRef: string): AvatarAsset => {
-  const [variant, color] = assetRef.trim().split(/\s+/);
+  const tokens = assetRef.trim().split(/\s+/);
+  const variant = tokens[0];
+  const color = tokens[tokens.length - 1];
+  const motif = tokens.length >= 3 ? tokens[1] : undefined;
   if (!variant || !color || !/^#[0-9a-fA-F]{3,8}$/.test(color)) return FALLBACK_ASSET;
-  return { variant, color };
+  return motif ? { variant, color, motif } : { variant, color };
 };

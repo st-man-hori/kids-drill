@@ -59,11 +59,84 @@ const particleFloatTransition = (delay: number): Transition => ({
 });
 const PARTICLE_FLOAT_ANIMATE: TargetAndTransition = { opacity: [0.35, 1, 0.35], y: [0, -3, 0] };
 
-// 各shapeは色・uidに加えてreduceMotionを受け取る。おみせ画面は同じバリアント・違う色の
+// ネックレスのチャーム形。アイテム名が「ほしのペンダント」「ハートペンダント」のように
+// 具体的なモチーフを名乗っていても、以前はティア・色にしか形が反応せず全部が丸に
+// 見えてしまっていた（asset_ref の motif で選ぶ。docs/data-model.md）。
+// 「数種類」に絞っており、床数の異なる16種の名前すべてに専用形を作るのではなく、
+// 近いモチーフへ寄せて割り当てる（データ側の対応表はマイグレーションのコメント参照）
+const starPath = (cx: number, cy: number, outerR: number, innerR: number) => {
+  const points: string[] = [];
+  for (let i = 0; i < 10; i++) {
+    const angle = (Math.PI / 5) * i - Math.PI / 2;
+    const r = i % 2 === 0 ? outerR : innerR;
+    points.push(`${i === 0 ? "M" : "L"}${(cx + r * Math.cos(angle)).toFixed(1)} ${(cy + r * Math.sin(angle)).toFixed(1)}`);
+  }
+  return `${points.join(" ")} Z`;
+};
+
+const heartPath = (cx: number, cy: number, size: number) =>
+  `M${cx} ${cy + size * 0.6} ` +
+  `C${cx - size * 1.1} ${cy - size * 0.3} ${cx - size * 0.55} ${cy - size * 1.05} ${cx} ${cy - size * 0.35} ` +
+  `C${cx + size * 0.55} ${cy - size * 1.05} ${cx + size * 1.1} ${cy - size * 0.3} ${cx} ${cy + size * 0.6} Z`;
+
+const gemPath = (cx: number, cy: number, r: number) =>
+  `M${cx} ${cy - r} L${cx + r * 0.6} ${cy - r * 0.4} L${cx + r} ${cy + r * 0.1} L${cx + r * 0.5} ${cy + r * 0.9} ` +
+  `L${cx} ${cy + r * 0.55} L${cx - r * 0.5} ${cy + r * 0.9} L${cx - r} ${cy + r * 0.1} L${cx - r * 0.6} ${cy - r * 0.4} Z`;
+
+const flowerPetalCenters = (cx: number, cy: number, r: number) =>
+  Array.from({ length: 5 }, (_, i) => {
+    const angle = (Math.PI * 2 * i) / 5 - Math.PI / 2;
+    return { x: cx + r * 0.55 * Math.cos(angle), y: cy + r * 0.55 * Math.sin(angle) };
+  });
+
+// チャーム(ネックレスの主形状)。motifが未指定/未知のときは丸のまま
+// （旧アイテムのように色だけで表現していたものと同じ見た目になる）
+const Charm = ({
+  motif,
+  cx,
+  cy,
+  r,
+  fill,
+  stroke,
+  strokeWidth,
+  filter,
+}: {
+  motif: string | undefined;
+  cx: number;
+  cy: number;
+  r: number;
+  fill: string;
+  stroke?: string;
+  strokeWidth?: number;
+  filter?: string;
+}) => {
+  switch (motif) {
+    case "star":
+      return <path d={starPath(cx, cy, r, r * 0.42)} fill={fill} stroke={stroke} strokeWidth={strokeWidth} filter={filter} />;
+    case "heart":
+      return <path d={heartPath(cx, cy, r * 0.85)} fill={fill} stroke={stroke} strokeWidth={strokeWidth} filter={filter} />;
+    case "gem":
+      return <path d={gemPath(cx, cy, r)} fill={fill} stroke={stroke} strokeWidth={strokeWidth} filter={filter} />;
+    case "flower":
+      return (
+        <g filter={filter}>
+          {flowerPetalCenters(cx, cy, r).map((p, i) => (
+            <circle key={i} cx={p.x} cy={p.y} r={r * 0.5} fill={fill} stroke={stroke} strokeWidth={strokeWidth} />
+          ))}
+          <circle cx={cx} cy={cy} r={r * 0.4} fill={fill} stroke={stroke} strokeWidth={strokeWidth} />
+        </g>
+      );
+    default:
+      return <circle cx={cx} cy={cy} r={r} fill={fill} stroke={stroke} strokeWidth={strokeWidth} filter={filter} />;
+  }
+};
+
+// 各shapeは色・uidに加えてreduceMotion、ネックレスのチャーム形を選ぶmotifを受け取る
+// （motifは今のところネックレス以外では未使用）。おみせ画面は同じバリアント・違う色の
 // アイテムを大量に同時描画するため（wardrobe-parts.tsx の ItemGrid）、グラデーション/
 // フィルタの <id> をuidで名前空間化しないと、SVGのidはドキュメント全体で共有される仕様上、
 // 後から描画したインスタンスが先のインスタンスの定義を参照してしまい色が反映されない
-type Shapes = (color: string, uid: string, reduceMotion: boolean) => ReactNode;
+type Shapes = (color: string, uid: string, reduceMotion: boolean, motif?: string) => ReactNode;
 
 // バリアントはティア(t1〜t6)に1対1対応。t1は現状踏襲のベタ塗り、t2以降は
 // docs/game-design.md のティア別テンプレ通りに表現を広げる。未知のバリアントは
@@ -681,13 +754,13 @@ const BOTTOM: Record<string, Shapes> = {
 };
 
 const NECKLACE: Record<string, Shapes> = {
-  t1: (c) => (
+  t1: (c, _uid, _reduceMotion, motif) => (
     <>
       <path d="M40 58 A12 10 0 0 0 60 58" stroke={c} strokeWidth="2.5" fill="none" strokeLinecap="round" />
-      <circle cx="50" cy="70" r="4.5" fill={c} />
+      <Charm motif={motif} cx={50} cy={70} r={5} fill={c} />
     </>
   ),
-  t2: (c, uid) => {
+  t2: (c, uid, _reduceMotion, motif) => {
     const grad = `${uid}-n2-grad`;
     return (
       <>
@@ -698,13 +771,13 @@ const NECKLACE: Record<string, Shapes> = {
           </radialGradient>
         </defs>
         <path d="M40 58 A12 10 0 0 0 60 58" stroke={c} strokeWidth="2.5" fill="none" strokeLinecap="round" />
-        <circle cx="50" cy="70" r="5" fill={`url(#${grad})`} stroke={darken(c, 0.4)} strokeWidth="1" />
+        <Charm motif={motif} cx={50} cy={70} r={5} fill={`url(#${grad})`} stroke={darken(c, 0.4)} strokeWidth={1} />
         <circle cx="42" cy="65" r="2.2" fill={`url(#${grad})`} />
         <circle cx="58" cy="65" r="2.2" fill={`url(#${grad})`} />
       </>
     );
   },
-  t3: (c, uid) => {
+  t3: (c, uid, _reduceMotion, motif) => {
     const grad = `${uid}-n3-grad`;
     const hi = `${uid}-n3-hi`;
     return (
@@ -720,26 +793,16 @@ const NECKLACE: Record<string, Shapes> = {
           </radialGradient>
         </defs>
         <path d="M39 58 A13 10 0 0 0 61 58" stroke={c} strokeWidth="2.6" fill="none" strokeLinecap="round" />
-        <g>
-          <path
-            d="M50 64 L53 70 L60 71 L55 76 L56 83 L50 79 L44 83 L45 76 L40 71 L47 70 Z"
-            fill={`url(#${grad})`}
-            stroke={darken(c, 0.5)}
-            strokeWidth="1"
-          />
-        </g>
-        <g>
-          <path
-            d="M50 66 L52 70 L56 71 L53 74 L54 78 L50 76 L46 78 L47 74 L44 71 L48 70 Z"
-            fill={`url(#${hi})`}
-          />
+        <Charm motif={motif} cx={50} cy={73} r={9} fill={`url(#${grad})`} stroke={darken(c, 0.5)} strokeWidth={1} />
+        <g opacity="0.9">
+          <Charm motif={motif} cx={50} cy={71} r={4.5} fill={`url(#${hi})`} />
           <circle cx="42" cy="66" r="1.4" fill={lighten(c, 0.5)} />
           <circle cx="58" cy="66" r="1.4" fill={lighten(c, 0.5)} />
         </g>
       </>
     );
   },
-  t4: (c, uid) => {
+  t4: (c, uid, _reduceMotion, motif) => {
     const grad = `${uid}-n4-grad`;
     const sheen = `${uid}-n4-sheen`;
     return (
@@ -757,14 +820,14 @@ const NECKLACE: Record<string, Shapes> = {
         </defs>
         <path d="M38 58 A14 10 0 0 0 62 58" stroke={c} strokeWidth="2.8" fill="none" strokeLinecap="round" />
         <path d="M34 60 A18 13 0 0 0 66 60" stroke={darken(c, 0.3)} strokeWidth="1.2" fill="none" opacity="0.5" />
-        <circle cx="50" cy="73" r="7" fill={`url(#${grad})`} stroke={darken(c, 0.5)} strokeWidth="1.2" />
+        <Charm motif={motif} cx={50} cy={73} r={7} fill={`url(#${grad})`} stroke={darken(c, 0.5)} strokeWidth={1.2} />
         <circle cx="47.5" cy="70.5" r="2.4" fill={`url(#${sheen})`} />
         <circle cx="41" cy="66" r="2" fill={c} stroke={darken(c, 0.4)} strokeWidth="0.6" />
         <circle cx="59" cy="66" r="2" fill={c} stroke={darken(c, 0.4)} strokeWidth="0.6" />
       </>
     );
   },
-  t5: (c, uid, reduceMotion) => {
+  t5: (c, uid, reduceMotion, motif) => {
     const grad = `${uid}-n5-grad`;
     const glow = `${uid}-n5-glow`;
     return (
@@ -787,16 +850,12 @@ const NECKLACE: Record<string, Shapes> = {
           animate={reduceMotion ? { opacity: 1 } : GLOW_PULSE_ANIMATE}
           transition={reduceMotion ? STATIC_TRANSITION : GLOW_PULSE_TRANSITION}
         >
-          <path
-            d="M50 63 L55 71 L64 72 L58 79 L60 88 L50 83 L40 88 L42 79 L36 72 L45 71 Z"
-            fill={`url(#${grad})`}
-            filter={`url(#${glow})`}
-          />
+          <Charm motif={motif} cx={50} cy={75} r={11} fill={`url(#${grad})`} filter={`url(#${glow})`} />
         </motion.g>
       </>
     );
   },
-  t6: (c, uid, reduceMotion) => {
+  t6: (c, uid, reduceMotion, motif) => {
     const grad1 = `${uid}-n6-grad1`;
     const grad2 = `${uid}-n6-grad2`;
     const grad3 = `${uid}-n6-grad3`;
@@ -822,7 +881,7 @@ const NECKLACE: Record<string, Shapes> = {
           </filter>
         </defs>
         <path d="M36 58 A16 11 0 0 0 64 58" stroke="#7a5cff" strokeWidth="2.8" fill="none" strokeLinecap="round" />
-        <circle cx="50" cy="74" r="8" fill={`url(#${grad1})`} stroke="#7a5cff" strokeWidth="1.2" />
+        <Charm motif={motif} cx={50} cy={74} r={8} fill={`url(#${grad1})`} stroke="#7a5cff" strokeWidth={1.2} />
         <ellipse cx="47" cy="71" rx="3" ry="2" fill={`url(#${grad2})`} />
         <path
           d="M50 66 L52 71 L57 71 L53 74 L55 79 L50 76 L45 79 L47 74 L43 71 L48 71 Z"
@@ -863,7 +922,7 @@ const renderSlot = (
   if (!asset) return null;
   const shapes = SHAPES[slot];
   const draw = shapes[asset.variant] ?? shapes.t1;
-  return draw(asset.color, uid, reduceMotion);
+  return draw(asset.color, uid, reduceMotion, asset.motif);
 };
 
 // うでの構え。うでは肩を軸に回すので、rectの上端中央を回転の中心にする
