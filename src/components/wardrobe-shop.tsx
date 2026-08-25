@@ -32,14 +32,17 @@ const NOTE: Record<string, string> = {
 // として分かりやすい
 type TierFilter = "all" | "t1" | "t2" | "t3" | "t4" | "t5" | "t6";
 
+// ラベルは「T1」のようなアルファベット+数字だと子どもには読めない記号に
+// 見えてしまうため、星の数で表す（★の数が多いほど上のランク、という
+// 見た目だけで直感的に伝わる。数字が読める子には「★1」のように併記もする）
 const TIER_FILTERS: { key: TierFilter; label: string }[] = [
   { key: "all", label: "ぜんぶ" },
-  { key: "t1", label: "T1" },
-  { key: "t2", label: "T2" },
-  { key: "t3", label: "T3" },
-  { key: "t4", label: "T4" },
-  { key: "t5", label: "T5" },
-  { key: "t6", label: "T6" },
+  { key: "t1", label: "★1" },
+  { key: "t2", label: "★2" },
+  { key: "t3", label: "★3" },
+  { key: "t4", label: "★4" },
+  { key: "t5", label: "★5" },
+  { key: "t6", label: "★6" },
 ];
 
 const matchesTierFilter = (variant: string, tier: TierFilter): boolean =>

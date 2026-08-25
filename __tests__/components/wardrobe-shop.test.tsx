@@ -44,7 +44,7 @@ test("filters items by tier", async () => {
     />,
   );
 
-  await user.click(screen.getByRole("button", { name: "T1" }));
+  await user.click(screen.getByRole("button", { name: "★1" }));
 
   expect(screen.getByText("みずいろヘア")).toBeInTheDocument();
   expect(screen.queryByText("ほしぞらヘア")).not.toBeInTheDocument();
@@ -54,7 +54,7 @@ test("shows a helper message when no item matches the selected tier", async () =
   const user = userEvent.setup();
   render(<WardrobeShop pointsBalance={500} items={[item({ asset: { variant: "t1", color: "#f2c14e" } })]} />);
 
-  await user.click(screen.getByRole("button", { name: "T6" }));
+  await user.click(screen.getByRole("button", { name: "★6" }));
 
   expect(screen.getByText("この ランクには まだ ないよ")).toBeInTheDocument();
 });
