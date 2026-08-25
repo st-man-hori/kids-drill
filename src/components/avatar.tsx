@@ -484,7 +484,7 @@ const HairShape = ({
 // docs/game-design.md のティア別テンプレ通りに表現を広げる。未知のバリアントは
 // 各スロットの t1 にフォールバックするので、レコードを足しただけで画面が壊れない
 const HAIR: Record<string, Shapes> = {
-  t1: (c, _uid, _reduceMotion, motif) => <HairShape style={motif} fill={c} />,
+  t1: (c, _uid, _reduceMotion, motif) => <HairShape style={motif} fill={c} stroke={darken(c, 0.45)} strokeWidth={1.8} />,
   t2: (c, uid, _reduceMotion, motif) => {
     const grad = `${uid}-h2-grad`;
     return (
@@ -748,7 +748,7 @@ const TopShape = ({
 }) => <>{(TOP_STYLES[style ?? "tee"] ?? TOP_STYLES.tee)(fill, stroke, strokeWidth)}</>;
 
 const TOP: Record<string, Shapes> = {
-  t1: (c, _uid, _reduceMotion, motif) => <TopShape style={motif} fill={c} />,
+  t1: (c, _uid, _reduceMotion, motif) => <TopShape style={motif} fill={c} stroke={darken(c, 0.45)} strokeWidth={1.8} />,
   t2: (c, uid, _reduceMotion, motif) => {
     const grad = `${uid}-t2-grad`;
     return (
@@ -1058,7 +1058,9 @@ const BottomShape = ({
 }) => <>{(BOTTOM_STYLES[style ?? "pants"] ?? BOTTOM_STYLES.pants)(fill, stroke, strokeWidth)}</>;
 
 const BOTTOM: Record<string, Shapes> = {
-  t1: (c, _uid, _reduceMotion, motif) => <BottomShape style={motif} fill={c} />,
+  t1: (c, _uid, _reduceMotion, motif) => (
+    <BottomShape style={motif} fill={c} stroke={darken(c, 0.45)} strokeWidth={1.8} />
+  ),
   t2: (c, uid, _reduceMotion, motif) => {
     const grad = `${uid}-b2-grad`;
     return (
@@ -1210,7 +1212,7 @@ const NECKLACE: Record<string, Shapes> = {
   t1: (c, uid, _reduceMotion, motif) => (
     <>
       <path d="M40 58 A12 10 0 0 0 60 58" stroke={c} strokeWidth="2.5" fill="none" strokeLinecap="round" />
-      <Charm motif={motif} uid={uid} baseColor={c} cx={50} cy={70} r={5} fill={c} />
+      <Charm motif={motif} uid={uid} baseColor={c} cx={50} cy={70} r={5} fill={c} stroke={darken(c, 0.45)} strokeWidth={1} />
     </>
   ),
   t2: (c, uid, _reduceMotion, motif) => {
