@@ -489,6 +489,33 @@ const HairShape = ({
   strokeWidth?: number;
 }) => <>{(HAIR_STYLES[style ?? "fluffy"] ?? HAIR_STYLES.fluffy)(fill, stroke, strokeWidth)}</>;
 
+// 前髪(ふさ)。HairShapeの本体は顔より後ろに描いているため、頭頂〜おでこに
+// かぶる部分は顔の丸に完全に隠れ、輪郭ぎりぎりの縁取りしか見えない
+// （＝はげて見える。「顔が前に来るなら、前髪だけ別レイヤーで顔の上に重ねればいい」
+// という指摘を受けて追加した）。同じ髪型の形をもう一度描き、まゆ毛の高さ(y27)
+// より上だけをマスクで残すことで、おでこにかかる前髪として顔の“上”に出す。
+// ポニーテール等の後ろに垂れる部分はy27より下なのでマスクで自然に消える
+const HairFringe = ({
+  style,
+  color,
+  uid,
+}: {
+  style: string | undefined;
+  color: string;
+  uid: string;
+}) => {
+  const maskId = `${uid}-hair-fringe-mask`;
+  const shape = (HAIR_STYLES[style ?? "fluffy"] ?? HAIR_STYLES.fluffy)(color, darken(color, 0.45), 1.8);
+  return (
+    <>
+      <mask id={maskId}>
+        <rect x="0" y="0" width="100" height="27" fill="#fff" />
+      </mask>
+      <g mask={`url(#${maskId})`}>{shape}</g>
+    </>
+  );
+};
+
 // バリアントはティア(t1〜t6)に1対1対応。t1は現状踏襲のベタ塗り、t2以降は
 // docs/game-design.md のティア別テンプレ通りに表現を広げる。未知のバリアントは
 // 各スロットの t1 にフォールバックするので、レコードを足しただけで画面が壊れない
@@ -1543,6 +1570,10 @@ export const Avatar = ({
       {/* かみは からだより後ろに描く。それ以外は SLOT_DRAW_ORDER の順で重ねる */}
       {renderSlot("hair", equipped.hair, uid, reduceMotion)}
       <BaseBody armPose={armPose} />
+      {/* 前髪だけは顔の"上"に重ねる(HairFringeのコメント参照) */}
+      {equipped.hair && (
+        <HairFringe style={equipped.hair.motif} color={equipped.hair.color} uid={uid} />
+      )}
       {SLOT_DRAW_ORDER.filter((slot) => slot !== "hair").map((slot) => (
         <g key={slot}>{renderSlot(slot, equipped[slot], uid, reduceMotion)}</g>
       ))}
