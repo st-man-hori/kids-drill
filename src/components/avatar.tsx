@@ -3,6 +3,14 @@
 import { useId, type ReactNode } from "react";
 import { motion, useReducedMotion, type Transition, type TargetAndTransition } from "framer-motion";
 import { SLOT_DRAW_ORDER, type AvatarAsset, type SlotType } from "@/lib/wardrobe";
+import {
+  DEFAULT_EYE_STYLE,
+  DEFAULT_MOUTH_STYLE,
+  DEFAULT_SKIN_TONE,
+  type EyeStyle,
+  type MouthStyle,
+  type SkinTone,
+} from "@/lib/face";
 
 // 着せ替えアバターの描画。**実イラストを用意するまでのダミー**で、
 // asset_ref から取り出したバリアントと色でSVGの図形を描いている
@@ -1495,8 +1503,11 @@ const ARM_PIVOT = { originX: 0.5, originY: 0.08 } as const;
 
 // 肌の色。着せ替え経済（wardrobe_items）とは別軸で、ポイント不要・いつでも
 // 選び直せる「顔をえらぶ」機能として持たせる（docs/game-design.md「ベースアバターは
-// 1体（見た目は最初にシンプルに選択）」を実装したもの）。既定(light)は旧SKIN定数と同じ値
-const SKIN_TONES: Record<string, string> = {
+// 1体（見た目は最初にシンプルに選択）」を実装したもの）。既定(light)は旧SKIN定数と同じ値。
+// idの一覧はsrc/lib/face.tsが一次情報源（DBアクセスを持ち込めないためidだけそちらに
+// 置いてある）。Record<SkinTone, string>で型付けることで、face.ts側にidを足したのに
+// こちらの色を定義し忘れる、という漏れをコンパイル時に検出できる
+const SKIN_TONES: Record<SkinTone, string> = {
   light: "#f6d5bd",
   beige: "#f0c49a",
   tan: "#d9a066",
@@ -1509,7 +1520,7 @@ const FACE_LINE = "#3f3a36";
 
 type FacePartShape = (color: string) => ReactNode;
 
-const EYE_STYLES: Record<string, FacePartShape> = {
+const EYE_STYLES: Record<EyeStyle, FacePartShape> = {
   // まる目(現状踏襲)
   dot: (c) => (
     <>
@@ -1549,7 +1560,7 @@ const EYE_STYLES: Record<string, FacePartShape> = {
   ),
 };
 
-const MOUTH_STYLES: Record<string, FacePartShape> = {
+const MOUTH_STYLES: Record<MouthStyle, FacePartShape> = {
   // スマイル(現状踏襲)
   smile: (c) => (
     <path d="M45 39 A5 4 0 0 0 55 39" stroke={c} strokeWidth="2" fill="none" strokeLinecap="round" />
@@ -1571,26 +1582,19 @@ const MOUTH_STYLES: Record<string, FacePartShape> = {
   ),
 };
 
-// 「顔をえらぶ」ピッカーUI（別コンポーネント）向けの選択肢一覧。実際の描画関数
-// (SKIN_TONES等)はこのファイルの外に出さず、id一覧だけを公開する。ピッカー側は
-// 各idを渡した<Avatar>を小さく並べて見せれば、実際の見た目と必ず一致する
-export const SKIN_TONE_OPTIONS = Object.keys(SKIN_TONES) as readonly string[];
-export const EYE_STYLE_OPTIONS = Object.keys(EYE_STYLES) as readonly string[];
-export const MOUTH_STYLE_OPTIONS = Object.keys(MOUTH_STYLES) as readonly string[];
-
 // 素体。着ているものが何も無くても、これだけで人の形に見えるようにしておく
 const BaseBody = ({
   armPose,
-  skinTone = "light",
-  eyeStyle = "dot",
-  mouthStyle = "smile",
+  skinTone = DEFAULT_SKIN_TONE,
+  eyeStyle = DEFAULT_EYE_STYLE,
+  mouthStyle = DEFAULT_MOUTH_STYLE,
 }: {
   armPose: ArmPose;
-  skinTone?: string;
-  eyeStyle?: string;
-  mouthStyle?: string;
+  skinTone?: SkinTone;
+  eyeStyle?: EyeStyle;
+  mouthStyle?: MouthStyle;
 }) => {
-  const skin = SKIN_TONES[skinTone] ?? SKIN_TONES.light;
+  const skin = SKIN_TONES[skinTone] ?? SKIN_TONES[DEFAULT_SKIN_TONE];
   const skinShade = darken(skin, 0.12);
   return (
     <>
@@ -1734,9 +1738,9 @@ export const Avatar = ({
 }: {
   equipped: Partial<Record<SlotType, AvatarAsset>>;
   armPose?: ArmPose;
-  skinTone?: string;
-  eyeStyle?: string;
-  mouthStyle?: string;
+  skinTone?: SkinTone;
+  eyeStyle?: EyeStyle;
+  mouthStyle?: MouthStyle;
   className?: string;
 }) => {
   const uid = sanitizeId(useId());
