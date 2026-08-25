@@ -52,10 +52,18 @@ export const WardrobePreview = ({ catalog }: { catalog: CatalogItemView[] }) => 
       <SlotTabs slot={slot} onSelect={setSlot} />
 
       <ItemGrid isEmpty={items.length === 0} emptyMessage={`${SLOT_LABELS[slot]}は 0件`}>
-        {items.map((item) => {
+        {items.map((item, index) => {
           const equippedHere = isSameAsset(equipped[item.slotType], item.asset);
+          // tier(t1〜t6)が切り替わる場所が一覧で分かるよう見出しを挟む。
+          // getWardrobeCatalogでtierごとにまとまる並びにしてあるのが前提
+          const showTierHeading = item.asset.variant !== items[index - 1]?.asset.variant;
           return (
-            <li key={item.id}>
+            <li key={item.id} className="contents">
+              {showTierHeading && (
+                <span className="col-span-full mt-1 text-xs font-bold text-foreground/50 first:mt-0">
+                  {item.asset.variant}
+                </span>
+              )}
               <button
                 type="button"
                 onClick={() => toggle(item)}

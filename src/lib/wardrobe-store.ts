@@ -248,7 +248,12 @@ export const getWardrobeCatalog = async (): Promise<CatalogItemView[]> => {
       ),
     }))
     .sort(
-      (a, b) => a.slotType.localeCompare(b.slotType) || a.name.localeCompare(b.name, "ja"),
+      // tier(t1〜t6)ごとに固まるようにする。全tierが試着できているか
+      // 一覧で確認しやすくするための並び（本番のおみせ側では未使用）
+      (a, b) =>
+        a.slotType.localeCompare(b.slotType) ||
+        a.asset.variant.localeCompare(b.asset.variant) ||
+        a.name.localeCompare(b.name, "ja"),
     );
 };
 
