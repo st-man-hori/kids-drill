@@ -78,6 +78,13 @@
       "when": 1787639196232,
       "tag": "0010_necklace_charm_motifs",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1787640074007,
+      "tag": "0011_necklace_charm_motifs_complete",
+      "breakpoints": true
     }
   ]
 }
