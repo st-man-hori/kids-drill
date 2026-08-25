@@ -11,10 +11,6 @@ import { SLOT_DRAW_ORDER, type AvatarAsset, type SlotType } from "@/lib/wardrobe
 // 実画像に差し替えるときは、このファイルの shape 群を <image> の重ね合わせに
 // 置き換えればよい。呼び出し側とデータの形（スロットごとの AvatarAsset）は変わらない。
 
-// はだ・ベースの色。ベースアバターは1体（docs/game-design.md）なので固定
-const SKIN = "#f6d5bd";
-const SKIN_SHADE = "#e8bfa1";
-
 // ティア別テンプレ（docs/game-design.md「ティア別SVG制作テンプレート」）のグラデーション・
 // ハイライト表現を、asset_ref の色1つ（データ形式は変えない）から導出するための濃淡計算
 const clampByte = (v: number) => Math.max(0, Math.min(255, Math.round(v)));
@@ -1497,56 +1493,141 @@ const ARM_MOTION: Record<
 // Motion自身の originX / originY（0〜1の割合）で渡すこと。
 const ARM_PIVOT = { originX: 0.5, originY: 0.08 } as const;
 
+// 肌の色。着せ替え経済（wardrobe_items）とは別軸で、ポイント不要・いつでも
+// 選び直せる「顔をえらぶ」機能として持たせる（docs/game-design.md「ベースアバターは
+// 1体（見た目は最初にシンプルに選択）」を実装したもの）。既定(light)は旧SKIN定数と同じ値
+const SKIN_TONES: Record<string, string> = {
+  light: "#f6d5bd",
+  beige: "#f0c49a",
+  tan: "#d9a066",
+  brown: "#a8703f",
+  deep: "#6b4423",
+};
+
+// 目・口の線の色。肌の色を問わず読み取りやすいよう固定にする
+const FACE_LINE = "#3f3a36";
+
+type FacePartShape = (color: string) => ReactNode;
+
+const EYE_STYLES: Record<string, FacePartShape> = {
+  // まる目(現状踏襲)
+  dot: (c) => (
+    <>
+      <circle cx="43" cy="31" r="2.4" fill={c} />
+      <circle cx="57" cy="31" r="2.4" fill={c} />
+    </>
+  ),
+  // ぱっちり目。白いハイライトを1つ足してきらっとさせる
+  round: (c) => (
+    <>
+      <circle cx="43" cy="30.5" r="3.2" fill={c} />
+      <circle cx="44.1" cy="29.2" r="1" fill="#ffffff" />
+      <circle cx="57" cy="30.5" r="3.2" fill={c} />
+      <circle cx="58.1" cy="29.2" r="1" fill="#ffffff" />
+    </>
+  ),
+  // にっこり目。口のスマイルと同じ弧を目に流用した、うれしそうな半目
+  happy: (c) => (
+    <>
+      <path d="M39.5 31.5 A4 3.4 0 0 1 46.5 31.5" stroke={c} strokeWidth="2" fill="none" strokeLinecap="round" />
+      <path d="M53.5 31.5 A4 3.4 0 0 1 60.5 31.5" stroke={c} strokeWidth="2" fill="none" strokeLinecap="round" />
+    </>
+  ),
+  // きらきら星目
+  star: (c) => (
+    <>
+      <path d={starPath(43, 31, 3.2, 1.4)} fill={c} />
+      <path d={starPath(57, 31, 3.2, 1.4)} fill={c} />
+    </>
+  ),
+  // ねむたい目。まっすぐな線だけのやさしい目
+  sleepy: (c) => (
+    <>
+      <path d="M39.5 31 L46.5 31" stroke={c} strokeWidth="2" strokeLinecap="round" />
+      <path d="M53.5 31 L60.5 31" stroke={c} strokeWidth="2" strokeLinecap="round" />
+    </>
+  ),
+};
+
+const MOUTH_STYLES: Record<string, FacePartShape> = {
+  // スマイル(現状踏襲)
+  smile: (c) => (
+    <path d="M45 39 A5 4 0 0 0 55 39" stroke={c} strokeWidth="2" fill="none" strokeLinecap="round" />
+  ),
+  // 大きな口を開けたにこにこ笑い
+  grin: (c) => <path d="M43 38 Q50 46.5 57 38 Q50 43.5 43 38 Z" fill={c} />,
+  // ちいさな控えめな笑み
+  small: (c) => (
+    <path d="M47 39.5 Q50 41.5 53 39.5" stroke={c} strokeWidth="2" fill="none" strokeLinecap="round" />
+  ),
+  // びっくり顔の「お」口
+  surprised: (c) => <ellipse cx="50" cy="40" rx="2.6" ry="3.2" fill={c} />,
+  // 歯が見えるくらいの笑い
+  giggle: (c) => (
+    <>
+      <path d="M44 38 Q50 45.5 56 38 Q50 42.5 44 38 Z" fill={c} />
+      <path d="M46.5 39 L53.5 39" stroke="#ffffff" strokeWidth="1.6" strokeLinecap="round" />
+    </>
+  ),
+};
+
 // 素体。着ているものが何も無くても、これだけで人の形に見えるようにしておく
-const BaseBody = ({ armPose }: { armPose: ArmPose }) => (
-  <>
-    {/* あし */}
-    <rect x="33" y="96" width="12" height="34" rx="6" fill={SKIN} />
-    <rect x="55" y="96" width="12" height="34" rx="6" fill={SKIN} />
-    {/* うで */}
-    <motion.rect
-      data-arm="left"
-      x="20"
-      y="60"
-      width="11"
-      height="34"
-      rx="5.5"
-      fill={SKIN}
-      style={ARM_PIVOT}
-      animate={ARM_MOTION[armPose].left}
-      transition={ARM_MOTION[armPose].transition}
-    />
-    <motion.rect
-      data-arm="right"
-      x="69"
-      y="60"
-      width="11"
-      height="34"
-      rx="5.5"
-      fill={SKIN}
-      style={ARM_PIVOT}
-      animate={ARM_MOTION[armPose].right}
-      transition={ARM_MOTION[armPose].transition}
-    />
-    {/* からだ */}
-    <rect x="30" y="56" width="40" height="46" rx="14" fill={SKIN_SHADE} />
-    {/* くび・あたま */}
-    <rect x="45" y="46" width="10" height="12" rx="4" fill={SKIN_SHADE} />
-    <circle cx="50" cy="32" r="20" fill={SKIN} />
-    {/* かお */}
-    <circle cx="43" cy="31" r="2.4" fill="#3f3a36" />
-    <circle cx="57" cy="31" r="2.4" fill="#3f3a36" />
-    <path
-      d="M45 39 A5 4 0 0 0 55 39"
-      stroke="#3f3a36"
-      strokeWidth="2"
-      fill="none"
-      strokeLinecap="round"
-    />
-    <circle cx="36" cy="37" r="3" fill="#f4a6a0" opacity="0.55" />
-    <circle cx="64" cy="37" r="3" fill="#f4a6a0" opacity="0.55" />
-  </>
-);
+const BaseBody = ({
+  armPose,
+  skinTone = "light",
+  eyeStyle = "dot",
+  mouthStyle = "smile",
+}: {
+  armPose: ArmPose;
+  skinTone?: string;
+  eyeStyle?: string;
+  mouthStyle?: string;
+}) => {
+  const skin = SKIN_TONES[skinTone] ?? SKIN_TONES.light;
+  const skinShade = darken(skin, 0.12);
+  return (
+    <>
+      {/* あし */}
+      <rect x="33" y="96" width="12" height="34" rx="6" fill={skin} />
+      <rect x="55" y="96" width="12" height="34" rx="6" fill={skin} />
+      {/* うで */}
+      <motion.rect
+        data-arm="left"
+        x="20"
+        y="60"
+        width="11"
+        height="34"
+        rx="5.5"
+        fill={skin}
+        style={ARM_PIVOT}
+        animate={ARM_MOTION[armPose].left}
+        transition={ARM_MOTION[armPose].transition}
+      />
+      <motion.rect
+        data-arm="right"
+        x="69"
+        y="60"
+        width="11"
+        height="34"
+        rx="5.5"
+        fill={skin}
+        style={ARM_PIVOT}
+        animate={ARM_MOTION[armPose].right}
+        transition={ARM_MOTION[armPose].transition}
+      />
+      {/* からだ */}
+      <rect x="30" y="56" width="40" height="46" rx="14" fill={skinShade} />
+      {/* くび・あたま */}
+      <rect x="45" y="46" width="10" height="12" rx="4" fill={skinShade} />
+      <circle cx="50" cy="32" r="20" fill={skin} />
+      {/* かお */}
+      {(EYE_STYLES[eyeStyle] ?? EYE_STYLES.dot)(FACE_LINE)}
+      {(MOUTH_STYLES[mouthStyle] ?? MOUTH_STYLES.smile)(FACE_LINE)}
+      <circle cx="36" cy="37" r="3" fill="#f4a6a0" opacity="0.55" />
+      <circle cx="64" cy="37" r="3" fill="#f4a6a0" opacity="0.55" />
+    </>
+  );
+};
 
 // アイテム一覧に出す小さな見本。アバターと同じ図形を、そのスロットの
 // あたりだけ切り出して使い回す（別に見本用の絵を持たなくて済む）
@@ -1582,10 +1663,16 @@ export const ItemThumb = ({
 export const Avatar = ({
   equipped,
   armPose = "down",
+  skinTone,
+  eyeStyle,
+  mouthStyle,
   className = "",
 }: {
   equipped: Partial<Record<SlotType, AvatarAsset>>;
   armPose?: ArmPose;
+  skinTone?: string;
+  eyeStyle?: string;
+  mouthStyle?: string;
   className?: string;
 }) => {
   const uid = sanitizeId(useId());
@@ -1594,7 +1681,7 @@ export const Avatar = ({
     <svg viewBox="0 0 100 140" className={className} role="img" aria-label="じぶんの キャラクター">
       {/* かみは からだより後ろに描く。それ以外は SLOT_DRAW_ORDER の順で重ねる */}
       {renderSlot("hair", equipped.hair, uid, reduceMotion)}
-      <BaseBody armPose={armPose} />
+      <BaseBody armPose={armPose} skinTone={skinTone} eyeStyle={eyeStyle} mouthStyle={mouthStyle} />
       {/* 前髪だけは顔の"上"に重ねる(HairFringeのコメント参照) */}
       {equipped.hair && (
         <HairFringe style={equipped.hair.motif} color={equipped.hair.color} uid={uid} />
