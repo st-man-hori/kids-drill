@@ -85,6 +85,28 @@ test("only shows the items of the selected slot", async () => {
   expect(screen.queryByText("ふわふわヘア")).not.toBeInTheDocument();
 });
 
+test("keeps the on-screen order stable even after the server re-sorts equipped items to the front", () => {
+  // 着せると revalidatePath 経由で items が「きているものが先頭」の並びで
+  // 再取得される（compareItems）。その場で並べ替えるとタップした
+  // アイテムが一覧の中でジャンプして見えてしまうため、この画面を開いた
+  // ときの並びをそのまま保つ（次に開き直したときだけ新しい並びになる）
+  const initial = [
+    item({ id: "hair-1", slotType: "hair", name: "ふわふわヘア", status: "owned" }),
+    item({ id: "hair-2", slotType: "hair", name: "みずいろヘア", status: "equipped" }),
+  ];
+  const { rerender } = render(<WardrobeCloset pointsBalance={0} items={initial} face={face} />);
+
+  expect(screen.getAllByRole("button", { name: /ヘア/ })[0]).toHaveTextContent("ふわふわヘア");
+
+  const reorderedByServer = [
+    item({ id: "hair-2", slotType: "hair", name: "みずいろヘア", status: "equipped" }),
+    item({ id: "hair-1", slotType: "hair", name: "ふわふわヘア", status: "owned" }),
+  ];
+  rerender(<WardrobeCloset pointsBalance={0} items={reorderedByServer} face={face} />);
+
+  expect(screen.getAllByRole("button", { name: /ヘア/ })[0]).toHaveTextContent("ふわふわヘア");
+});
+
 test("puts the look back when the server refuses to save it", async () => {
   vi.mocked(wearWardrobeItem).mockResolvedValue({ ok: false, reason: "notOwned" });
   const user = userEvent.setup();

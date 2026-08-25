@@ -44,7 +44,21 @@ export const WardrobeCloset = ({
     return { ...fromServer, ...preview };
   }, [items, preview]);
 
-  const slotItems = items.filter((item) => item.slotType === slot);
+  // 並び順はこの画面を開いた時点でいったん固定する。着せるとサーバー側の
+  // 並び(compareItems、きているものが先頭)に合わせて items が再取得され、
+  // そのまま並べ替えるとタップしたアイテムが一覧の中でジャンプして見えて
+  // しまう。次にこの画面を開き直したとき(ページ遷移でコンポーネントが
+  // 作り直されたとき)にだけ新しい並びに切り替わればよい
+  const [initialOrder] = useState(
+    () => new Map(items.map((item, index) => [item.id, index])),
+  );
+
+  const slotItems = useMemo(() => {
+    return items
+      .filter((item) => item.slotType === slot)
+      .slice()
+      .sort((a, b) => (initialOrder.get(a.id) ?? items.length) - (initialOrder.get(b.id) ?? items.length));
+  }, [items, slot, initialOrder]);
 
   const handleTap = (item: WardrobeItemView) => {
     if (pending || item.status === "equipped") return;
