@@ -70,14 +70,15 @@ export const WardrobeCloset = ({
     <div className="flex min-h-0 w-full max-w-3xl flex-1 flex-col items-center gap-[clamp(0.375rem,1.5vh,1.25rem)]">
       <PointsBadge points={pointsBalance} />
 
-      {/* スマホ幅ではアイテム一覧の取り分を確保するため小さめに抑え、
-          タブレット以上（sm:）では従来どおり大きく見せる */}
+      {/* アイテム一覧の取り分を確保するため、着せ替え前後を見比べられる
+          範囲でできるだけ小さく抑える（大きすぎるとアイテム一覧が
+          画面下に押し出されて何を持っているか分かりづらくなるため） */}
       <Avatar
         equipped={equipped}
         skinTone={face.skinTone}
         eyeStyle={face.eyeStyle}
         mouthStyle={face.mouthStyle}
-        className="h-[clamp(4.5rem,14vh,7rem)] w-auto shrink-0 sm:h-[clamp(7rem,22vh,12rem)]"
+        className="h-[clamp(3.5rem,10vh,5rem)] w-auto shrink-0 sm:h-[clamp(5rem,14vh,8rem)]"
       />
 
       <StatusMessage message={message} />
