@@ -413,10 +413,12 @@ const HAIR_STYLES: Record<string, HairStyleParts> = {
     </>
   ),
   // スパイキーヘア/りゅうせいヘア: ジグザグの毛先。先端は顔の丸(天辺y12)より
-  // 確実に上へ出す(HAIR_CAP_Dと同じ理由)
+  // 確実に上へ出す(HAIR_CAP_Dと同じ理由)。下端は弧(A)で閉じると横に大きく
+  // ふくらみ、耳の高さに丸いイヤーマフのようなこぶができてスパイキーらしさと
+  // 合わなかったため、中央だけ軽くくぼむ2次ベジェ(Q)で閉じている
   spiky: (fill, stroke, sw) => (
     <path
-      d="M24 40 L28 8 L35 30 L41 3 L47 28 L50 0 L53 28 L59 3 L65 30 L72 8 L76 40 A26 18 0 0 1 24 40 Z"
+      d="M24 40 L28 8 L35 30 L41 3 L47 28 L50 0 L53 28 L59 3 L65 30 L72 8 L76 40 Q50 48 24 40 Z"
       fill={fill}
       stroke={stroke}
       strokeWidth={sw}
