@@ -18,6 +18,12 @@ export const childProfiles = pgTable("child_profiles", {
   displayNickname: text("display_nickname").notNull().unique(),
   grade: integer("grade").notNull(),
   pointsBalance: integer("points_balance").notNull().default(0),
+  // 顔(肌の色・目・口)。着せ替え経済(wardrobe_items)とは別軸で、ポイント不要・
+  // いつでも選び直せる。既定値は移行前の見た目(SKIN_TONES.light/dot/smile)と
+  // 一致させてあり、既存の子どもの見た目が移行で変わらないようにしている
+  skinTone: text("skin_tone").notNull().default("light"),
+  eyeStyle: text("eye_style").notNull().default("dot"),
+  mouthStyle: text("mouth_style").notNull().default("smile"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 

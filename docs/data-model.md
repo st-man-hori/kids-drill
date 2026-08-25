@@ -17,6 +17,10 @@ DBスキーマの概念設計（Drizzle実装前のたたき台）。詳細な�
 - `display_nickname`（unique、自動生成。詳細は [game-design.md](./game-design.md) 参照）
 - `grade`（学年 1〜6）
 - `points_balance`（着せ替えアイテム交換用ポイント）
+- `skin_tone` / `eye_style` / `mouth_style`（顔。`wardrobe_items`の着せ替え経済とは別軸で、
+  ポイント不要・いつでも選び直せる。既定値`light`/`dot`/`smile`は導入前の見た目と一致させて
+  あり、移行で既存の子どもの見た目が変わらない。値の実体は[game-design.md](./game-design.md)
+  「顔をえらぶ」参照）
 - `created_at`
 
 ### subjects（教科）
