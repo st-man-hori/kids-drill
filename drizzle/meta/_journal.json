@@ -64,6 +64,13 @@
       "when": 1787637796989,
       "tag": "0008_point_only_wardrobe_items",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1787638208493,
+      "tag": "0009_normalize_legacy_wardrobe_variants",
+      "breakpoints": true
     }
   ]
 }
