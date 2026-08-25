@@ -506,9 +506,19 @@ const HairShape = ({
 // 前髪(ふさ)。HairShapeの本体は顔より後ろに描いているため、頭頂〜おでこに
 // かぶる部分は顔の丸に完全に隠れ、輪郭ぎりぎりの縁取りしか見えない
 // （＝はげて見える。「顔が前に来るなら、前髪だけ別レイヤーで顔の上に重ねればいい」
-// という指摘を受けて追加した）。同じ髪型の形をもう一度描き、まゆ毛の高さ(y27)
-// より上だけをマスクで残すことで、おでこにかかる前髪として顔の“上”に出す。
-// ポニーテール等の後ろに垂れる部分はy27より下なのでマスクで自然に消える
+// という指摘を受けて追加した）。同じ髪型の形をもう一度描き、まゆ毛の高さより
+// 上だけをマスクで残すことで、おでこにかかる前髪として顔の“上”に出す。
+// ポニーテール等の後ろに垂れる部分はマスクの範囲より下なので自然に消える
+//
+// マスクの下端が横一直線だと、どの髪型でも同じ「ぱっつん」前髪になってしまう
+// （マッシュ以外にまで、まっすぐ切りそろえた前髪を強制していた）。マッシュ
+// だけは狙ってその形にしている(ボブのぱっつん前髪が特徴)ので直線のまま残し、
+// それ以外は中央がやや浅く・こめかみ側がやや深い曲線にして、真ん中で分けて
+// 左右に流したセンター分けらしい表情をつけている
+const FRINGE_MASK_STRAIGHT_D = "M0 0 H100 V27 H0 Z";
+const FRINGE_MASK_CENTER_PART_D =
+  "M0 0 H100 V25 Q80 25 65 30 Q57.5 30 50 20 Q42.5 30 35 30 Q20 25 0 25 Z";
+
 const HairFringe = ({
   style,
   color,
@@ -520,10 +530,11 @@ const HairFringe = ({
 }) => {
   const maskId = `${uid}-hair-fringe-mask`;
   const shape = (HAIR_STYLES[style ?? "fluffy"] ?? HAIR_STYLES.fluffy)(color, darken(color, 0.45), 1.8);
+  const maskD = style === "mash" ? FRINGE_MASK_STRAIGHT_D : FRINGE_MASK_CENTER_PART_D;
   return (
     <>
       <mask id={maskId}>
-        <rect x="0" y="0" width="100" height="27" fill="#fff" />
+        <path d={maskD} fill="#fff" />
       </mask>
       <g mask={`url(#${maskId})`}>{shape}</g>
     </>
