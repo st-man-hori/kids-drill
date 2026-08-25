@@ -32,6 +32,33 @@ test("shows the price of an item on sale", () => {
   expect(screen.getByText("400 ポイント")).toBeInTheDocument();
 });
 
+test("filters items by required points", async () => {
+  const user = userEvent.setup();
+  render(
+    <WardrobeShop
+      pointsBalance={500}
+      items={[
+        item({ id: "item-1", name: "みずいろヘア", pricePoints: 240 }),
+        item({ id: "item-2", name: "ほしぞらヘア", pricePoints: 1650 }),
+      ]}
+    />,
+  );
+
+  await user.click(screen.getByRole("button", { name: "300まで" }));
+
+  expect(screen.getByText("みずいろヘア")).toBeInTheDocument();
+  expect(screen.queryByText("ほしぞらヘア")).not.toBeInTheDocument();
+});
+
+test("shows a helper message when no item matches the selected point band", async () => {
+  const user = userEvent.setup();
+  render(<WardrobeShop pointsBalance={500} items={[item({ pricePoints: 400 })]} />);
+
+  await user.click(screen.getByRole("button", { name: "1401いじょう" }));
+
+  expect(screen.getByText("この ポイントたいには まだ ないよ")).toBeInTheDocument();
+});
+
 // タップ即購入だとポイントが意図せず減ってしまう（issue #7）ため、
 // affordableなアイテムは確認ダイアログを挟んでから購入する
 test("tapping an item asks for confirmation instead of buying right away", async () => {

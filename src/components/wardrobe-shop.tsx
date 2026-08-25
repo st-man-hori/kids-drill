@@ -24,6 +24,25 @@ const NOTE: Record<string, string> = {
   tooExpensive: "ポイントが たりないよ",
 };
 
+type PriceBand = "all" | "to300" | "to700" | "to1400" | "over1400";
+
+const PRICE_BANDS: { key: PriceBand; label: string }[] = [
+  { key: "all", label: "ぜんぶ" },
+  { key: "to300", label: "300まで" },
+  { key: "to700", label: "301から700" },
+  { key: "to1400", label: "701から1400" },
+  { key: "over1400", label: "1401いじょう" },
+];
+
+const matchesPriceBand = (pricePoints: number | null, band: PriceBand): boolean => {
+  if (band === "all") return true;
+  if (pricePoints === null) return false;
+  if (band === "to300") return pricePoints <= 300;
+  if (band === "to700") return pricePoints >= 301 && pricePoints <= 700;
+  if (band === "to1400") return pricePoints >= 701 && pricePoints <= 1400;
+  return pricePoints >= 1401;
+};
+
 // おみせ専用の確認ダイアログ。きせかえ画面の「着る」はポイントを使わず
 // 何度でも着せ直せる操作なので確認を挟まない（→wardrobe-closet.tsx）が、
 // 購入はポイントを失う・元に戻せない操作なので必ず一段挟む
@@ -100,6 +119,7 @@ export const WardrobeShop = ({
   items: WardrobeItemView[];
 }) => {
   const [slot, setSlot] = useState<SlotType>("hair");
+  const [priceBand, setPriceBand] = useState<PriceBand>("all");
   const [pending, startTransition] = useTransition();
   const [message, setMessage] = useState<string | null>(null);
   // 買えたものはその場で一覧から消す。サーバーの再取得を待つと
@@ -108,8 +128,11 @@ export const WardrobeShop = ({
   // 確認待ちのアイテム。ここにある間はまだ購入されていない
   const [confirming, setConfirming] = useState<WardrobeItemView | null>(null);
 
-  const slotItems = items.filter(
+  const slotItemsBeforeFilter = items.filter(
     (item) => item.slotType === slot && !bought.includes(item.id),
+  );
+  const slotItems = slotItemsBeforeFilter.filter((item) =>
+    matchesPriceBand(item.pricePoints, priceBand),
   );
 
   const handleTap = (item: WardrobeItemView) => {
@@ -150,9 +173,36 @@ export const WardrobeShop = ({
 
       <SlotTabs slot={slot} onSelect={setSlot} />
 
+      <div
+        className="flex w-full flex-wrap justify-center gap-2"
+        role="group"
+        aria-label="ポイントで しぼりこみ"
+      >
+        {PRICE_BANDS.map((band) => (
+          <motion.button
+            key={band.key}
+            type="button"
+            whileTap={{ scale: 0.95 }}
+            onClick={() => setPriceBand(band.key)}
+            aria-pressed={priceBand === band.key}
+            className={`min-h-11 rounded-full px-4 py-2 text-sm font-bold ${
+              priceBand === band.key
+                ? "bg-brand text-brand-foreground shadow-sm"
+                : "border-2 border-brand/40 bg-white text-brand"
+            }`}
+          >
+            {band.label}
+          </motion.button>
+        ))}
+      </div>
+
       <ItemGrid
         isEmpty={slotItems.length === 0}
-        emptyMessage={`${SLOT_LABELS[slot]}は ぜんぶ てにいれたよ！`}
+        emptyMessage={
+          slotItemsBeforeFilter.length === 0
+            ? `${SLOT_LABELS[slot]}は ぜんぶ てにいれたよ！`
+            : "この ポイントたいには まだ ないよ"
+        }
       >
         {slotItems.map((item) => (
           <li key={item.id}>
