@@ -24,24 +24,26 @@ const NOTE: Record<string, string> = {
   tooExpensive: "ポイントが たりないよ",
 };
 
-type PriceBand = "all" | "to300" | "to700" | "to1400" | "over1400";
+// ポイント帯(300まで/301から700...)で絞り込んでいたが、価格はティア内でも
+// 段階的に上げている(docs/game-design.md「アイテムの階層」)ため、価格帯と
+// ティアの境目が一致せず1つの帯に複数ティアが混ざって分かりにくかった。
+// 見た目の作り込み度(docs/game-design.md「ティア別SVG制作テンプレート」)と
+// 直結するティア(T1〜T6)そのもので絞り込む方が、子どもにも「つぎのランク」
+// として分かりやすい
+type TierFilter = "all" | "t1" | "t2" | "t3" | "t4" | "t5" | "t6";
 
-const PRICE_BANDS: { key: PriceBand; label: string }[] = [
+const TIER_FILTERS: { key: TierFilter; label: string }[] = [
   { key: "all", label: "ぜんぶ" },
-  { key: "to300", label: "300まで" },
-  { key: "to700", label: "301から700" },
-  { key: "to1400", label: "701から1400" },
-  { key: "over1400", label: "1401いじょう" },
+  { key: "t1", label: "T1" },
+  { key: "t2", label: "T2" },
+  { key: "t3", label: "T3" },
+  { key: "t4", label: "T4" },
+  { key: "t5", label: "T5" },
+  { key: "t6", label: "T6" },
 ];
 
-const matchesPriceBand = (pricePoints: number | null, band: PriceBand): boolean => {
-  if (band === "all") return true;
-  if (pricePoints === null) return false;
-  if (band === "to300") return pricePoints <= 300;
-  if (band === "to700") return pricePoints >= 301 && pricePoints <= 700;
-  if (band === "to1400") return pricePoints >= 701 && pricePoints <= 1400;
-  return pricePoints >= 1401;
-};
+const matchesTierFilter = (variant: string, tier: TierFilter): boolean =>
+  tier === "all" || variant === tier;
 
 // おみせ専用の確認ダイアログ。きせかえ画面の「着る」はポイントを使わず
 // 何度でも着せ直せる操作なので確認を挟まない（→wardrobe-closet.tsx）が、
@@ -119,7 +121,7 @@ export const WardrobeShop = ({
   items: WardrobeItemView[];
 }) => {
   const [slot, setSlot] = useState<SlotType>("hair");
-  const [priceBand, setPriceBand] = useState<PriceBand>("all");
+  const [tierFilter, setTierFilter] = useState<TierFilter>("all");
   const [pending, startTransition] = useTransition();
   const [message, setMessage] = useState<string | null>(null);
   // 買えたものはその場で一覧から消す。サーバーの再取得を待つと
@@ -132,7 +134,7 @@ export const WardrobeShop = ({
     (item) => item.slotType === slot && !bought.includes(item.id),
   );
   const slotItems = slotItemsBeforeFilter.filter((item) =>
-    matchesPriceBand(item.pricePoints, priceBand),
+    matchesTierFilter(item.asset.variant, tierFilter),
   );
 
   const handleTap = (item: WardrobeItemView) => {
@@ -176,22 +178,22 @@ export const WardrobeShop = ({
       <div
         className="flex w-full flex-wrap justify-center gap-2"
         role="group"
-        aria-label="ポイントで しぼりこみ"
+        aria-label="ランクで しぼりこみ"
       >
-        {PRICE_BANDS.map((band) => (
+        {TIER_FILTERS.map((tier) => (
           <motion.button
-            key={band.key}
+            key={tier.key}
             type="button"
             whileTap={{ scale: 0.95 }}
-            onClick={() => setPriceBand(band.key)}
-            aria-pressed={priceBand === band.key}
+            onClick={() => setTierFilter(tier.key)}
+            aria-pressed={tierFilter === tier.key}
             className={`min-h-11 rounded-full px-4 py-2 text-sm font-bold ${
-              priceBand === band.key
+              tierFilter === tier.key
                 ? "bg-brand text-brand-foreground shadow-sm"
                 : "border-2 border-brand/40 bg-white text-brand"
             }`}
           >
-            {band.label}
+            {tier.label}
           </motion.button>
         ))}
       </div>
@@ -201,7 +203,7 @@ export const WardrobeShop = ({
         emptyMessage={
           slotItemsBeforeFilter.length === 0
             ? `${SLOT_LABELS[slot]}は ぜんぶ てにいれたよ！`
-            : "この ポイントたいには まだ ないよ"
+            : "この ランクには まだ ないよ"
         }
       >
         {slotItems.map((item) => (

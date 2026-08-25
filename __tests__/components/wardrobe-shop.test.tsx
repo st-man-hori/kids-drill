@@ -32,31 +32,31 @@ test("shows the price of an item on sale", () => {
   expect(screen.getByText("400 ポイント")).toBeInTheDocument();
 });
 
-test("filters items by required points", async () => {
+test("filters items by tier", async () => {
   const user = userEvent.setup();
   render(
     <WardrobeShop
       pointsBalance={500}
       items={[
-        item({ id: "item-1", name: "みずいろヘア", pricePoints: 240 }),
-        item({ id: "item-2", name: "ほしぞらヘア", pricePoints: 1650 }),
+        item({ id: "item-1", name: "みずいろヘア", asset: { variant: "t1", color: "#8fb3e0" } }),
+        item({ id: "item-2", name: "ほしぞらヘア", asset: { variant: "t6", color: "#2b1a4a" } }),
       ]}
     />,
   );
 
-  await user.click(screen.getByRole("button", { name: "300まで" }));
+  await user.click(screen.getByRole("button", { name: "T1" }));
 
   expect(screen.getByText("みずいろヘア")).toBeInTheDocument();
   expect(screen.queryByText("ほしぞらヘア")).not.toBeInTheDocument();
 });
 
-test("shows a helper message when no item matches the selected point band", async () => {
+test("shows a helper message when no item matches the selected tier", async () => {
   const user = userEvent.setup();
-  render(<WardrobeShop pointsBalance={500} items={[item({ pricePoints: 400 })]} />);
+  render(<WardrobeShop pointsBalance={500} items={[item({ asset: { variant: "t1", color: "#f2c14e" } })]} />);
 
-  await user.click(screen.getByRole("button", { name: "1401いじょう" }));
+  await user.click(screen.getByRole("button", { name: "T6" }));
 
-  expect(screen.getByText("この ポイントたいには まだ ないよ")).toBeInTheDocument();
+  expect(screen.getByText("この ランクには まだ ないよ")).toBeInTheDocument();
 });
 
 // タップ即購入だとポイントが意図せず減ってしまう（issue #7）ため、
