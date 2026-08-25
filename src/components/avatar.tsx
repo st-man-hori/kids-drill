@@ -357,25 +357,135 @@ const Charm = ({
   }
 };
 
-// 各shapeは色・uidに加えてreduceMotion、ネックレスのチャーム形を選ぶmotifを受け取る
-// （motifは今のところネックレス以外では未使用）。おみせ画面は同じバリアント・違う色の
-// アイテムを大量に同時描画するため（wardrobe-parts.tsx の ItemGrid）、グラデーション/
-// フィルタの <id> をuidで名前空間化しないと、SVGのidはドキュメント全体で共有される仕様上、
-// 後から描画したインスタンスが先のインスタンスの定義を参照してしまい色が反映されない
+// 各shapeは色・uidに加えてreduceMotion、モチーフ/スタイルを選ぶmotifを受け取る
+// （ネックレスではチャーム形、髪では髪型シルエットの選択に使う。トップス・ボトムスは
+// 今のところ未使用）。おみせ画面は同じバリアント・違う色のアイテムを大量に同時描画
+// するため（wardrobe-parts.tsx の ItemGrid）、グラデーション/フィルタの <id> をuidで
+// 名前空間化しないと、SVGのidはドキュメント全体で共有される仕様上、後から描画した
+// インスタンスが先のインスタンスの定義を参照してしまい色が反映されない
 type Shapes = (color: string, uid: string, reduceMotion: boolean, motif?: string) => ReactNode;
+
+// 髪型シルエット。「ショートヘア」「ツインヘア」のように名前が具体的な髪型を
+// 名乗っていても、以前はティア・色にしか形が反応せず全部が同じ丸坊主的シルエットで
+// 描かれていた（ネックレスのチャームと同じ問題。asset_ref の motif で選ぶ）。
+// fill/stroke/strokeWidthを渡す関数として定義し、t3のクリップパス（テクスチャの
+// はみ出し防止）にも同じ関数を再利用する（clipPathの中身はfill/strokeの値を
+// 描画に使わないので、白などダミー値を渡して呼び出せばよい）
+type HairStyleParts = (fill: string, stroke: string | undefined, strokeWidth: number) => ReactNode;
+
+// おだんご・ツイン・サイドの結び目に使う共通の頭頂ドーム（低め・横長）
+const HAIR_CAP_D = "M24 36 A26 26 0 0 1 76 36 L76 46 A26 18 0 0 1 24 46 Z";
+
+// ドームの輪郭(中心50,36 半径26)より外側にはみ出す位置に置き、輪郭の内側で
+// 埋もれて見えなくなら（塗りと同じ色なので）ないようにする
+const CURL_BUMPS = [
+  { x: 27, y: 30, r: 7.5 },
+  { x: 36, y: 16, r: 8 },
+  { x: 50, y: 10, r: 8.5 },
+  { x: 64, y: 16, r: 8 },
+  { x: 73, y: 30, r: 7.5 },
+];
+
+const HAIR_STYLES: Record<string, HairStyleParts> = {
+  // ショートヘア: 耳の少し下までの短いドーム
+  short: (fill, stroke, sw) => <path d={HAIR_CAP_D} fill={fill} stroke={stroke} strokeWidth={sw} />,
+  // ロングヘア/おやすみヘア/にじいろヘア: ドーム+肩より下まで垂れる左右の房
+  long: (fill, stroke, sw) => (
+    <>
+      <path d={HAIR_CAP_D} fill={fill} stroke={stroke} strokeWidth={sw} />
+      <path d="M24 40 L19 112 A5 5 0 0 0 29 113 L34 44 Z" fill={fill} stroke={stroke} strokeWidth={sw} />
+      <path d="M76 40 L81 112 A5 5 0 0 1 71 113 L66 44 Z" fill={fill} stroke={stroke} strokeWidth={sw} />
+    </>
+  ),
+  // ふわふわヘア/オーロラヘア: 丸を3つ重ねたアフロ状(現状踏襲)
+  fluffy: (fill, stroke, sw) => (
+    <>
+      <circle cx="50" cy="24" r="23" fill={fill} stroke={stroke} strokeWidth={sw} />
+      <circle cx="30" cy="34" r="12" fill={fill} stroke={stroke} strokeWidth={sw} />
+      <circle cx="70" cy="34" r="12" fill={fill} stroke={stroke} strokeWidth={sw} />
+    </>
+  ),
+  // スパイキーヘア/りゅうせいヘア: ジグザグの毛先
+  spiky: (fill, stroke, sw) => (
+    <path
+      d="M24 40 L28 14 L35 30 L41 9 L47 28 L50 6 L53 28 L59 9 L65 30 L72 14 L76 40 A26 18 0 0 1 24 40 Z"
+      fill={fill}
+      stroke={stroke}
+      strokeWidth={sw}
+    />
+  ),
+  // ツインヘア: ドーム+左右の房(だ円)
+  twin: (fill, stroke, sw) => (
+    <>
+      <path d={HAIR_CAP_D} fill={fill} stroke={stroke} strokeWidth={sw} />
+      <ellipse cx="16" cy="60" rx="8" ry="24" fill={fill} stroke={stroke} strokeWidth={sw} transform="rotate(-12 16 60)" />
+      <ellipse cx="84" cy="60" rx="8" ry="24" fill={fill} stroke={stroke} strokeWidth={sw} transform="rotate(12 84 60)" />
+    </>
+  ),
+  // サイドヘア/スポーツヘア: ドーム+片側だけの房
+  side: (fill, stroke, sw) => (
+    <>
+      <path d={HAIR_CAP_D} fill={fill} stroke={stroke} strokeWidth={sw} />
+      <ellipse cx="82" cy="58" rx="9" ry="26" fill={fill} stroke={stroke} strokeWidth={sw} transform="rotate(18 82 58)" />
+    </>
+  ),
+  // ウェーブヘア/すずかぜヘア: 毛先が波打つ縁。髪はからだより後ろに描く
+  // (Avatar内のコメント参照)ため、からだの矩形(x30-70, y56〜)に重なるy48以降で
+  // 波打たせると隠れて見えなくなる。波はすべてy48より上に収める
+  wavy: (fill, stroke, sw) => (
+    <path
+      d="M24 30 A26 22 0 0 1 76 30 L77 40 Q73 46 69 40 Q65 46 61 40 Q57 46 53 40 Q49 46 45 40 Q41 46 37 40 Q33 46 29 40 Q25 45 23 40 Z"
+      fill={fill}
+      stroke={stroke}
+      strokeWidth={sw}
+    />
+  ),
+  // マッシュヘア: まっすぐな前髪のボブ(現状踏襲)
+  mash: (fill, stroke, sw) => (
+    <path
+      d="M27 34 A23 23 0 0 1 73 34 L73 46 L64 46 L64 22 L36 22 L36 46 L27 46 Z"
+      fill={fill}
+      stroke={stroke}
+      strokeWidth={sw}
+    />
+  ),
+  // おだんごヘア: ドーム+頭頂の2つ結び
+  bun: (fill, stroke, sw) => (
+    <>
+      <path d={HAIR_CAP_D} fill={fill} stroke={stroke} strokeWidth={sw} />
+      <circle cx="20" cy="14" r="8" fill={fill} stroke={stroke} strokeWidth={sw} />
+      <circle cx="80" cy="14" r="8" fill={fill} stroke={stroke} strokeWidth={sw} />
+    </>
+  ),
+  // くるくるヘア: ドームの縁に沿ったカール(丸の連なり)
+  curly: (fill, stroke, sw) => (
+    <>
+      <path d={HAIR_CAP_D} fill={fill} stroke={stroke} strokeWidth={sw} />
+      {CURL_BUMPS.map((p, i) => (
+        <circle key={i} cx={p.x} cy={p.y} r={p.r} fill={fill} stroke={stroke} strokeWidth={sw} />
+      ))}
+    </>
+  ),
+};
+
+const HairShape = ({
+  style,
+  fill,
+  stroke,
+  strokeWidth = 0,
+}: {
+  style: string | undefined;
+  fill: string;
+  stroke?: string;
+  strokeWidth?: number;
+}) => <>{(HAIR_STYLES[style ?? "fluffy"] ?? HAIR_STYLES.fluffy)(fill, stroke, strokeWidth)}</>;
 
 // バリアントはティア(t1〜t6)に1対1対応。t1は現状踏襲のベタ塗り、t2以降は
 // docs/game-design.md のティア別テンプレ通りに表現を広げる。未知のバリアントは
 // 各スロットの t1 にフォールバックするので、レコードを足しただけで画面が壊れない
 const HAIR: Record<string, Shapes> = {
-  t1: (c) => (
-    <>
-      <circle cx="50" cy="24" r="23" fill={c} />
-      <circle cx="30" cy="34" r="12" fill={c} />
-      <circle cx="70" cy="34" r="12" fill={c} />
-    </>
-  ),
-  t2: (c, uid) => {
+  t1: (c, _uid, _reduceMotion, motif) => <HairShape style={motif} fill={c} />,
+  t2: (c, uid, _reduceMotion, motif) => {
     const grad = `${uid}-h2-grad`;
     return (
       <>
@@ -385,22 +495,17 @@ const HAIR: Record<string, Shapes> = {
             <stop offset="1" stopColor={c} />
           </linearGradient>
         </defs>
-        <path
-          d="M27 34 A23 23 0 0 1 73 34 L73 46 L64 46 L64 22 L36 22 L36 46 L27 46 Z"
-          fill={`url(#${grad})`}
-          stroke={darken(c, 0.55)}
-          strokeWidth="2.2"
-        />
-        <path d="M27 40 L73 40 L73 46 L64 46 L64 40 L36 40 L36 46 L27 46 Z" fill={darken(c, 0.35)} opacity="0.5" />
-        <path d="M36 22 L36 46 M64 22 L64 46" stroke={darken(c, 0.55)} strokeWidth="1" opacity="0.6" />
-        <circle cx="34" cy="30" r="2.2" fill={lighten(c, 0.5)} opacity="0.7" />
-        <circle cx="44" cy="26" r="2.2" fill={lighten(c, 0.5)} opacity="0.7" />
-        <circle cx="54" cy="29" r="2.2" fill={lighten(c, 0.5)} opacity="0.7" />
-        <circle cx="64" cy="27" r="2.2" fill={lighten(c, 0.5)} opacity="0.7" />
+        <HairShape style={motif} fill={`url(#${grad})`} stroke={darken(c, 0.55)} strokeWidth={2.2} />
+        {/* ハイライトの粒。どの髪型でも頭頂付近には毛があるので、この位置なら
+            スタイルを問わず髪の上に乗る */}
+        <circle cx="38" cy="26" r="2.2" fill={lighten(c, 0.5)} opacity="0.7" />
+        <circle cx="46" cy="20" r="2.2" fill={lighten(c, 0.5)} opacity="0.7" />
+        <circle cx="54" cy="21" r="2.2" fill={lighten(c, 0.5)} opacity="0.7" />
+        <circle cx="62" cy="26" r="2.2" fill={lighten(c, 0.5)} opacity="0.7" />
       </>
     );
   },
-  t3: (c, uid) => {
+  t3: (c, uid, _reduceMotion, motif) => {
     const grad = `${uid}-h3-grad`;
     const hi = `${uid}-h3-hi`;
     const clip = `${uid}-h3-clip`;
@@ -415,30 +520,24 @@ const HAIR: Record<string, Shapes> = {
             <stop offset="0" stopColor="#ffffff" stopOpacity="0.85" />
             <stop offset="1" stopColor="#ffffff" stopOpacity="0" />
           </radialGradient>
+          {/* テクスチャの粒・ハイライトが髪の外(顔など)にはみ出さないよう、
+              選んだスタイルと同じ輪郭でクリップする */}
           <clipPath id={clip}>
-            <path d="M25 33 A25 25 0 0 1 75 33 L75 78 A25 22 0 0 1 25 78 Z" />
+            <HairShape style={motif} fill="#fff" strokeWidth={0} />
           </clipPath>
         </defs>
-        <g>
-          <path
-            d="M25 33 A25 25 0 0 1 75 33 L75 78 A25 22 0 0 1 25 78 Z"
-            fill={`url(#${grad})`}
-            stroke={darken(c, 0.5)}
-            strokeWidth="2"
-          />
-          <path d="M25 35 A25 25 0 0 1 75 35" fill="none" stroke={darken(c, 0.35)} strokeWidth="1" opacity="0.7" />
-        </g>
+        <HairShape style={motif} fill={`url(#${grad})`} stroke={darken(c, 0.5)} strokeWidth={2} />
         <g clipPath={`url(#${clip})`}>
-          <circle cx="38" cy="55" r="3" fill={lighten(c, 0.45)} opacity="0.5" />
-          <circle cx="58" cy="65" r="3" fill={lighten(c, 0.45)} opacity="0.5" />
-          <circle cx="48" cy="45" r="3" fill={lighten(c, 0.45)} opacity="0.5" />
+          <ellipse cx="42" cy="24" rx="18" ry="12" fill={`url(#${hi})`} />
+          <circle cx="36" cy="30" r="2.6" fill={lighten(c, 0.45)} opacity="0.55" />
+          <circle cx="58" cy="22" r="2.6" fill={lighten(c, 0.45)} opacity="0.55" />
+          <circle cx="48" cy="16" r="2.6" fill={lighten(c, 0.45)} opacity="0.55" />
+          <path d="M63 30 L69 33 L63 36 L65 33 Z" fill="#ffe28a" stroke="#dba528" strokeWidth="0.6" />
         </g>
-        <ellipse cx="42" cy="28" rx="18" ry="12" fill={`url(#${hi})`} />
-        <path d="M63 38 L69 41 L63 44 L65 41 Z" fill="#ffe28a" stroke="#dba528" strokeWidth="0.6" />
       </>
     );
   },
-  t4: (c, uid) => {
+  t4: (c, uid, _reduceMotion, motif) => {
     const grad = `${uid}-h4-grad`;
     const sheen = `${uid}-h4-sheen`;
     return (
@@ -455,21 +554,16 @@ const HAIR: Record<string, Shapes> = {
             <stop offset="1" stopColor="#ffffff" stopOpacity="0" />
           </linearGradient>
         </defs>
-        <path
-          d="M24 34 A26 26 0 0 1 76 34 L76 82 A26 24 0 0 1 24 82 Z"
-          fill={`url(#${grad})`}
-          stroke={darken(c, 0.5)}
-          strokeWidth="2"
-        />
-        <path d="M28 40 C40 36 60 36 72 40" stroke={`url(#${sheen})`} strokeWidth="2" fill="none" />
-        <circle cx="35" cy="58" r="2.4" fill="#fff4c2" stroke="#e8b93a" strokeWidth="0.6" />
-        <circle cx="50" cy="66" r="2.4" fill="#fff4c2" stroke="#e8b93a" strokeWidth="0.6" />
-        <circle cx="65" cy="58" r="2.4" fill="#fff4c2" stroke="#e8b93a" strokeWidth="0.6" />
-        <path d="M38 15 L42 24 L50 12 L58 24 L62 15 L62 22 L38 22 Z" fill="#ffe28a" stroke="#dba528" strokeWidth="1" />
+        <HairShape style={motif} fill={`url(#${grad})`} stroke={darken(c, 0.5)} strokeWidth={2} />
+        <path d="M28 30 C40 26 60 26 72 30" stroke={`url(#${sheen})`} strokeWidth="2" fill="none" />
+        <circle cx="35" cy="22" r="2.4" fill="#fff4c2" stroke="#e8b93a" strokeWidth="0.6" />
+        <circle cx="50" cy="18" r="2.4" fill="#fff4c2" stroke="#e8b93a" strokeWidth="0.6" />
+        <circle cx="65" cy="22" r="2.4" fill="#fff4c2" stroke="#e8b93a" strokeWidth="0.6" />
+        <path d="M38 8 L42 17 L50 5 L58 17 L62 8 L62 15 L38 15 Z" fill="#ffe28a" stroke="#dba528" strokeWidth="1" />
       </>
     );
   },
-  t5: (c, uid, reduceMotion) => {
+  t5: (c, uid, reduceMotion, motif) => {
     const grad = `${uid}-h5-grad`;
     const glow = `${uid}-h5-glow`;
     return (
@@ -487,24 +581,19 @@ const HAIR: Record<string, Shapes> = {
             </feMerge>
           </filter>
         </defs>
-        <path
-          d="M24 34 A26 26 0 0 1 76 34 L76 80 A26 24 0 0 1 24 80 Z"
-          fill={`url(#${grad})`}
-          stroke={darken(c, 0.45)}
-          strokeWidth="2"
-        />
+        <HairShape style={motif} fill={`url(#${grad})`} stroke={darken(c, 0.45)} strokeWidth={2} />
         <motion.g
           animate={reduceMotion ? { opacity: 1 } : GLOW_PULSE_ANIMATE}
           transition={reduceMotion ? STATIC_TRANSITION : GLOW_PULSE_TRANSITION}
         >
-          <path d="M32 20 L36 32 L28 32 Z" fill="#fff2b0" filter={`url(#${glow})`} />
-          <path d="M50 10 L55 26 L45 26 Z" fill="#fff2b0" filter={`url(#${glow})`} />
-          <path d="M68 20 L72 32 L64 32 Z" fill="#fff2b0" filter={`url(#${glow})`} />
+          <path d="M32 12 L36 24 L28 24 Z" fill="#fff2b0" filter={`url(#${glow})`} />
+          <path d="M50 4 L55 20 L45 20 Z" fill="#fff2b0" filter={`url(#${glow})`} />
+          <path d="M68 12 L72 24 L64 24 Z" fill="#fff2b0" filter={`url(#${glow})`} />
         </motion.g>
       </>
     );
   },
-  t6: (c, uid, reduceMotion) => {
+  t6: (c, uid, reduceMotion, motif) => {
     const grad1 = `${uid}-h6-grad1`;
     const grad2 = `${uid}-h6-grad2`;
     const grad3 = `${uid}-h6-grad3`;
@@ -529,15 +618,10 @@ const HAIR: Record<string, Shapes> = {
             <feGaussianBlur stdDeviation="1.8" />
           </filter>
         </defs>
+        <HairShape style={motif} fill={`url(#${grad1})`} stroke="#7a5cff" strokeWidth={2} />
+        <ellipse cx="42" cy="20" rx="20" ry="14" fill={`url(#${grad2})`} />
         <path
-          d="M24 34 A26 26 0 0 1 76 34 L76 82 A26 24 0 0 1 24 82 Z"
-          fill={`url(#${grad1})`}
-          stroke="#7a5cff"
-          strokeWidth="2"
-        />
-        <ellipse cx="42" cy="26" rx="20" ry="14" fill={`url(#${grad2})`} />
-        <path
-          d="M50 8 L54 18 L64 18 L56 24 L59 34 L50 28 L41 34 L44 24 L36 18 L46 18 Z"
+          d="M50 2 L54 12 L64 12 L56 18 L59 28 L50 22 L41 28 L44 18 L36 12 L46 12 Z"
           fill={`url(#${grad3})`}
           stroke="#c98a1f"
           strokeWidth="1"
