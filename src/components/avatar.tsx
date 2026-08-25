@@ -731,14 +731,60 @@ const TOP_SLEEVE_LENGTH: Partial<Record<string, number>> = {
   coat: 36,
 };
 
+// そで(BaseBodyでうでと一緒に動く方の袖)とからだを別々の<rect>で重ねて
+// 描くと、それぞれの縁取り線が接するところに継ぎ目が見えてしまい「肩と
+// からだが別パーツ」に見えてしまう(実機フィードバック)。肩から袖にかけて
+// をからだと同じ1本の輪郭線で描くことで、静止時は完全に一枚の服に見える
+// ようにする。袖の丈ぶんだけ肩がふくらんだシルエットになり、BaseBody側の
+// 動く袖(同じ丈)は静止時はこの下に完全に隠れ、うでを上げたときだけ
+// この輪郭の外に出て「袖がうでについてくる」ように見える
+const sleevedTorsoPath = (sleeveLen: number): string => {
+  const capBottom = 54 + sleeveLen;
+  const mid = (a: readonly [number, number], b: readonly [number, number]): [number, number] => [
+    (a[0] + b[0]) / 2,
+    (a[1] + b[1]) / 2,
+  ];
+  // 左半身ぶんの頂点。右半身は x を 100-x で鏡映して作る
+  const points: [number, number][] = [
+    [40, 56], // えりの左はし(首の下に隠れる)
+    [28, 56], // 肩の外側
+    [17, 60], // 袖のそとがわ上
+    [17, capBottom - 6], // 袖のそとがわ下
+    [24, capBottom], // 袖のすそ
+    [28, capBottom - 6], // わきの下のくびれ
+    [28, 100], // わき〜すそまでの胴の側面
+    [32, 104], // すその角(左)
+    [68, 104], // すその角(右)
+    [72, 100],
+    [72, capBottom - 6],
+    [76, capBottom],
+    [83, capBottom - 6],
+    [83, 60],
+    [72, 56],
+    [60, 56], // えりの右はし
+  ];
+  const start = mid(points[points.length - 1]!, points[0]!);
+  let d = `M ${start[0]} ${start[1]} `;
+  for (let i = 0; i < points.length; i++) {
+    const current = points[i]!;
+    const next = points[(i + 1) % points.length]!;
+    const corner = mid(current, next);
+    d += `Q ${current[0]} ${current[1]} ${corner[0]} ${corner[1]} `;
+  }
+  return `${d}Z`;
+};
+
 const TOP_STYLES: Record<string, TopStyleParts> = {
-  // ティーシャツ/ボーダーカットソー: 現状踏襲のシンプルな丸角長方形
-  tee: (fill, stroke, sw) => <rect x="28" y="56" width="44" height="44" rx="14" fill={fill} stroke={stroke} strokeWidth={sw} />,
+  // ティーシャツ/ボーダーカットソー: そでとからだをひとつづきの輪郭にした
+  // シルエット(sleevedTorsoPath)
+  tee: (fill, stroke, sw) => (
+    <path d={sleevedTorsoPath(TOP_SLEEVE_LENGTH.tee ?? 20)} fill={fill} stroke={stroke} strokeWidth={sw} />
+  ),
   // パーカー/ほしぞらパーカー: 本体+えりの後ろにのぞくフード+ひも
   hoodie: (fill, stroke, sw) => (
     <>
       <path d="M36 60 Q50 38 64 60 L58 66 Q50 52 42 66 Z" fill={fill} stroke={stroke} strokeWidth={sw} />
-      <rect x="28" y="56" width="44" height="44" rx="14" fill={fill} stroke={stroke} strokeWidth={sw} />
+      <path d={sleevedTorsoPath(TOP_SLEEVE_LENGTH.hoodie ?? 26)} fill={fill} stroke={stroke} strokeWidth={sw} />
       <line x1="47" y1="66" x2="46" y2="76" stroke={stroke ?? "#00000055"} strokeWidth={sw ? sw * 0.6 : 1} strokeLinecap="round" />
       <line x1="53" y1="66" x2="54" y2="76" stroke={stroke ?? "#00000055"} strokeWidth={sw ? sw * 0.6 : 1} strokeLinecap="round" />
     </>
@@ -746,7 +792,7 @@ const TOP_STYLES: Record<string, TopStyleParts> = {
   // ジャケット/めいさいブルゾン/デニムジャケット: 本体+前あきのVえり+センターの縫い目
   jacket: (fill, stroke, sw) => (
     <>
-      <rect x="28" y="56" width="44" height="44" rx="14" fill={fill} stroke={stroke} strokeWidth={sw} />
+      <path d={sleevedTorsoPath(TOP_SLEEVE_LENGTH.jacket ?? 34)} fill={fill} stroke={stroke} strokeWidth={sw} />
       <path d="M42 58 L50 70 L58 58" fill="none" stroke={stroke ?? "#00000055"} strokeWidth={sw || 1.5} />
       <line x1="50" y1="70" x2="50" y2="98" stroke={stroke ?? "#00000055"} strokeWidth={sw ? sw * 0.6 : 1} />
     </>
@@ -768,7 +814,7 @@ const TOP_STYLES: Record<string, TopStyleParts> = {
   // 前を開けすぎない(ボタン留め)ことでtee/jacketとの見分けをはっきりさせる
   shirt: (fill, stroke, sw) => (
     <>
-      <rect x="28" y="56" width="44" height="44" rx="14" fill={fill} stroke={stroke} strokeWidth={sw} />
+      <path d={sleevedTorsoPath(TOP_SLEEVE_LENGTH.shirt ?? 22)} fill={fill} stroke={stroke} strokeWidth={sw} />
       <path d="M50 56 L38 62 L46 72 L50 64 L54 72 L62 62 Z" fill={stroke ?? "#00000055"} />
       <path d="M50 64 L46 72 L50 78 L54 72 Z" fill={fill} stroke={stroke} strokeWidth={sw ? sw * 0.6 : 1} />
       <circle cx="50" cy="80" r="1.6" fill={stroke ?? "#00000055"} />
@@ -807,7 +853,7 @@ const TOP_STYLES: Record<string, TopStyleParts> = {
   // フリルブラウス: えりぐりに沿ったフリル(半円の連なり)
   blouse: (fill, stroke, sw) => (
     <>
-      <rect x="28" y="56" width="44" height="44" rx="14" fill={fill} stroke={stroke} strokeWidth={sw} />
+      <path d={sleevedTorsoPath(TOP_SLEEVE_LENGTH.blouse ?? 20)} fill={fill} stroke={stroke} strokeWidth={sw} />
       {[36, 42.5, 49, 55.5, 62].map((x, i) => (
         <circle key={i} cx={x} cy="57" r="4" fill={fill} stroke={stroke} strokeWidth={sw} />
       ))}
