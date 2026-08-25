@@ -776,11 +776,13 @@ const TOP_STYLES: Record<string, TopStyleParts> = {
       <circle cx="50" cy="94" r="1.6" fill={stroke ?? "#00000055"} />
     </>
   ),
-  // マリンコート/ふわふわコート: すそへ向けてやや広がる丈長シルエット+ラペル
+  // マリンコート/ふわふわコート: すそへ向けてやや広がるシルエット+ラペル。
+  // からだ(BaseBodyの胴体はy56-102)より少し長い程度の丈にとどめ、
+  // ドレス(足元まで隠す丈)と見分けがつくようにする
   coat: (fill, stroke, sw) => (
     <>
       <path
-        d="M30 56 L70 56 L78 108 A6 6 0 0 1 72 114 L28 114 A6 6 0 0 1 22 108 Z"
+        d="M30 56 L70 56 L77 102 A5 5 0 0 1 72 107 L28 107 A5 5 0 0 1 23 102 Z"
         fill={fill}
         stroke={stroke}
         strokeWidth={sw}
@@ -991,17 +993,19 @@ const TOP: Record<string, Shapes> = {
 type BottomStyleParts = (fill: string, stroke: string | undefined, strokeWidth: number) => ReactNode;
 
 const BOTTOM_STYLES: Record<string, BottomStyleParts> = {
-  // ズボン/おやすみパンツ/オーロラパンツ: 現状踏襲の2本足
+  // ズボン/おやすみパンツ/オーロラパンツ: 2本足。あし(BaseBodyでy96-130)の
+  // 丈いっぱいまで覆うと足首が隠れて不自然なため、少し短くして肌をのぞかせる
   pants: (fill, stroke, sw) => (
     <>
-      <rect x="31" y="96" width="16" height="32" rx="7" fill={fill} stroke={stroke} strokeWidth={sw} />
-      <rect x="53" y="96" width="16" height="32" rx="7" fill={fill} stroke={stroke} strokeWidth={sw} />
+      <rect x="31" y="96" width="16" height="26" rx="7" fill={fill} stroke={stroke} strokeWidth={sw} />
+      <rect x="53" y="96" width="16" height="26" rx="7" fill={fill} stroke={stroke} strokeWidth={sw} />
     </>
   ),
-  // 星のスカート: 1枚の末広がりシルエット(現状踏襲)
+  // 星のスカート: 1枚の末広がりシルエット。ひざ丈程度に短くして、
+  // あしがほとんど見えなくなる丈長スカートにならないようにする
   skirt: (fill, stroke, sw) => (
     <path
-      d="M32 96 L68 96 L78 122 A3 3 0 0 1 75 126 L25 126 A3 3 0 0 1 22 122 Z"
+      d="M32 96 L68 96 L74 110 A3 3 0 0 1 71 114 L29 114 A3 3 0 0 1 26 110 Z"
       fill={fill}
       stroke={stroke}
       strokeWidth={sw}
@@ -1021,11 +1025,11 @@ const BOTTOM_STYLES: Record<string, BottomStyleParts> = {
       <rect x="55" y="96" width="12" height="34" rx="6" fill={fill} stroke={stroke} strokeWidth={sw} />
     </>
   ),
-  // ワイドパンツ: すそへ向けて広がる2本足
+  // ワイドパンツ: すそへ向けて広がる2本足。pantsと同じ理由で足首を少し出す
   wide: (fill, stroke, sw) => (
     <>
-      <path d="M31 96 L47 96 L49 130 L29 130 Z" fill={fill} stroke={stroke} strokeWidth={sw} />
-      <path d="M53 96 L69 96 L71 130 L51 130 Z" fill={fill} stroke={stroke} strokeWidth={sw} />
+      <path d="M31 96 L47 96 L49 122 L29 122 Z" fill={fill} stroke={stroke} strokeWidth={sw} />
+      <path d="M53 96 L69 96 L71 122 L51 122 Z" fill={fill} stroke={stroke} strokeWidth={sw} />
     </>
   ),
   // キュロット: 丈短めで裾が外側へ広がる(スカートとパンツの中間)
@@ -1047,21 +1051,21 @@ const BOTTOM_STYLES: Record<string, BottomStyleParts> = {
   // 迷彩ズボン: 2本足+不規則な迷彩ブロッチ
   camo: (fill, stroke, sw) => (
     <>
-      <rect x="31" y="96" width="16" height="32" rx="7" fill={fill} stroke={stroke} strokeWidth={sw} />
-      <rect x="53" y="96" width="16" height="32" rx="7" fill={fill} stroke={stroke} strokeWidth={sw} />
+      <rect x="31" y="96" width="16" height="26" rx="7" fill={fill} stroke={stroke} strokeWidth={sw} />
+      <rect x="53" y="96" width="16" height="26" rx="7" fill={fill} stroke={stroke} strokeWidth={sw} />
       <ellipse cx="37" cy="104" rx="4" ry="3" fill="#00000030" transform="rotate(20 37 104)" />
-      <ellipse cx="42" cy="117" rx="3.5" ry="2.5" fill="#00000030" transform="rotate(-15 42 117)" />
+      <ellipse cx="42" cy="115" rx="3.5" ry="2.5" fill="#00000030" transform="rotate(-15 42 115)" />
       <ellipse cx="59" cy="108" rx="4" ry="3" fill="#00000030" transform="rotate(10 59 108)" />
-      <ellipse cx="64" cy="120" rx="3.5" ry="2.5" fill="#00000030" transform="rotate(-20 64 120)" />
+      <ellipse cx="64" cy="118" rx="3.5" ry="2.5" fill="#00000030" transform="rotate(-20 64 118)" />
     </>
   ),
   // デニムパンツ: 2本足+ステッチ+バックポケット
   denim: (fill, stroke, sw) => (
     <>
-      <rect x="31" y="96" width="16" height="32" rx="7" fill={fill} stroke={stroke} strokeWidth={sw} />
-      <rect x="53" y="96" width="16" height="32" rx="7" fill={fill} stroke={stroke} strokeWidth={sw} />
-      <line x1="35" y1="98" x2="35" y2="124" stroke="#ffffff88" strokeWidth="0.8" strokeDasharray="1.5 1.5" />
-      <line x1="57" y1="98" x2="57" y2="124" stroke="#ffffff88" strokeWidth="0.8" strokeDasharray="1.5 1.5" />
+      <rect x="31" y="96" width="16" height="26" rx="7" fill={fill} stroke={stroke} strokeWidth={sw} />
+      <rect x="53" y="96" width="16" height="26" rx="7" fill={fill} stroke={stroke} strokeWidth={sw} />
+      <line x1="35" y1="98" x2="35" y2="118" stroke="#ffffff88" strokeWidth="0.8" strokeDasharray="1.5 1.5" />
+      <line x1="57" y1="98" x2="57" y2="118" stroke="#ffffff88" strokeWidth="0.8" strokeDasharray="1.5 1.5" />
       <rect x="34" y="100" width="9" height="7" rx="1.5" fill="none" stroke="#ffffff88" strokeWidth="0.8" />
       <rect x="56" y="100" width="9" height="7" rx="1.5" fill="none" stroke="#ffffff88" strokeWidth="0.8" />
     </>
@@ -1069,28 +1073,28 @@ const BOTTOM_STYLES: Record<string, BottomStyleParts> = {
   // カーゴパンツ/サファリパンツ: 2本足+サイドポケット
   cargo: (fill, stroke, sw) => (
     <>
-      <rect x="31" y="96" width="16" height="32" rx="7" fill={fill} stroke={stroke} strokeWidth={sw} />
-      <rect x="53" y="96" width="16" height="32" rx="7" fill={fill} stroke={stroke} strokeWidth={sw} />
-      <rect x="27" y="108" width="8" height="10" rx="2" fill={fill} stroke={stroke} strokeWidth={sw} />
-      <rect x="65" y="108" width="8" height="10" rx="2" fill={fill} stroke={stroke} strokeWidth={sw} />
-      <line x1="27" y1="112" x2="35" y2="112" stroke={stroke ?? "#00000055"} strokeWidth={sw ? sw * 0.5 : 0.8} />
-      <line x1="65" y1="112" x2="73" y2="112" stroke={stroke ?? "#00000055"} strokeWidth={sw ? sw * 0.5 : 0.8} />
+      <rect x="31" y="96" width="16" height="26" rx="7" fill={fill} stroke={stroke} strokeWidth={sw} />
+      <rect x="53" y="96" width="16" height="26" rx="7" fill={fill} stroke={stroke} strokeWidth={sw} />
+      <rect x="27" y="106" width="8" height="10" rx="2" fill={fill} stroke={stroke} strokeWidth={sw} />
+      <rect x="65" y="106" width="8" height="10" rx="2" fill={fill} stroke={stroke} strokeWidth={sw} />
+      <line x1="27" y1="110" x2="35" y2="110" stroke={stroke ?? "#00000055"} strokeWidth={sw ? sw * 0.5 : 0.8} />
+      <line x1="65" y1="110" x2="73" y2="110" stroke={stroke ?? "#00000055"} strokeWidth={sw ? sw * 0.5 : 0.8} />
     </>
   ),
   // スポーツパンツ: 2本足+サイドライン
   sport: (fill, stroke, sw) => (
     <>
-      <rect x="31" y="96" width="16" height="32" rx="7" fill={fill} stroke={stroke} strokeWidth={sw} />
-      <rect x="53" y="96" width="16" height="32" rx="7" fill={fill} stroke={stroke} strokeWidth={sw} />
-      <rect x="33" y="96" width="2.5" height="32" fill="#ffffffaa" />
-      <rect x="64.5" y="96" width="2.5" height="32" fill="#ffffffaa" />
+      <rect x="31" y="96" width="16" height="26" rx="7" fill={fill} stroke={stroke} strokeWidth={sw} />
+      <rect x="53" y="96" width="16" height="26" rx="7" fill={fill} stroke={stroke} strokeWidth={sw} />
+      <rect x="33" y="96" width="2.5" height="26" fill="#ffffffaa" />
+      <rect x="64.5" y="96" width="2.5" height="26" fill="#ffffffaa" />
     </>
   ),
-  // プリーツスカート: スカート+縦のプリーツライン
+  // プリーツスカート: スカート(skirtと同じひざ丈)+縦のプリーツライン
   pleatskirt: (fill, stroke, sw) => (
     <>
       <path
-        d="M32 96 L68 96 L78 122 A3 3 0 0 1 75 126 L25 126 A3 3 0 0 1 22 122 Z"
+        d="M32 96 L68 96 L74 110 A3 3 0 0 1 71 114 L29 114 A3 3 0 0 1 26 110 Z"
         fill={fill}
         stroke={stroke}
         strokeWidth={sw}
@@ -1100,25 +1104,25 @@ const BOTTOM_STYLES: Record<string, BottomStyleParts> = {
           key={x}
           x1={x}
           y1="97"
-          x2={x + (x - 50) * 0.35}
-          y2="124"
+          x2={x + (x - 50) * 0.2}
+          y2="112"
           stroke={stroke ?? "#00000033"}
           strokeWidth={sw ? sw * 0.5 : 0.8}
         />
       ))}
     </>
   ),
-  // チュールスカート: スカートより広くふんわり+レイヤーのライン
+  // チュールスカート: skirtより広くふんわり+レイヤーのライン(丈はskirtと同じひざ丈)
   tulleskirt: (fill, stroke, sw) => (
     <>
       <path
-        d="M30 94 L70 94 L84 120 A4 4 0 0 1 80 126 L20 126 A4 4 0 0 1 16 120 Z"
+        d="M30 94 L70 94 L78 108 A4 4 0 0 1 74 114 L26 114 A4 4 0 0 1 22 108 Z"
         fill={fill}
         stroke={stroke}
         strokeWidth={sw}
       />
-      <path d="M18 118 Q50 110 82 118" fill="none" stroke="#ffffff88" strokeWidth={sw ? sw * 0.6 : 1} opacity="0.6" />
-      <path d="M22 106 Q50 98 78 106" fill="none" stroke="#ffffff88" strokeWidth={sw ? sw * 0.6 : 1} opacity="0.5" />
+      <path d="M24 106 Q50 100 76 106" fill="none" stroke="#ffffff88" strokeWidth={sw ? sw * 0.6 : 1} opacity="0.6" />
+      <path d="M26 99 Q50 94 74 99" fill="none" stroke="#ffffff88" strokeWidth={sw ? sw * 0.6 : 1} opacity="0.5" />
     </>
   ),
 };
@@ -1645,7 +1649,7 @@ const BaseBody = ({
         {CANVAS_BBOX_REF}
         <rect x="20" y="60" width="11" height="34" rx="5.5" fill={skin} />
         {sleeveLength !== undefined && (
-          <rect x="17" y="55" width="17" height={sleeveLength} rx="7" fill={sleeveFill} stroke={sleeveStroke} strokeWidth={1.8} />
+          <rect x="17" y="54" width="20" height={sleeveLength} rx="8.5" fill={sleeveFill} stroke={sleeveStroke} strokeWidth={1.8} />
         )}
       </motion.g>
       <motion.g
@@ -1657,7 +1661,7 @@ const BaseBody = ({
         {CANVAS_BBOX_REF}
         <rect x="69" y="60" width="11" height="34" rx="5.5" fill={skin} />
         {sleeveLength !== undefined && (
-          <rect x="66" y="55" width="17" height={sleeveLength} rx="7" fill={sleeveFill} stroke={sleeveStroke} strokeWidth={1.8} />
+          <rect x="63" y="54" width="20" height={sleeveLength} rx="8.5" fill={sleeveFill} stroke={sleeveStroke} strokeWidth={1.8} />
         )}
       </motion.g>
       {/* からだ */}
