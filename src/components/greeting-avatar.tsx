@@ -5,6 +5,7 @@ import { motion, useReducedMotion, type Transition, type TargetAndTransition } f
 import { Avatar, type ArmPose } from "@/components/avatar";
 import type { AvatarGreeting } from "@/lib/avatar-greeting";
 import type { AvatarAsset, SlotType } from "@/lib/wardrobe";
+import type { EyeStyle, MouthStyle, SkinTone } from "@/lib/face";
 
 // マイページを開いたときに一度だけするあいさつ。どれをするかは
 // サーバー側で選んで渡される（src/lib/avatar-greeting.ts）。
@@ -67,10 +68,16 @@ const IDLE: { animate: TargetAndTransition; transition: Transition } = {
 export const GreetingAvatar = ({
   equipped,
   greeting,
+  skinTone,
+  eyeStyle,
+  mouthStyle,
   className = "",
 }: {
   equipped: Partial<Record<SlotType, AvatarAsset>>;
   greeting: AvatarGreeting;
+  skinTone?: SkinTone;
+  eyeStyle?: EyeStyle;
+  mouthStyle?: MouthStyle;
   className?: string;
 }) => {
   const reduceMotion = useReducedMotion();
@@ -84,7 +91,15 @@ export const GreetingAvatar = ({
   }, [move.durationMs, reduceMotion]);
 
   if (reduceMotion) {
-    return <Avatar equipped={equipped} className={className} />;
+    return (
+      <Avatar
+        equipped={equipped}
+        skinTone={skinTone}
+        eyeStyle={eyeStyle}
+        mouthStyle={mouthStyle}
+        className={className}
+      />
+    );
   }
 
   const current = done ? IDLE : move;
@@ -98,6 +113,9 @@ export const GreetingAvatar = ({
       <Avatar
         equipped={equipped}
         armPose={done ? "down" : move.armPose}
+        skinTone={skinTone}
+        eyeStyle={eyeStyle}
+        mouthStyle={mouthStyle}
         className="h-full w-auto"
       />
     </motion.div>

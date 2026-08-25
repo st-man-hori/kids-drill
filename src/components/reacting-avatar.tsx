@@ -3,6 +3,7 @@
 import { motion, useReducedMotion, type Transition, type TargetAndTransition } from "framer-motion";
 import { Avatar, type ArmPose } from "@/components/avatar";
 import type { AvatarAsset, SlotType } from "@/lib/wardrobe";
+import type { EyeStyle, MouthStyle, SkinTone } from "@/lib/face";
 
 // 答えに反応するアバター。docs/game-design.md が練習モードのフィードバックとして
 // 「正解モーション・キャラ反応・獲得ポイント表示」を挙げているうちの「キャラ反応」。
@@ -55,10 +56,16 @@ const ARM_POSE: Record<AvatarMood, ArmPose> = {
 export const ReactingAvatar = ({
   equipped,
   mood,
+  skinTone,
+  eyeStyle,
+  mouthStyle,
   className = "",
 }: {
   equipped: Partial<Record<SlotType, AvatarAsset>>;
   mood: AvatarMood;
+  skinTone?: SkinTone;
+  eyeStyle?: EyeStyle;
+  mouthStyle?: MouthStyle;
   className?: string;
 }) => {
   const reduceMotion = useReducedMotion();
@@ -74,6 +81,9 @@ export const ReactingAvatar = ({
       <Avatar
         equipped={equipped}
         armPose={reduceMotion ? "down" : ARM_POSE[mood]}
+        skinTone={skinTone}
+        eyeStyle={eyeStyle}
+        mouthStyle={mouthStyle}
         className="h-full w-auto"
       />
     </motion.div>

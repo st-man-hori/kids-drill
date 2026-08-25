@@ -5,6 +5,7 @@ import { db } from "@/db";
 import { childProfiles } from "@/db/schema";
 import { getTimeBasedGreeting } from "@/lib/greeting";
 import { getEquippedAssets } from "@/lib/wardrobe-store";
+import { isEyeStyle, isMouthStyle, isSkinTone } from "@/lib/face";
 import { LogoutButton } from "@/components/logout-button";
 import { LinkButton } from "@/components/link-button";
 import { GreetingAvatar } from "@/components/greeting-avatar";
@@ -37,6 +38,9 @@ const MyPage = async () => {
           SSRとハイドレーションで食い違う） */}
       <GreetingAvatar
         equipped={equipped}
+        skinTone={isSkinTone(child?.skinTone) ? child.skinTone : undefined}
+        eyeStyle={isEyeStyle(child?.eyeStyle) ? child.eyeStyle : undefined}
+        mouthStyle={isMouthStyle(child?.mouthStyle) ? child.mouthStyle : undefined}
         greeting={pickGreeting()}
         className="h-[clamp(6rem,20vh,10rem)] shrink-0"
       />
@@ -57,6 +61,9 @@ const MyPage = async () => {
         </LinkButton>
         <LinkButton href="/wardrobe" variant="secondary">
           きせかえ
+        </LinkButton>
+        <LinkButton href="/face" variant="secondary">
+          かおを えらぶ
         </LinkButton>
         <LinkButton href="/shop" variant="secondary">
           おみせ

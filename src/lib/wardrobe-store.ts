@@ -221,6 +221,42 @@ export const getWardrobe = async (childId: string): Promise<Wardrobe> => {
   return { pointsBalance, items: items.sort(compareItems) };
 };
 
+// 開発用の試着プレビュー（/dev/wardrobe-preview）向け。解放条件・所持・ポイントは
+// 一切見ず、カタログ全件をそのまま返す。子どもの実績を参照しないので childId も不要
+export type CatalogItemView = {
+  id: string;
+  slotType: SlotType;
+  name: string;
+  asset: AvatarAsset;
+  pricePoints: number | null;
+  unlockLabel: string;
+};
+
+export const getWardrobeCatalog = async (): Promise<CatalogItemView[]> => {
+  const catalog = await db.select().from(wardrobeItems);
+
+  return catalog
+    .filter((item) => isSlotType(item.slotType))
+    .map((item) => ({
+      id: item.id,
+      slotType: item.slotType as SlotType,
+      name: item.name,
+      asset: parseAssetRef(item.assetRef),
+      pricePoints: item.pricePoints,
+      unlockLabel: unlockConditionLabel(
+        parseUnlockCondition(item.unlockConditionType, item.unlockConditionValue),
+      ),
+    }))
+    .sort(
+      // tier(t1〜t6)ごとに固まるようにする。全tierが試着できているか
+      // 一覧で確認しやすくするための並び（本番のおみせ側では未使用）
+      (a, b) =>
+        a.slotType.localeCompare(b.slotType) ||
+        a.asset.variant.localeCompare(b.asset.variant) ||
+        a.name.localeCompare(b.name, "ja"),
+    );
+};
+
 export type WardrobeActionResult =
   | { ok: true }
   | { ok: false; reason: "notFound" | "locked" | "alreadyOwned" | "notEnoughPoints" | "notOwned" };

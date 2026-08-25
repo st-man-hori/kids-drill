@@ -12,6 +12,7 @@ import {
 import { wearWardrobeItem } from "@/app/wardrobe/actions";
 import { SLOT_LABELS, type AvatarAsset, type SlotType } from "@/lib/wardrobe";
 import type { WardrobeItemView } from "@/lib/wardrobe-store";
+import type { ChildFace } from "@/lib/face";
 
 // きせかえ画面。**持っているアイテムだけ**を並べる。
 // まだ持っていないものはおみせ（/shop）側の担当。
@@ -19,10 +20,14 @@ import type { WardrobeItemView } from "@/lib/wardrobe-store";
 export const WardrobeCloset = ({
   pointsBalance,
   items,
+  face,
 }: {
   pointsBalance: number;
   // 所持済みのアイテムのみ（equipped / owned）
   items: WardrobeItemView[];
+  // 顔(肌の色・目・口)。着せ替えとは別画面(/face)で選ぶが、プレビューは
+  // 常に本人の見た目に揃える
+  face: ChildFace;
 }) => {
   const [slot, setSlot] = useState<SlotType>("hair");
   const [pending, startTransition] = useTransition();
@@ -39,7 +44,21 @@ export const WardrobeCloset = ({
     return { ...fromServer, ...preview };
   }, [items, preview]);
 
-  const slotItems = items.filter((item) => item.slotType === slot);
+  // 並び順はこの画面を開いた時点でいったん固定する。着せるとサーバー側の
+  // 並び(compareItems、きているものが先頭)に合わせて items が再取得され、
+  // そのまま並べ替えるとタップしたアイテムが一覧の中でジャンプして見えて
+  // しまう。次にこの画面を開き直したとき(ページ遷移でコンポーネントが
+  // 作り直されたとき)にだけ新しい並びに切り替わればよい
+  const [initialOrder] = useState(
+    () => new Map(items.map((item, index) => [item.id, index])),
+  );
+
+  const slotItems = useMemo(() => {
+    return items
+      .filter((item) => item.slotType === slot)
+      .slice()
+      .sort((a, b) => (initialOrder.get(a.id) ?? items.length) - (initialOrder.get(b.id) ?? items.length));
+  }, [items, slot, initialOrder]);
 
   const handleTap = (item: WardrobeItemView) => {
     if (pending || item.status === "equipped") return;
@@ -65,11 +84,15 @@ export const WardrobeCloset = ({
     <div className="flex min-h-0 w-full max-w-3xl flex-1 flex-col items-center gap-[clamp(0.375rem,1.5vh,1.25rem)]">
       <PointsBadge points={pointsBalance} />
 
-      {/* スマホ幅ではアイテム一覧の取り分を確保するため小さめに抑え、
-          タブレット以上（sm:）では従来どおり大きく見せる */}
+      {/* アイテム一覧の取り分を確保するため、着せ替え前後を見比べられる
+          範囲でできるだけ小さく抑える（大きすぎるとアイテム一覧が
+          画面下に押し出されて何を持っているか分かりづらくなるため） */}
       <Avatar
         equipped={equipped}
-        className="h-[clamp(4.5rem,14vh,7rem)] w-auto shrink-0 sm:h-[clamp(7rem,22vh,12rem)]"
+        skinTone={face.skinTone}
+        eyeStyle={face.eyeStyle}
+        mouthStyle={face.mouthStyle}
+        className="h-[clamp(3.5rem,10vh,5rem)] w-auto shrink-0 sm:h-[clamp(5rem,14vh,8rem)]"
       />
 
       <StatusMessage message={message} />

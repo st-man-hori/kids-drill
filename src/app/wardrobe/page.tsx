@@ -4,6 +4,7 @@ import { LinkButton } from "@/components/link-button";
 import { WardrobeCloset } from "@/components/wardrobe-closet";
 import { getWardrobe, grantUnlockedFreeItems } from "@/lib/wardrobe-store";
 import { isOwnedStatus } from "@/lib/wardrobe";
+import { getChildFace } from "@/lib/face-store";
 
 const WardrobePage = async () => {
   const session = await auth();
@@ -16,7 +17,10 @@ const WardrobePage = async () => {
   // 手元に無い状態になるため
   await grantUnlockedFreeItems(session.user.id);
 
-  const wardrobe = await getWardrobe(session.user.id);
+  const [wardrobe, face] = await Promise.all([
+    getWardrobe(session.user.id),
+    getChildFace(session.user.id),
+  ]);
   // きせかえに並べるのは持っているものだけ。まだ持っていないものはおみせ側
   const owned = wardrobe.items.filter((item) => isOwnedStatus(item.status));
 
@@ -26,11 +30,14 @@ const WardrobePage = async () => {
         きせかえ
       </h1>
 
-      <WardrobeCloset pointsBalance={wardrobe.pointsBalance} items={owned} />
+      <WardrobeCloset pointsBalance={wardrobe.pointsBalance} items={owned} face={face} />
 
       <div className="flex flex-col items-center gap-3 sm:flex-row">
         <LinkButton href="/shop" variant="primary">
           おみせへ
+        </LinkButton>
+        <LinkButton href="/face" variant="secondary">
+          かおを えらぶ
         </LinkButton>
         <LinkButton href="/mypage" variant="secondary">
           マイページへ もどる

@@ -24,6 +24,30 @@ const NOTE: Record<string, string> = {
   tooExpensive: "ポイントが たりないよ",
 };
 
+// ポイント帯(300まで/301から700...)で絞り込んでいたが、価格はティア内でも
+// 段階的に上げている(docs/game-design.md「アイテムの階層」)ため、価格帯と
+// ティアの境目が一致せず1つの帯に複数ティアが混ざって分かりにくかった。
+// 見た目の作り込み度(docs/game-design.md「ティア別SVG制作テンプレート」)と
+// 直結するティア(T1〜T6)そのもので絞り込む方が、子どもにも「つぎのランク」
+// として分かりやすい
+type TierFilter = "all" | "t1" | "t2" | "t3" | "t4" | "t5" | "t6";
+
+// ラベルは「T1」のようなアルファベット+数字だと子どもには読めない記号に
+// 見えてしまうため、星の数で表す（★の数が多いほど上のランク、という
+// 見た目だけで直感的に伝わる。数字が読める子には「★1」のように併記もする）
+const TIER_FILTERS: { key: TierFilter; label: string }[] = [
+  { key: "all", label: "ぜんぶ" },
+  { key: "t1", label: "★1" },
+  { key: "t2", label: "★2" },
+  { key: "t3", label: "★3" },
+  { key: "t4", label: "★4" },
+  { key: "t5", label: "★5" },
+  { key: "t6", label: "★6" },
+];
+
+const matchesTierFilter = (variant: string, tier: TierFilter): boolean =>
+  tier === "all" || variant === tier;
+
 // おみせ専用の確認ダイアログ。きせかえ画面の「着る」はポイントを使わず
 // 何度でも着せ直せる操作なので確認を挟まない（→wardrobe-closet.tsx）が、
 // 購入はポイントを失う・元に戻せない操作なので必ず一段挟む
@@ -100,6 +124,7 @@ export const WardrobeShop = ({
   items: WardrobeItemView[];
 }) => {
   const [slot, setSlot] = useState<SlotType>("hair");
+  const [tierFilter, setTierFilter] = useState<TierFilter>("all");
   const [pending, startTransition] = useTransition();
   const [message, setMessage] = useState<string | null>(null);
   // 買えたものはその場で一覧から消す。サーバーの再取得を待つと
@@ -108,8 +133,11 @@ export const WardrobeShop = ({
   // 確認待ちのアイテム。ここにある間はまだ購入されていない
   const [confirming, setConfirming] = useState<WardrobeItemView | null>(null);
 
-  const slotItems = items.filter(
+  const slotItemsBeforeFilter = items.filter(
     (item) => item.slotType === slot && !bought.includes(item.id),
+  );
+  const slotItems = slotItemsBeforeFilter.filter((item) =>
+    matchesTierFilter(item.asset.variant, tierFilter),
   );
 
   const handleTap = (item: WardrobeItemView) => {
@@ -150,9 +178,36 @@ export const WardrobeShop = ({
 
       <SlotTabs slot={slot} onSelect={setSlot} />
 
+      <div
+        className="flex w-full flex-wrap justify-center gap-2"
+        role="group"
+        aria-label="ランクで しぼりこみ"
+      >
+        {TIER_FILTERS.map((tier) => (
+          <motion.button
+            key={tier.key}
+            type="button"
+            whileTap={{ scale: 0.95 }}
+            onClick={() => setTierFilter(tier.key)}
+            aria-pressed={tierFilter === tier.key}
+            className={`min-h-11 rounded-full px-4 py-2 text-sm font-bold ${
+              tierFilter === tier.key
+                ? "bg-brand text-brand-foreground shadow-sm"
+                : "border-2 border-brand/40 bg-white text-brand"
+            }`}
+          >
+            {tier.label}
+          </motion.button>
+        ))}
+      </div>
+
       <ItemGrid
         isEmpty={slotItems.length === 0}
-        emptyMessage={`${SLOT_LABELS[slot]}は ぜんぶ てにいれたよ！`}
+        emptyMessage={
+          slotItemsBeforeFilter.length === 0
+            ? `${SLOT_LABELS[slot]}は ぜんぶ てにいれたよ！`
+            : "この ランクには まだ ないよ"
+        }
       >
         {slotItems.map((item) => (
           <li key={item.id}>

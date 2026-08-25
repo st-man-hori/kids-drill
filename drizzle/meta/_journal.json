@@ -50,6 +50,69 @@
       "when": 1787293196953,
       "tag": "0006_kanji_reading_levels",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1787627707903,
+      "tag": "0007_tiered_wardrobe_items",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1787637796989,
+      "tag": "0008_point_only_wardrobe_items",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1787638208493,
+      "tag": "0009_normalize_legacy_wardrobe_variants",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1787639196232,
+      "tag": "0010_necklace_charm_motifs",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1787640074007,
+      "tag": "0011_necklace_charm_motifs_complete",
+      "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1787640656688,
+      "tag": "0012_hair_style_motifs",
+      "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1787641013253,
+      "tag": "0013_top_style_motifs",
+      "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "7",
+      "when": 1787641332997,
+      "tag": "0014_bottom_style_motifs",
+      "breakpoints": true
+    },
+    {
+      "idx": 15,
+      "version": "7",
+      "when": 1787651190719,
+      "tag": "0015_child_face_customization",
+      "breakpoints": true
     }
   ]
 }
