@@ -908,14 +908,158 @@ const TOP: Record<string, Shapes> = {
   },
 };
 
-const BOTTOM: Record<string, Shapes> = {
-  t1: (c) => (
+// ボトムスの型。髪・トップスと同じ理由（asset_ref の motif で選ぶ）。
+// t3のクリップパスにも同じ関数を再利用する
+type BottomStyleParts = (fill: string, stroke: string | undefined, strokeWidth: number) => ReactNode;
+
+const BOTTOM_STYLES: Record<string, BottomStyleParts> = {
+  // ズボン/おやすみパンツ/オーロラパンツ: 現状踏襲の2本足
+  pants: (fill, stroke, sw) => (
     <>
-      <rect x="31" y="96" width="16" height="32" rx="7" fill={c} />
-      <rect x="53" y="96" width="16" height="32" rx="7" fill={c} />
+      <rect x="31" y="96" width="16" height="32" rx="7" fill={fill} stroke={stroke} strokeWidth={sw} />
+      <rect x="53" y="96" width="16" height="32" rx="7" fill={fill} stroke={stroke} strokeWidth={sw} />
     </>
   ),
-  t2: (c, uid) => {
+  // 星のスカート: 1枚の末広がりシルエット(現状踏襲)
+  skirt: (fill, stroke, sw) => (
+    <path
+      d="M32 96 L68 96 L78 122 A3 3 0 0 1 75 126 L25 126 A3 3 0 0 1 22 122 Z"
+      fill={fill}
+      stroke={stroke}
+      strokeWidth={sw}
+    />
+  ),
+  // ショートパンツ: 丈の短い2本足
+  shorts: (fill, stroke, sw) => (
+    <>
+      <rect x="31" y="96" width="16" height="20" rx="7" fill={fill} stroke={stroke} strokeWidth={sw} />
+      <rect x="53" y="96" width="16" height="20" rx="7" fill={fill} stroke={stroke} strokeWidth={sw} />
+    </>
+  ),
+  // レギンス: 細身の2本足
+  leggings: (fill, stroke, sw) => (
+    <>
+      <rect x="33" y="96" width="12" height="34" rx="6" fill={fill} stroke={stroke} strokeWidth={sw} />
+      <rect x="55" y="96" width="12" height="34" rx="6" fill={fill} stroke={stroke} strokeWidth={sw} />
+    </>
+  ),
+  // ワイドパンツ: すそへ向けて広がる2本足
+  wide: (fill, stroke, sw) => (
+    <>
+      <path d="M31 96 L47 96 L49 130 L29 130 Z" fill={fill} stroke={stroke} strokeWidth={sw} />
+      <path d="M53 96 L69 96 L71 130 L51 130 Z" fill={fill} stroke={stroke} strokeWidth={sw} />
+    </>
+  ),
+  // キュロット: 丈短めで裾が外側へ広がる(スカートとパンツの中間)
+  culotte: (fill, stroke, sw) => (
+    <>
+      <path d="M31 96 L47 96 L51 118 L27 118 Z" fill={fill} stroke={stroke} strokeWidth={sw} />
+      <path d="M53 96 L69 96 L73 118 L49 118 Z" fill={fill} stroke={stroke} strokeWidth={sw} />
+    </>
+  ),
+  // ジョガーパンツ: 足首でしぼる裾のカフ
+  joggers: (fill, stroke, sw) => (
+    <>
+      <path d="M31 96 L47 96 L45 122 L33 122 Z" fill={fill} stroke={stroke} strokeWidth={sw} />
+      <rect x="32.5" y="121" width="13" height="7" rx="3" fill="#00000022" />
+      <path d="M53 96 L69 96 L67 122 L55 122 Z" fill={fill} stroke={stroke} strokeWidth={sw} />
+      <rect x="54.5" y="121" width="13" height="7" rx="3" fill="#00000022" />
+    </>
+  ),
+  // 迷彩ズボン: 2本足+不規則な迷彩ブロッチ
+  camo: (fill, stroke, sw) => (
+    <>
+      <rect x="31" y="96" width="16" height="32" rx="7" fill={fill} stroke={stroke} strokeWidth={sw} />
+      <rect x="53" y="96" width="16" height="32" rx="7" fill={fill} stroke={stroke} strokeWidth={sw} />
+      <ellipse cx="37" cy="104" rx="4" ry="3" fill="#00000030" transform="rotate(20 37 104)" />
+      <ellipse cx="42" cy="117" rx="3.5" ry="2.5" fill="#00000030" transform="rotate(-15 42 117)" />
+      <ellipse cx="59" cy="108" rx="4" ry="3" fill="#00000030" transform="rotate(10 59 108)" />
+      <ellipse cx="64" cy="120" rx="3.5" ry="2.5" fill="#00000030" transform="rotate(-20 64 120)" />
+    </>
+  ),
+  // デニムパンツ: 2本足+ステッチ+バックポケット
+  denim: (fill, stroke, sw) => (
+    <>
+      <rect x="31" y="96" width="16" height="32" rx="7" fill={fill} stroke={stroke} strokeWidth={sw} />
+      <rect x="53" y="96" width="16" height="32" rx="7" fill={fill} stroke={stroke} strokeWidth={sw} />
+      <line x1="35" y1="98" x2="35" y2="124" stroke="#ffffff88" strokeWidth="0.8" strokeDasharray="1.5 1.5" />
+      <line x1="57" y1="98" x2="57" y2="124" stroke="#ffffff88" strokeWidth="0.8" strokeDasharray="1.5 1.5" />
+      <rect x="34" y="100" width="9" height="7" rx="1.5" fill="none" stroke="#ffffff88" strokeWidth="0.8" />
+      <rect x="56" y="100" width="9" height="7" rx="1.5" fill="none" stroke="#ffffff88" strokeWidth="0.8" />
+    </>
+  ),
+  // カーゴパンツ/サファリパンツ: 2本足+サイドポケット
+  cargo: (fill, stroke, sw) => (
+    <>
+      <rect x="31" y="96" width="16" height="32" rx="7" fill={fill} stroke={stroke} strokeWidth={sw} />
+      <rect x="53" y="96" width="16" height="32" rx="7" fill={fill} stroke={stroke} strokeWidth={sw} />
+      <rect x="27" y="108" width="8" height="10" rx="2" fill={fill} stroke={stroke} strokeWidth={sw} />
+      <rect x="65" y="108" width="8" height="10" rx="2" fill={fill} stroke={stroke} strokeWidth={sw} />
+      <line x1="27" y1="112" x2="35" y2="112" stroke={stroke ?? "#00000055"} strokeWidth={sw ? sw * 0.5 : 0.8} />
+      <line x1="65" y1="112" x2="73" y2="112" stroke={stroke ?? "#00000055"} strokeWidth={sw ? sw * 0.5 : 0.8} />
+    </>
+  ),
+  // スポーツパンツ: 2本足+サイドライン
+  sport: (fill, stroke, sw) => (
+    <>
+      <rect x="31" y="96" width="16" height="32" rx="7" fill={fill} stroke={stroke} strokeWidth={sw} />
+      <rect x="53" y="96" width="16" height="32" rx="7" fill={fill} stroke={stroke} strokeWidth={sw} />
+      <rect x="33" y="96" width="2.5" height="32" fill="#ffffffaa" />
+      <rect x="64.5" y="96" width="2.5" height="32" fill="#ffffffaa" />
+    </>
+  ),
+  // プリーツスカート: スカート+縦のプリーツライン
+  pleatskirt: (fill, stroke, sw) => (
+    <>
+      <path
+        d="M32 96 L68 96 L78 122 A3 3 0 0 1 75 126 L25 126 A3 3 0 0 1 22 122 Z"
+        fill={fill}
+        stroke={stroke}
+        strokeWidth={sw}
+      />
+      {[36, 43, 50, 57, 64].map((x) => (
+        <line
+          key={x}
+          x1={x}
+          y1="97"
+          x2={x + (x - 50) * 0.35}
+          y2="124"
+          stroke={stroke ?? "#00000033"}
+          strokeWidth={sw ? sw * 0.5 : 0.8}
+        />
+      ))}
+    </>
+  ),
+  // チュールスカート: スカートより広くふんわり+レイヤーのライン
+  tulleskirt: (fill, stroke, sw) => (
+    <>
+      <path
+        d="M30 94 L70 94 L84 120 A4 4 0 0 1 80 126 L20 126 A4 4 0 0 1 16 120 Z"
+        fill={fill}
+        stroke={stroke}
+        strokeWidth={sw}
+      />
+      <path d="M18 118 Q50 110 82 118" fill="none" stroke="#ffffff88" strokeWidth={sw ? sw * 0.6 : 1} opacity="0.6" />
+      <path d="M22 106 Q50 98 78 106" fill="none" stroke="#ffffff88" strokeWidth={sw ? sw * 0.6 : 1} opacity="0.5" />
+    </>
+  ),
+};
+
+const BottomShape = ({
+  style,
+  fill,
+  stroke,
+  strokeWidth = 0,
+}: {
+  style: string | undefined;
+  fill: string;
+  stroke?: string;
+  strokeWidth?: number;
+}) => <>{(BOTTOM_STYLES[style ?? "pants"] ?? BOTTOM_STYLES.pants)(fill, stroke, strokeWidth)}</>;
+
+const BOTTOM: Record<string, Shapes> = {
+  t1: (c, _uid, _reduceMotion, motif) => <BottomShape style={motif} fill={c} />,
+  t2: (c, uid, _reduceMotion, motif) => {
     const grad = `${uid}-b2-grad`;
     return (
       <>
@@ -925,20 +1069,11 @@ const BOTTOM: Record<string, Shapes> = {
             <stop offset="1" stopColor={c} />
           </linearGradient>
         </defs>
-        <path
-          d="M32 96 L68 96 L78 122 A3 3 0 0 1 75 126 L25 126 A3 3 0 0 1 22 122 Z"
-          fill={`url(#${grad})`}
-          stroke={darken(c, 0.5)}
-          strokeWidth="2"
-        />
-        <path d="M27 116 L73 116" stroke={darken(c, 0.3)} strokeWidth="4" opacity="0.4" />
-        <circle cx="38" cy="106" r="1.8" fill="#ffffff" opacity="0.75" />
-        <circle cx="50" cy="110" r="1.8" fill="#ffffff" opacity="0.75" />
-        <circle cx="62" cy="106" r="1.8" fill="#ffffff" opacity="0.75" />
+        <BottomShape style={motif} fill={`url(#${grad})`} stroke={darken(c, 0.5)} strokeWidth={2} />
       </>
     );
   },
-  t3: (c, uid) => {
+  t3: (c, uid, _reduceMotion, motif) => {
     const grad = `${uid}-b3-grad`;
     const hi = `${uid}-b3-hi`;
     const clip = `${uid}-b3-clip`;
@@ -953,30 +1088,23 @@ const BOTTOM: Record<string, Shapes> = {
             <stop offset="0" stopColor="#ffffff" stopOpacity="0.75" />
             <stop offset="1" stopColor="#ffffff" stopOpacity="0" />
           </radialGradient>
+          {/* 生地の粒・ハイライトが服の外にはみ出さないよう、選んだスタイルと
+              同じ輪郭でクリップする */}
           <clipPath id={clip}>
-            <path d="M31 96 L69 96 L79 124 A3 3 0 0 1 76 128 L24 128 A3 3 0 0 1 21 124 Z" />
+            <BottomShape style={motif} fill="#fff" strokeWidth={0} />
           </clipPath>
         </defs>
-        <g>
-          <path
-            d="M31 96 L69 96 L79 124 A3 3 0 0 1 76 128 L24 128 A3 3 0 0 1 21 124 Z"
-            fill={`url(#${grad})`}
-            stroke={darken(c, 0.5)}
-            strokeWidth="2.2"
-          />
-          <path d="M31 98 L69 98" stroke={lighten(c, 0.4)} strokeWidth="1" strokeDasharray="2 2" opacity="0.6" />
-        </g>
+        <BottomShape style={motif} fill={`url(#${grad})`} stroke={darken(c, 0.5)} strokeWidth={2.2} />
         <g clipPath={`url(#${clip})`}>
+          <ellipse cx="42" cy="100" rx="14" ry="6" fill={`url(#${hi})`} />
           <path d="M20 110 L80 106" stroke={lighten(c, 0.4)} strokeWidth="6" opacity="0.18" />
           <path d="M20 120 L80 117" stroke={lighten(c, 0.4)} strokeWidth="6" opacity="0.14" />
+          <circle cx="50" cy="99.5" r="2.2" fill="#fff4c2" stroke="#c9a227" strokeWidth="0.6" />
         </g>
-        <ellipse cx="42" cy="100" rx="14" ry="6" fill={`url(#${hi})`} />
-        <rect x="40" y="96" width="20" height="7" rx="3" fill={darken(c, 0.4)} />
-        <circle cx="50" cy="99.5" r="2.2" fill="#fff4c2" stroke="#c9a227" strokeWidth="0.6" />
       </>
     );
   },
-  t4: (c, uid) => {
+  t4: (c, uid, _reduceMotion, motif) => {
     const grad = `${uid}-b4-grad`;
     const sheen = `${uid}-b4-sheen`;
     return (
@@ -993,21 +1121,13 @@ const BOTTOM: Record<string, Shapes> = {
             <stop offset="1" stopColor="#ffffff" stopOpacity="0" />
           </linearGradient>
         </defs>
-        <path
-          d="M30 96 H70 L77 126 A3 3 0 0 1 74 130 H26 A3 3 0 0 1 23 126 Z"
-          fill={`url(#${grad})`}
-          stroke={darken(c, 0.55)}
-          strokeWidth="2.2"
-        />
-        <path d="M64 96 L74 128 L68 130 L58 98 Z" fill={darken(c, 0.25)} opacity="0.85" />
+        <BottomShape style={motif} fill={`url(#${grad})`} stroke={darken(c, 0.55)} strokeWidth={2.2} />
         <path d="M32 102 C42 98 58 98 68 102" stroke={`url(#${sheen})`} strokeWidth="2" fill="none" />
-        <circle cx="38" cy="112" r="2.2" fill="#fff4c2" stroke="#dba528" strokeWidth="0.6" />
-        <circle cx="50" cy="116" r="2.2" fill="#fff4c2" stroke="#dba528" strokeWidth="0.6" />
-        <circle cx="62" cy="112" r="2.2" fill="#fff4c2" stroke="#dba528" strokeWidth="0.6" />
+        <circle cx="50" cy="99.5" r="2.4" fill="#fff4c2" stroke="#dba528" strokeWidth="0.6" />
       </>
     );
   },
-  t5: (c, uid, reduceMotion) => {
+  t5: (c, uid, reduceMotion, motif) => {
     const grad = `${uid}-b5-grad`;
     const glow = `${uid}-b5-glow`;
     return (
@@ -1025,24 +1145,18 @@ const BOTTOM: Record<string, Shapes> = {
             </feMerge>
           </filter>
         </defs>
-        <path
-          d="M30 96 H70 L78 124 A3 3 0 0 1 75 128 H25 A3 3 0 0 1 22 124 Z"
-          fill={`url(#${grad})`}
-          stroke={darken(c, 0.5)}
-          strokeWidth="2.2"
-        />
+        <BottomShape style={motif} fill={`url(#${grad})`} stroke={darken(c, 0.5)} strokeWidth={2.2} />
         <motion.g
           animate={reduceMotion ? { opacity: 1 } : GLOW_PULSE_ANIMATE}
           transition={reduceMotion ? STATIC_TRANSITION : GLOW_PULSE_TRANSITION}
         >
-          <path d="M50 108 L54 118 L50 128 L46 118 Z" fill="#c9f0ff" filter={`url(#${glow})`} />
-          <path d="M34 112 L37 120 L34 128 L31 120 Z" fill="#c9f0ff" filter={`url(#${glow})`} opacity="0.85" />
-          <path d="M66 112 L69 120 L66 128 L63 120 Z" fill="#c9f0ff" filter={`url(#${glow})`} opacity="0.85" />
+          <path d="M39 102 L42 110 L39 118 L36 110 Z" fill="#c9f0ff" filter={`url(#${glow})`} />
+          <path d="M61 102 L64 110 L61 118 L58 110 Z" fill="#c9f0ff" filter={`url(#${glow})`} opacity="0.85" />
         </motion.g>
       </>
     );
   },
-  t6: (c, uid, reduceMotion) => {
+  t6: (c, uid, reduceMotion, motif) => {
     const grad1 = `${uid}-b6-grad1`;
     const grad2 = `${uid}-b6-grad2`;
     const grad3 = `${uid}-b6-grad3`;
@@ -1067,12 +1181,7 @@ const BOTTOM: Record<string, Shapes> = {
             <feGaussianBlur stdDeviation="1.8" />
           </filter>
         </defs>
-        <path
-          d="M30 96 H70 L78 124 A3 3 0 0 1 75 128 H25 A3 3 0 0 1 22 124 Z"
-          fill={`url(#${grad1})`}
-          stroke="#7a5cff"
-          strokeWidth="2.2"
-        />
+        <BottomShape style={motif} fill={`url(#${grad1})`} stroke="#7a5cff" strokeWidth={2.2} />
         <ellipse cx="42" cy="100" rx="16" ry="6" fill={`url(#${grad2})`} />
         <path
           d="M50 106 L52 112 L58 112 L53 116 L55 122 L50 118 L45 122 L47 116 L42 112 L48 112 Z"
