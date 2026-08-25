@@ -55,10 +55,16 @@ const ARM_POSE: Record<AvatarMood, ArmPose> = {
 export const ReactingAvatar = ({
   equipped,
   mood,
+  skinTone,
+  eyeStyle,
+  mouthStyle,
   className = "",
 }: {
   equipped: Partial<Record<SlotType, AvatarAsset>>;
   mood: AvatarMood;
+  skinTone?: string;
+  eyeStyle?: string;
+  mouthStyle?: string;
   className?: string;
 }) => {
   const reduceMotion = useReducedMotion();
@@ -74,6 +80,9 @@ export const ReactingAvatar = ({
       <Avatar
         equipped={equipped}
         armPose={reduceMotion ? "down" : ARM_POSE[mood]}
+        skinTone={skinTone}
+        eyeStyle={eyeStyle}
+        mouthStyle={mouthStyle}
         className="h-full w-auto"
       />
     </motion.div>

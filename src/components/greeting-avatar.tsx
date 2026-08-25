@@ -67,10 +67,16 @@ const IDLE: { animate: TargetAndTransition; transition: Transition } = {
 export const GreetingAvatar = ({
   equipped,
   greeting,
+  skinTone,
+  eyeStyle,
+  mouthStyle,
   className = "",
 }: {
   equipped: Partial<Record<SlotType, AvatarAsset>>;
   greeting: AvatarGreeting;
+  skinTone?: string;
+  eyeStyle?: string;
+  mouthStyle?: string;
   className?: string;
 }) => {
   const reduceMotion = useReducedMotion();
@@ -84,7 +90,15 @@ export const GreetingAvatar = ({
   }, [move.durationMs, reduceMotion]);
 
   if (reduceMotion) {
-    return <Avatar equipped={equipped} className={className} />;
+    return (
+      <Avatar
+        equipped={equipped}
+        skinTone={skinTone}
+        eyeStyle={eyeStyle}
+        mouthStyle={mouthStyle}
+        className={className}
+      />
+    );
   }
 
   const current = done ? IDLE : move;
@@ -98,6 +112,9 @@ export const GreetingAvatar = ({
       <Avatar
         equipped={equipped}
         armPose={done ? "down" : move.armPose}
+        skinTone={skinTone}
+        eyeStyle={eyeStyle}
+        mouthStyle={mouthStyle}
         className="h-full w-auto"
       />
     </motion.div>

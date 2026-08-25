@@ -1571,6 +1571,13 @@ const MOUTH_STYLES: Record<string, FacePartShape> = {
   ),
 };
 
+// 「顔をえらぶ」ピッカーUI（別コンポーネント）向けの選択肢一覧。実際の描画関数
+// (SKIN_TONES等)はこのファイルの外に出さず、id一覧だけを公開する。ピッカー側は
+// 各idを渡した<Avatar>を小さく並べて見せれば、実際の見た目と必ず一致する
+export const SKIN_TONE_OPTIONS = Object.keys(SKIN_TONES) as readonly string[];
+export const EYE_STYLE_OPTIONS = Object.keys(EYE_STYLES) as readonly string[];
+export const MOUTH_STYLE_OPTIONS = Object.keys(MOUTH_STYLES) as readonly string[];
+
 // 素体。着ているものが何も無くても、これだけで人の形に見えるようにしておく
 const BaseBody = ({
   armPose,
