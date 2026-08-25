@@ -52,8 +52,14 @@ test.each(["down", "cheer"] as const)("has two arms in the %s pose", (armPose) =
   expect(container.querySelectorAll("[data-arm]").length).toBe(2);
 });
 
-// うでは肩（＝rectの上端中央）を軸に回す。ここが真ん中になっていると、
-// 肩から腕が上がらず、腕の中央を中心にくるっと回るだけの不自然な動きになる。
+// うでは肩を軸に回す。ここが真ん中になっていると、肩から腕が上がらず、
+// 腕の中央を中心にくるっと回るだけの不自然な動きになる。
+//
+// うで(data-arm)はそで(TOP_SLEEVE_LENGTH)と同じmotion.gに入れて一緒に回すため、
+// 軸はそのgroup自身のbboxではなく、キャンバス全体(0 0 100 140)を覆う透明な
+// 参照rect(CANVAS_BBOX_REF)基準の割合になっている。そでの丈でbboxが変わっても
+// 軸がずれないようにするための仕組み（avatar.tsxのARM_PIVOT_LEFT/RIGHTのコメント
+// 参照）。左右で異なるx、共通のy（肩の高さ、キャンバス上半分）になっているはず
 //
 // Framer MotionはSVGにtransformを書くとき transform-origin を自前で組み立て直す。
 // CSSの transform-origin で書くとアニメーション開始時に "50% 50%" へ化けるため、
@@ -66,11 +72,13 @@ test("pivots the arms at the shoulder, not at their middle", () => {
 
   for (const arm of arms) {
     const [x, y] = arm.style.transformOrigin.split(/\s+/);
-    expect(x).toBe("50%");
 
-    // 上端寄り＝肩。真ん中(50%)ではないこと
+    // キャンバス中央(50%)ではなく、左右それぞれの肩の位置になっていること
+    expect(x).not.toBe("50%");
+
+    // 肩の高さ＝キャンバス上半分。腕の中央(bboxの50%)や下半分ではないこと
     const yPercent = Number.parseFloat(y);
     expect(Number.isNaN(yPercent)).toBe(false);
-    expect(yPercent).toBeLessThan(25);
+    expect(yPercent).toBeLessThan(50);
   }
 });

@@ -718,6 +718,19 @@ const HAIR: Record<string, Shapes> = {
 // t3のクリップパスにも同じ関数を再利用する
 type TopStyleParts = (fill: string, stroke: string | undefined, strokeWidth: number) => ReactNode;
 
+// 袖の丈。BaseBody側でうでと同じmotion.gに入れて回すため、そちらで持つ
+// (このファイル内でTOP_STYLESの近くに置いているのはmotifとの対応が
+// 見つけやすいように)。ノースリーブにしたい型(vest/dress/cape)は未設定のまま
+// にして、袖を描かない
+const TOP_SLEEVE_LENGTH: Partial<Record<string, number>> = {
+  tee: 20,
+  blouse: 20,
+  shirt: 22,
+  hoodie: 26,
+  jacket: 34,
+  coat: 36,
+};
+
 const TOP_STYLES: Record<string, TopStyleParts> = {
   // ティーシャツ/ボーダーカットソー: 現状踏襲のシンプルな丸角長方形
   tee: (fill, stroke, sw) => <rect x="28" y="56" width="44" height="44" rx="14" fill={fill} stroke={stroke} strokeWidth={sw} />,
@@ -1491,7 +1504,7 @@ const ARM_MOTION: Record<
   },
 };
 
-// 肩（rectの上端中央）を回転の軸にする。
+// 肩（うでrectの上端中央）を回転の軸にする。
 //
 // **CSSの transform-origin では効かない**。Framer MotionはSVG要素にtransformを
 // 書き込むとき、transform-origin を自前で組み立て直し、originX/originY を
@@ -1499,7 +1512,17 @@ const ARM_MOTION: Record<
 // （motion-dom の render/svg/utils/build-attrs.mjs）。初期描画では指定が残るが、
 // アニメーションが走った瞬間に中心回転に化ける。
 // Motion自身の originX / originY（0〜1の割合）で渡すこと。
-const ARM_PIVOT = { originX: 0.5, originY: 0.08 } as const;
+//
+// この割合は「その要素自身のgetBBox()」に対するものなので、袖(そで)を
+// うでと同じmotion.gに入れて一緒に回すと、袖の丈でbboxが変わって回転軸が
+// ずれてしまう（SWAY_CONFIG付近のコメントで揺れに使っているのと同じ問題）。
+// そのため揺れと同様、キャンバス全体(0 0 100 140)を覆う透明なrectをbboxに
+// 混ぜて軸を固定し、原点は「素のうでrect(x20/69,y60,w11,h34)の上端中央」を
+// キャンバス比率に変換した値で持つ
+// (左: x=(20+11*0.5)/100, 右: x=(69+11*0.5)/100, y=(60+34*0.08)/140)
+const CANVAS_BBOX_REF = <rect x="0" y="0" width="100" height="140" fill="none" />;
+const ARM_PIVOT_LEFT = { originX: 0.255, originY: 0.448 } as const;
+const ARM_PIVOT_RIGHT = { originX: 0.745, originY: 0.448 } as const;
 
 // 肌の色。着せ替え経済（wardrobe_items）とは別軸で、ポイント不要・いつでも
 // 選び直せる「顔をえらぶ」機能として持たせる（docs/game-design.md「ベースアバターは
@@ -1582,50 +1605,61 @@ const MOUTH_STYLES: Record<MouthStyle, FacePartShape> = {
   ),
 };
 
-// 素体。着ているものが何も無くても、これだけで人の形に見えるようにしておく
+// 素体。着ているものが何も無くても、これだけで人の形に見えるようにしておく。
+// topAssetは袖をうでと同じ回転グループに入れて一緒に回すためだけに使う
+// （トップス本体はこれまでどおりSLOT_DRAW_ORDER経由で別に描く）
 const BaseBody = ({
   armPose,
+  topAsset,
   skinTone = DEFAULT_SKIN_TONE,
   eyeStyle = DEFAULT_EYE_STYLE,
   mouthStyle = DEFAULT_MOUTH_STYLE,
 }: {
   armPose: ArmPose;
+  topAsset?: AvatarAsset;
   skinTone?: SkinTone;
   eyeStyle?: EyeStyle;
   mouthStyle?: MouthStyle;
 }) => {
   const skin = SKIN_TONES[skinTone] ?? SKIN_TONES[DEFAULT_SKIN_TONE];
   const skinShade = darken(skin, 0.12);
+  // 袖の色はトップスのtier別グラデーションまでは再現せず、tierを問わず
+  // t1相当のフラットな色+ふちどりにする（HairFringeと同じ簡略化の考え方）。
+  // うでの回転に完全同期させることを優先し、色の精緻さは1段落とす判断
+  const sleeveLength = topAsset?.motif ? TOP_SLEEVE_LENGTH[topAsset.motif] : undefined;
+  const sleeveFill = topAsset?.color;
+  const sleeveStroke = topAsset ? darken(topAsset.color, 0.45) : undefined;
   return (
     <>
       {/* あし */}
       <rect x="33" y="96" width="12" height="34" rx="6" fill={skin} />
       <rect x="55" y="96" width="12" height="34" rx="6" fill={skin} />
-      {/* うで */}
-      <motion.rect
+      {/* うで＋そで。そでをうでと同じmotion.gに入れることで、ポーズで
+          うでが動いてもそでが取り残されない（付け根で外れて見える）事故を防ぐ */}
+      <motion.g
         data-arm="left"
-        x="20"
-        y="60"
-        width="11"
-        height="34"
-        rx="5.5"
-        fill={skin}
-        style={ARM_PIVOT}
+        style={ARM_PIVOT_LEFT}
         animate={ARM_MOTION[armPose].left}
         transition={ARM_MOTION[armPose].transition}
-      />
-      <motion.rect
+      >
+        {CANVAS_BBOX_REF}
+        <rect x="20" y="60" width="11" height="34" rx="5.5" fill={skin} />
+        {sleeveLength !== undefined && (
+          <rect x="17" y="55" width="17" height={sleeveLength} rx="7" fill={sleeveFill} stroke={sleeveStroke} strokeWidth={1.8} />
+        )}
+      </motion.g>
+      <motion.g
         data-arm="right"
-        x="69"
-        y="60"
-        width="11"
-        height="34"
-        rx="5.5"
-        fill={skin}
-        style={ARM_PIVOT}
+        style={ARM_PIVOT_RIGHT}
         animate={ARM_MOTION[armPose].right}
         transition={ARM_MOTION[armPose].transition}
-      />
+      >
+        {CANVAS_BBOX_REF}
+        <rect x="69" y="60" width="11" height="34" rx="5.5" fill={skin} />
+        {sleeveLength !== undefined && (
+          <rect x="66" y="55" width="17" height={sleeveLength} rx="7" fill={sleeveFill} stroke={sleeveStroke} strokeWidth={1.8} />
+        )}
+      </motion.g>
       {/* からだ */}
       <rect x="30" y="56" width="40" height="46" rx="14" fill={skinShade} />
       {/* くび・あたま */}
@@ -1671,13 +1705,10 @@ export const ItemThumb = ({
   );
 };
 
-// 髪・服をそよ風で揺れているように見せる。ARM_PIVOTのコメントの通り、Framer
-// MotionのoriginX/originYはCSSの%と違い「その要素自身のgetBBox()」に対する
-// 割合なので、髪型/服の型ごとにシルエットの大きさがバラバラだと同じ
-// originX/originYでも実際の回転軸がずれてしまう。100x140のキャンバス全体を
-// カバーする透明なrect(見た目には影響しない)を子要素に混ぜてbboxを常に
-// キャンバス全体に固定することで、どのシルエットでも軸をそろえている
-const SWAY_CANVAS_REF = <rect x="0" y="0" width="100" height="140" fill="none" />;
+// 髪・服をそよ風で揺れているように見せる。ARM_PIVOT_LEFT/RIGHTのコメントの
+// 通り、髪型/服の型ごとにシルエットの大きさがバラバラだと同じoriginX/originY
+// でも実際の回転軸がずれてしまうため、CANVAS_BBOX_REFで軸をキャンバス全体に
+// 固定している（うでの回転と同じ仕組みを流用）
 
 const swayAnimate = (deg: number): TargetAndTransition => ({ rotate: [-deg, deg, -deg] });
 const swayTransition = (duration: number, delay = 0): Transition => ({
@@ -1723,7 +1754,7 @@ const Sway = ({
     animate={reduceMotion ? { rotate: 0 } : swayAnimate(deg)}
     transition={reduceMotion ? STATIC_TRANSITION : swayTransition(duration, delay)}
   >
-    {SWAY_CANVAS_REF}
+    {CANVAS_BBOX_REF}
     {children}
   </motion.g>
 );
@@ -1754,7 +1785,7 @@ export const Avatar = ({
           {hairBack}
         </Sway>
       )}
-      <BaseBody armPose={armPose} skinTone={skinTone} eyeStyle={eyeStyle} mouthStyle={mouthStyle} />
+      <BaseBody armPose={armPose} topAsset={equipped.top} skinTone={skinTone} eyeStyle={eyeStyle} mouthStyle={mouthStyle} />
       {/* 前髪だけは顔の"上"に重ねる(HairFringeのコメント参照)。後ろ髪と
           同じ揺れ方(HAIR_SWAY)にして、位相をそろえる */}
       {equipped.hair && (
