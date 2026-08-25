@@ -62,8 +62,9 @@ const PARTICLE_FLOAT_ANIMATE: TargetAndTransition = { opacity: [0.35, 1, 0.35], 
 // ネックレスのチャーム形。アイテム名が「ほしのペンダント」「ハートペンダント」のように
 // 具体的なモチーフを名乗っていても、以前はティア・色にしか形が反応せず全部が丸に
 // 見えてしまっていた（asset_ref の motif で選ぶ。docs/data-model.md）。
-// 「数種類」に絞っており、床数の異なる16種の名前すべてに専用形を作るのではなく、
-// 近いモチーフへ寄せて割り当てる（データ側の対応表はマイグレーションのコメント参照）
+// 「つきのペンダントなのにstarファミリーに寄せていて星に見える」という指摘を受け、
+// 近似でまとめるのをやめ、16種類の名前それぞれに専用の形を用意している
+// （データ側の対応表は0011マイグレーションのコメント参照）
 const starPath = (cx: number, cy: number, outerR: number, innerR: number) => {
   const points: string[] = [];
   for (let i = 0; i < 10; i++) {
@@ -83,29 +84,107 @@ const gemPath = (cx: number, cy: number, r: number) =>
   `M${cx} ${cy - r} L${cx + r * 0.6} ${cy - r * 0.4} L${cx + r} ${cy + r * 0.1} L${cx + r * 0.5} ${cy + r * 0.9} ` +
   `L${cx} ${cy + r * 0.55} L${cx - r * 0.5} ${cy + r * 0.9} L${cx - r} ${cy + r * 0.1} L${cx - r * 0.6} ${cy - r * 0.4} Z`;
 
-const flowerPetalCenters = (cx: number, cy: number, r: number) =>
+// 花びらは円ではなく中心から放射状に伸びる楕円にし、間隔もあけて
+// 「丸の集合体」に見えないようにする
+const flowerPetals = (cx: number, cy: number, r: number) =>
   Array.from({ length: 5 }, (_, i) => {
     const angle = (Math.PI * 2 * i) / 5 - Math.PI / 2;
-    return { x: cx + r * 0.55 * Math.cos(angle), y: cy + r * 0.55 * Math.sin(angle) };
+    const petalCx = cx + r * 0.62 * Math.cos(angle);
+    const petalCy = cy + r * 0.62 * Math.sin(angle);
+    return { cx: petalCx, cy: petalCy, rotateDeg: (angle * 180) / Math.PI + 90 };
   });
 
+// 三日月。「丸から丸を引く」形をmaskで表現する（弧のpath計算より確実で読みやすい）
+const moonMaskCutout = (cx: number, cy: number, r: number) => ({
+  cx: cx + r * 0.55,
+  cy: cy - r * 0.35,
+  r: r * 0.88,
+});
+
+// 蝶。羽根4枚は縦長の楕円にして間隔を広くあけ、「丸の集合」に見えないようにする。
+// 胴体は太めの縦カプセルで、羽根の間の隙間にはっきり見せる
+const butterflyWings = (cx: number, cy: number, r: number) => [
+  { cx: cx - r * 0.68, cy: cy - r * 0.32, rx: r * 0.42, ry: r * 0.62, rotate: -28 },
+  { cx: cx + r * 0.68, cy: cy - r * 0.32, rx: r * 0.42, ry: r * 0.62, rotate: 28 },
+  { cx: cx - r * 0.5, cy: cy + r * 0.4, rx: r * 0.28, ry: r * 0.42, rotate: -18 },
+  { cx: cx + r * 0.5, cy: cy + r * 0.4, rx: r * 0.28, ry: r * 0.42, rotate: 18 },
+];
+
+// 炎。外側のしずく形+内側にひとまわり小さい炎心（明るい色）を重ね、
+// 単なるしずく(gemと紛らわしい)ではなく燃えている感じを出す
+const flamePath = (cx: number, cy: number, r: number) =>
+  `M${cx + r * 0.08} ${cy - r} ` +
+  `C${cx + r * 0.95} ${cy - r * 0.15} ${cx + r * 0.65} ${cy + r * 0.55} ${cx - r * 0.05} ${cy + r} ` +
+  `C${cx - r * 0.75} ${cy + r * 0.5} ${cx - r * 0.75} ${cy - r * 0.2} ${cx + r * 0.08} ${cy - r} Z`;
+const flameCorePath = (cx: number, cy: number, r: number) =>
+  `M${cx + r * 0.05} ${cy - r * 0.35} ` +
+  `C${cx + r * 0.5} ${cy + r * 0.05} ${cx + r * 0.35} ${cy + r * 0.45} ${cx} ${cy + r * 0.6} ` +
+  `C${cx - r * 0.3} ${cy + r * 0.4} ${cx - r * 0.35} ${cy} ${cx + r * 0.05} ${cy - r * 0.35} Z`;
+
+// どうぶつの肉球。大きい楕円1つ+指の丸4つ
+const pawToes = (cx: number, cy: number, r: number) => [
+  { x: cx - r * 0.55, y: cy - r * 0.35 },
+  { x: cx - r * 0.2, y: cy - r * 0.6 },
+  { x: cx + r * 0.2, y: cy - r * 0.6 },
+  { x: cx + r * 0.55, y: cy - r * 0.35 },
+];
+
+// あめ(キャンディ)。中心でつまんだリボン形。左右2つの四角形+中心の結び目
+const candyWrapperPath = (cx: number, cy: number, r: number) =>
+  `M${cx - r} ${cy - r * 0.7} L${cx - r * 0.15} ${cy - r * 0.15} L${cx - r * 0.15} ${cy + r * 0.15} L${cx - r} ${cy + r * 0.7} Z ` +
+  `M${cx + r} ${cy - r * 0.7} L${cx + r * 0.15} ${cy - r * 0.15} L${cx + r * 0.15} ${cy + r * 0.15} L${cx + r} ${cy + r * 0.7} Z`;
+
+// ひらいた本。背表紙(cx)を軸に左右へ開くページ2枚
+const bookLeftPath = (cx: number, cy: number, r: number) =>
+  `M${cx} ${cy - r * 0.55} L${cx - r} ${cy - r * 0.75} L${cx - r} ${cy + r * 0.65} L${cx} ${cy + r * 0.45} Z`;
+const bookRightPath = (cx: number, cy: number, r: number) =>
+  `M${cx} ${cy - r * 0.55} L${cx + r} ${cy - r * 0.75} L${cx + r} ${cy + r * 0.65} L${cx} ${cy + r * 0.45} Z`;
+
+// おんぷ。符頭(だ円)+符幹(縦線)+符尾(旗)
+const noteFlagPath = (cx: number, cy: number, r: number) =>
+  `M${cx + r * 0.2} ${cy - r * 0.9} Q${cx + r * 0.95} ${cy - r * 0.65} ${cx + r * 0.6} ${cy - r * 0.1} ` +
+  `Q${cx + r * 0.85} ${cy - r * 0.45} ${cx + r * 0.2} ${cy - r * 0.55} Z`;
+
+// いかり(マリン)。丸(リング)+縦の軸+横の腕木+左右のツメ。線を太めにして、
+// 小さいサイズでも輪郭が潰れず「いかり」と分かるようにする
+const anchorParts = (cx: number, cy: number, r: number) => ({
+  ringCy: cy - r * 0.72,
+  ringR: r * 0.28,
+  shaftTop: cy - r * 0.46,
+  shaftBottom: cy + r * 0.62,
+  armY: cy - r * 0.02,
+  armHalf: r * 0.52,
+  flukeLeft: `M${cx - r * 0.52} ${cy + r * 0.28} Q${cx - r * 0.62} ${cy + r * 0.85} ${cx - r * 0.08} ${cy + r * 0.72}`,
+  flukeRight: `M${cx + r * 0.52} ${cy + r * 0.28} Q${cx + r * 0.62} ${cy + r * 0.85} ${cx + r * 0.08} ${cy + r * 0.72}`,
+});
+
+// にじ。単色の濃淡だと色が付いているだけの弧に見えてしまうため、アイテムの色は
+// 使わず実際の虹の6色バンドで固定する（「にじ」と分かることを優先する）
+const RAINBOW_BANDS = ["#e8685f", "#f2a33c", "#f0d24e", "#6dbf6d", "#4f8ef2", "#9b6fd9"];
+
 // チャーム(ネックレスの主形状)。motifが未指定/未知のときは丸のまま
-// （旧アイテムのように色だけで表現していたものと同じ見た目になる）
+// （旧アイテムのように色だけで表現していたものと同じ見た目になる）。
+// rainbow/planetのように色を分解して塗り分けるモチーフのために、グラデーション
+// でも構わないfillとは別にbaseColor(元のhex1色)も受け取る
 const Charm = ({
   motif,
+  uid,
   cx,
   cy,
   r,
   fill,
+  baseColor,
   stroke,
   strokeWidth,
   filter,
 }: {
   motif: string | undefined;
+  uid: string;
   cx: number;
   cy: number;
   r: number;
   fill: string;
+  baseColor: string;
   stroke?: string;
   strokeWidth?: number;
   filter?: string;
@@ -120,12 +199,159 @@ const Charm = ({
     case "flower":
       return (
         <g filter={filter}>
-          {flowerPetalCenters(cx, cy, r).map((p, i) => (
-            <circle key={i} cx={p.x} cy={p.y} r={r * 0.5} fill={fill} stroke={stroke} strokeWidth={strokeWidth} />
+          {flowerPetals(cx, cy, r).map((p, i) => (
+            <ellipse
+              key={i}
+              cx={p.cx}
+              cy={p.cy}
+              rx={r * 0.3}
+              ry={r * 0.46}
+              fill={fill}
+              stroke={stroke}
+              strokeWidth={strokeWidth}
+              transform={`rotate(${p.rotateDeg} ${p.cx} ${p.cy})`}
+            />
           ))}
-          <circle cx={cx} cy={cy} r={r * 0.4} fill={fill} stroke={stroke} strokeWidth={strokeWidth} />
+          <circle cx={cx} cy={cy} r={r * 0.3} fill={lighten(baseColor, 0.45)} stroke={darken(baseColor, 0.3)} strokeWidth={r * 0.05} />
         </g>
       );
+    case "moon": {
+      const cutout = moonMaskCutout(cx, cy, r);
+      const maskId = `${uid}-moon-mask`;
+      return (
+        <g filter={filter}>
+          <mask id={maskId}>
+            <circle cx={cx} cy={cy} r={r * 1.4} fill="white" />
+            <circle cx={cutout.cx} cy={cutout.cy} r={cutout.r} fill="black" />
+          </mask>
+          <circle cx={cx} cy={cy} r={r} fill={fill} stroke={stroke} strokeWidth={strokeWidth} mask={`url(#${maskId})`} />
+        </g>
+      );
+    }
+    case "butterfly":
+      return (
+        <g filter={filter}>
+          {butterflyWings(cx, cy, r).map((w, i) => (
+            <ellipse
+              key={i}
+              cx={w.cx}
+              cy={w.cy}
+              rx={w.rx}
+              ry={w.ry}
+              fill={fill}
+              stroke={stroke}
+              strokeWidth={strokeWidth}
+              transform={`rotate(${w.rotate} ${w.cx} ${w.cy})`}
+            />
+          ))}
+          <rect x={cx - r * 0.09} y={cy - r * 0.68} width={r * 0.18} height={r * 1.36} rx={r * 0.09} fill={darken(baseColor, 0.45)} />
+        </g>
+      );
+    case "rainbow": {
+      // 同心の半円として重ねる。弧の両端を常に「その帯自身の半径ぶん」離す
+      // （半径を変えつつ端点を固定すると、半径が弦の半分未満になった帯がSVG仕様で
+      // 最小半径にクランプされ、全部同じ大きさの弧になってしまう）
+      const apexY = cy + r * 0.2;
+      return (
+        <g filter={filter}>
+          {RAINBOW_BANDS.map((col, i) => {
+            const bandR = r - i * (r * 0.15);
+            return (
+              <path
+                key={col}
+                d={`M${cx - bandR} ${apexY} A${bandR} ${bandR} 0 0 1 ${cx + bandR} ${apexY}`}
+                stroke={col}
+                strokeWidth={r * 0.17}
+                fill="none"
+                strokeLinecap="round"
+              />
+            );
+          })}
+        </g>
+      );
+    }
+    case "flame":
+      return (
+        <g filter={filter}>
+          <path d={flamePath(cx, cy, r)} fill={fill} stroke={stroke} strokeWidth={strokeWidth} />
+          <path d={flameCorePath(cx, cy, r)} fill={lighten(baseColor, 0.55)} />
+        </g>
+      );
+    case "planet":
+      return (
+        <g filter={filter}>
+          <ellipse
+            cx={cx}
+            cy={cy}
+            rx={r * 1.2}
+            ry={r * 0.32}
+            fill="none"
+            stroke={fill}
+            strokeWidth={r * 0.16}
+            opacity={0.7}
+            transform={`rotate(-18 ${cx} ${cy})`}
+          />
+          <circle cx={cx} cy={cy} r={r * 0.75} fill={fill} stroke={stroke} strokeWidth={strokeWidth} />
+        </g>
+      );
+    case "paw":
+      return (
+        <g filter={filter}>
+          <ellipse cx={cx} cy={cy + r * 0.35} rx={r * 0.7} ry={r * 0.55} fill={fill} stroke={stroke} strokeWidth={strokeWidth} />
+          {pawToes(cx, cy, r).map((p, i) => (
+            <circle key={i} cx={p.x} cy={p.y} r={r * 0.28} fill={fill} stroke={stroke} strokeWidth={strokeWidth} />
+          ))}
+        </g>
+      );
+    case "candy":
+      return (
+        <g filter={filter}>
+          <path d={candyWrapperPath(cx, cy, r)} fill={fill} stroke={stroke} strokeWidth={strokeWidth} />
+          <circle cx={cx} cy={cy} r={r * 0.22} fill={fill} stroke="#ffffff" strokeWidth={r * 0.06} />
+        </g>
+      );
+    case "book":
+      return (
+        <g filter={filter}>
+          <path d={bookLeftPath(cx, cy, r)} fill={fill} stroke={stroke} strokeWidth={strokeWidth} />
+          <path d={bookRightPath(cx, cy, r)} fill={fill} stroke={stroke} strokeWidth={strokeWidth} />
+          {/* ページの罫線。左右2本ずつ入れて「本」と分かりやすくする */}
+          <line x1={cx - r * 0.55} y1={cy - r * 0.15} x2={cx - r * 0.15} y2={cy - r * 0.2} stroke={darken(baseColor, 0.35)} strokeWidth={r * 0.05} opacity="0.7" />
+          <line x1={cx - r * 0.55} y1={cy + r * 0.1} x2={cx - r * 0.15} y2={cy + r * 0.05} stroke={darken(baseColor, 0.35)} strokeWidth={r * 0.05} opacity="0.7" />
+          <line x1={cx + r * 0.15} y1={cy - r * 0.2} x2={cx + r * 0.55} y2={cy - r * 0.15} stroke={darken(baseColor, 0.35)} strokeWidth={r * 0.05} opacity="0.7" />
+          <line x1={cx + r * 0.15} y1={cy + r * 0.05} x2={cx + r * 0.55} y2={cy + r * 0.1} stroke={darken(baseColor, 0.35)} strokeWidth={r * 0.05} opacity="0.7" />
+          <line x1={cx} y1={cy - r * 0.55} x2={cx} y2={cy + r * 0.45} stroke={darken(baseColor, 0.4)} strokeWidth={r * 0.09} />
+        </g>
+      );
+    case "note":
+      return (
+        <g filter={filter}>
+          <ellipse
+            cx={cx - r * 0.3}
+            cy={cy + r * 0.55}
+            rx={r * 0.42}
+            ry={r * 0.32}
+            fill={fill}
+            stroke={stroke}
+            strokeWidth={strokeWidth}
+            transform={`rotate(-15 ${cx - r * 0.3} ${cy + r * 0.55})`}
+          />
+          <rect x={cx + r * 0.05} y={cy - r * 0.9} width={r * 0.15} height={r * 1.5} fill={fill} />
+          <path d={noteFlagPath(cx, cy, r)} fill={fill} />
+        </g>
+      );
+    case "anchor": {
+      const a = anchorParts(cx, cy, r);
+      return (
+        <g filter={filter}>
+          <circle cx={cx} cy={a.ringCy} r={a.ringR} fill="none" stroke={fill} strokeWidth={r * 0.24} />
+          <line x1={cx} y1={a.shaftTop} x2={cx} y2={a.shaftBottom} stroke={fill} strokeWidth={r * 0.24} strokeLinecap="round" />
+          <line x1={cx - a.armHalf} y1={a.armY} x2={cx + a.armHalf} y2={a.armY} stroke={fill} strokeWidth={r * 0.2} strokeLinecap="round" />
+          <path d={a.flukeLeft} fill="none" stroke={fill} strokeWidth={r * 0.24} strokeLinecap="round" />
+          <path d={a.flukeRight} fill="none" stroke={fill} strokeWidth={r * 0.24} strokeLinecap="round" />
+        </g>
+      );
+    }
     default:
       return <circle cx={cx} cy={cy} r={r} fill={fill} stroke={stroke} strokeWidth={strokeWidth} filter={filter} />;
   }
@@ -754,10 +980,10 @@ const BOTTOM: Record<string, Shapes> = {
 };
 
 const NECKLACE: Record<string, Shapes> = {
-  t1: (c, _uid, _reduceMotion, motif) => (
+  t1: (c, uid, _reduceMotion, motif) => (
     <>
       <path d="M40 58 A12 10 0 0 0 60 58" stroke={c} strokeWidth="2.5" fill="none" strokeLinecap="round" />
-      <Charm motif={motif} cx={50} cy={70} r={5} fill={c} />
+      <Charm motif={motif} uid={uid} baseColor={c} cx={50} cy={70} r={5} fill={c} />
     </>
   ),
   t2: (c, uid, _reduceMotion, motif) => {
@@ -771,7 +997,7 @@ const NECKLACE: Record<string, Shapes> = {
           </radialGradient>
         </defs>
         <path d="M40 58 A12 10 0 0 0 60 58" stroke={c} strokeWidth="2.5" fill="none" strokeLinecap="round" />
-        <Charm motif={motif} cx={50} cy={70} r={5} fill={`url(#${grad})`} stroke={darken(c, 0.4)} strokeWidth={1} />
+        <Charm motif={motif} uid={uid} baseColor={c} cx={50} cy={70} r={5} fill={`url(#${grad})`} stroke={darken(c, 0.4)} strokeWidth={1} />
         <circle cx="42" cy="65" r="2.2" fill={`url(#${grad})`} />
         <circle cx="58" cy="65" r="2.2" fill={`url(#${grad})`} />
       </>
@@ -793,9 +1019,9 @@ const NECKLACE: Record<string, Shapes> = {
           </radialGradient>
         </defs>
         <path d="M39 58 A13 10 0 0 0 61 58" stroke={c} strokeWidth="2.6" fill="none" strokeLinecap="round" />
-        <Charm motif={motif} cx={50} cy={73} r={9} fill={`url(#${grad})`} stroke={darken(c, 0.5)} strokeWidth={1} />
+        <Charm motif={motif} uid={uid} baseColor={c} cx={50} cy={73} r={9} fill={`url(#${grad})`} stroke={darken(c, 0.5)} strokeWidth={1} />
         <g opacity="0.9">
-          <Charm motif={motif} cx={50} cy={71} r={4.5} fill={`url(#${hi})`} />
+          <Charm motif={motif} uid={uid} baseColor={c} cx={50} cy={71} r={4.5} fill={`url(#${hi})`} />
           <circle cx="42" cy="66" r="1.4" fill={lighten(c, 0.5)} />
           <circle cx="58" cy="66" r="1.4" fill={lighten(c, 0.5)} />
         </g>
@@ -820,7 +1046,7 @@ const NECKLACE: Record<string, Shapes> = {
         </defs>
         <path d="M38 58 A14 10 0 0 0 62 58" stroke={c} strokeWidth="2.8" fill="none" strokeLinecap="round" />
         <path d="M34 60 A18 13 0 0 0 66 60" stroke={darken(c, 0.3)} strokeWidth="1.2" fill="none" opacity="0.5" />
-        <Charm motif={motif} cx={50} cy={73} r={7} fill={`url(#${grad})`} stroke={darken(c, 0.5)} strokeWidth={1.2} />
+        <Charm motif={motif} uid={uid} baseColor={c} cx={50} cy={73} r={7} fill={`url(#${grad})`} stroke={darken(c, 0.5)} strokeWidth={1.2} />
         <circle cx="47.5" cy="70.5" r="2.4" fill={`url(#${sheen})`} />
         <circle cx="41" cy="66" r="2" fill={c} stroke={darken(c, 0.4)} strokeWidth="0.6" />
         <circle cx="59" cy="66" r="2" fill={c} stroke={darken(c, 0.4)} strokeWidth="0.6" />
@@ -850,7 +1076,7 @@ const NECKLACE: Record<string, Shapes> = {
           animate={reduceMotion ? { opacity: 1 } : GLOW_PULSE_ANIMATE}
           transition={reduceMotion ? STATIC_TRANSITION : GLOW_PULSE_TRANSITION}
         >
-          <Charm motif={motif} cx={50} cy={75} r={11} fill={`url(#${grad})`} filter={`url(#${glow})`} />
+          <Charm motif={motif} uid={uid} baseColor={c} cx={50} cy={75} r={11} fill={`url(#${grad})`} filter={`url(#${glow})`} />
         </motion.g>
       </>
     );
@@ -881,13 +1107,21 @@ const NECKLACE: Record<string, Shapes> = {
           </filter>
         </defs>
         <path d="M36 58 A16 11 0 0 0 64 58" stroke="#7a5cff" strokeWidth="2.8" fill="none" strokeLinecap="round" />
-        <Charm motif={motif} cx={50} cy={74} r={8} fill={`url(#${grad1})`} stroke="#7a5cff" strokeWidth={1.2} />
+        <Charm motif={motif} uid={uid} baseColor={c} cx={50} cy={74} r={8} fill={`url(#${grad1})`} stroke="#7a5cff" strokeWidth={1.2} />
         <ellipse cx="47" cy="71" rx="3" ry="2" fill={`url(#${grad2})`} />
-        <path
-          d="M50 66 L52 71 L57 71 L53 74 L55 79 L50 76 L45 79 L47 74 L43 71 L48 71 Z"
+        {/* T6の「アイテム固有のシンボル」は、モチーフと無関係な固定の星バッジだと
+            主形状を隠して全部「星の上に何か乗っている」ように見えてしまっていた。
+            同じmotifのミニチュアを金色で右肩に添えることで、モチーフ自体を強調する */}
+        <Charm
+          motif={motif}
+          uid={`${uid}-mini`}
+          baseColor={c}
+          cx={60}
+          cy={64}
+          r={3.4}
           fill={`url(#${grad3})`}
           stroke="#c98a1f"
-          strokeWidth="0.8"
+          strokeWidth={0.6}
         />
         <motion.g
           animate={reduceMotion ? { opacity: 1, y: 0 } : PARTICLE_FLOAT_ANIMATE}
