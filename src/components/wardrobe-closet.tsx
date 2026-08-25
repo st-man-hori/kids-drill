@@ -12,6 +12,7 @@ import {
 import { wearWardrobeItem } from "@/app/wardrobe/actions";
 import { SLOT_LABELS, type AvatarAsset, type SlotType } from "@/lib/wardrobe";
 import type { WardrobeItemView } from "@/lib/wardrobe-store";
+import type { ChildFace } from "@/lib/face";
 
 // きせかえ画面。**持っているアイテムだけ**を並べる。
 // まだ持っていないものはおみせ（/shop）側の担当。
@@ -19,10 +20,14 @@ import type { WardrobeItemView } from "@/lib/wardrobe-store";
 export const WardrobeCloset = ({
   pointsBalance,
   items,
+  face,
 }: {
   pointsBalance: number;
   // 所持済みのアイテムのみ（equipped / owned）
   items: WardrobeItemView[];
+  // 顔(肌の色・目・口)。着せ替えとは別画面(/face)で選ぶが、プレビューは
+  // 常に本人の見た目に揃える
+  face: ChildFace;
 }) => {
   const [slot, setSlot] = useState<SlotType>("hair");
   const [pending, startTransition] = useTransition();
@@ -69,6 +74,9 @@ export const WardrobeCloset = ({
           タブレット以上（sm:）では従来どおり大きく見せる */}
       <Avatar
         equipped={equipped}
+        skinTone={face.skinTone}
+        eyeStyle={face.eyeStyle}
+        mouthStyle={face.mouthStyle}
         className="h-[clamp(4.5rem,14vh,7rem)] w-auto shrink-0 sm:h-[clamp(7rem,22vh,12rem)]"
       />
 
