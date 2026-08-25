@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { Fragment, useMemo, useState } from "react";
 import { Avatar, ItemThumb } from "@/components/avatar";
 import { ItemGrid, SlotTabs } from "@/components/wardrobe-parts";
 import { SLOT_LABELS, type AvatarAsset, type SlotType } from "@/lib/wardrobe";
@@ -58,31 +58,39 @@ export const WardrobePreview = ({ catalog }: { catalog: CatalogItemView[] }) => 
           // getWardrobeCatalogでtierごとにまとまる並びにしてあるのが前提
           const showTierHeading = item.asset.variant !== items[index - 1]?.asset.variant;
           return (
-            <li key={item.id} className="contents">
+            // display:contentsのliで見出し(span)とbuttonを束ねる形にしていたが、
+            // display:contentsは子孫へのCSSカスタムプロパティの継承を壊す
+            // ブラウザがあり、Tailwindのスケール系ユーティリティ(h-12など、
+            // 内部でvar(--spacing)を使うcalc())がbutton内のItemThumb(svg)に効かず
+            // サムネイルが0x0に潰れる事故が起きた。見出しをliごと独立させ、
+            // display:contentsを使わずに済む形にして避けている
+            <Fragment key={item.id}>
               {showTierHeading && (
-                <span className="col-span-full mt-1 text-xs font-bold text-foreground/50 first:mt-0">
+                <li className="col-span-full mt-1 text-xs font-bold text-foreground/50 first:mt-0">
                   {item.asset.variant}
-                </span>
+                </li>
               )}
-              <button
-                type="button"
-                onClick={() => toggle(item)}
-                className={`flex min-h-11 w-full flex-col items-center gap-1 rounded-[20px] p-2 text-center shadow-sm ${
-                  equippedHere ? "bg-brand/25 ring-2 ring-brand" : "bg-white/70"
-                }`}
-              >
-                <ItemThumb slot={item.slotType} asset={item.asset} className="h-12 w-auto" />
-                <span className="text-xs font-bold leading-snug text-foreground">{item.name}</span>
-                <span className="text-[11px] leading-snug text-foreground/60">
-                  {item.asset.variant}
-                  {item.asset.motif ? `/${item.asset.motif}` : ""}
-                </span>
-                <span className="text-[11px] leading-snug text-foreground/60">
-                  {item.pricePoints === null ? "むりょう" : `${item.pricePoints}pt`} ・{" "}
-                  {item.unlockLabel}
-                </span>
-              </button>
-            </li>
+              <li>
+                <button
+                  type="button"
+                  onClick={() => toggle(item)}
+                  className={`flex min-h-11 w-full flex-col items-center gap-1 rounded-[20px] p-2 text-center shadow-sm ${
+                    equippedHere ? "bg-brand/25 ring-2 ring-brand" : "bg-white/70"
+                  }`}
+                >
+                  <ItemThumb slot={item.slotType} asset={item.asset} className="h-12 w-auto" />
+                  <span className="text-xs font-bold leading-snug text-foreground">{item.name}</span>
+                  <span className="text-[11px] leading-snug text-foreground/60">
+                    {item.asset.variant}
+                    {item.asset.motif ? `/${item.asset.motif}` : ""}
+                  </span>
+                  <span className="text-[11px] leading-snug text-foreground/60">
+                    {item.pricePoints === null ? "むりょう" : `${item.pricePoints}pt`} ・{" "}
+                    {item.unlockLabel}
+                  </span>
+                </button>
+              </li>
+            </Fragment>
           );
         })}
       </ItemGrid>
