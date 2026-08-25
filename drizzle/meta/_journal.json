@@ -57,6 +57,13 @@
       "when": 1787627707903,
       "tag": "0007_tiered_wardrobe_items",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1787637796989,
+      "tag": "0008_point_only_wardrobe_items",
+      "breakpoints": true
     }
   ]
 }
