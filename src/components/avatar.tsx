@@ -1660,6 +1660,63 @@ export const ItemThumb = ({
   );
 };
 
+// 髪・服をそよ風で揺れているように見せる。ARM_PIVOTのコメントの通り、Framer
+// MotionのoriginX/originYはCSSの%と違い「その要素自身のgetBBox()」に対する
+// 割合なので、髪型/服の型ごとにシルエットの大きさがバラバラだと同じ
+// originX/originYでも実際の回転軸がずれてしまう。100x140のキャンバス全体を
+// カバーする透明なrect(見た目には影響しない)を子要素に混ぜてbboxを常に
+// キャンバス全体に固定することで、どのシルエットでも軸をそろえている
+const SWAY_CANVAS_REF = <rect x="0" y="0" width="100" height="140" fill="none" />;
+
+const swayAnimate = (deg: number): TargetAndTransition => ({ rotate: [-deg, deg, -deg] });
+const swayTransition = (duration: number, delay = 0): Transition => ({
+  duration,
+  delay,
+  repeat: Infinity,
+  ease: "easeInOut",
+});
+
+// スロットごとの揺れ方。髪は頭頂(y≈14)、トップスは肩(y≈56)、ボトムスは
+// 腰(y≈96)を軸に、それぞれ少しずつ周期・位相をずらして揺らす。全部そろえて
+// 振ると1枚の板が回っているように見えるため、髪→服→ボトムスの順に
+// わずかに遅らせて自然さを出す。ネックレスは体に密着していて単独で
+// 揺れると不自然なため対象外（未設定＝揺らさない）
+type SwayConfig = { originY: number; deg: number; duration: number; delay?: number };
+// 前髪(HairFringe)は後ろ髪と別コンポーネントだが、SLOT_DRAW_ORDERのループを
+// 通らず個別に描画しているため、SWAY_CONFIGとは別に単独の定数としても持つ
+// （中身はSWAY_CONFIG.hairと同じ値を指すことで位相をそろえる）
+const HAIR_SWAY: SwayConfig = { originY: 0.1, deg: 2, duration: 3.2 };
+const SWAY_CONFIG: Partial<Record<SlotType, SwayConfig>> = {
+  hair: HAIR_SWAY,
+  top: { originY: 0.4, deg: 1.2, duration: 3.6, delay: 0.15 },
+  bottom: { originY: 0.69, deg: 1, duration: 4, delay: 0.3 },
+};
+
+const Sway = ({
+  reduceMotion,
+  originY,
+  deg,
+  duration,
+  delay,
+  children,
+}: {
+  reduceMotion: boolean;
+  originY: number;
+  deg: number;
+  duration: number;
+  delay?: number;
+  children: ReactNode;
+}) => (
+  <motion.g
+    style={{ originX: 0.5, originY }}
+    animate={reduceMotion ? { rotate: 0 } : swayAnimate(deg)}
+    transition={reduceMotion ? STATIC_TRANSITION : swayTransition(duration, delay)}
+  >
+    {SWAY_CANVAS_REF}
+    {children}
+  </motion.g>
+);
+
 export const Avatar = ({
   equipped,
   armPose = "down",
@@ -1677,18 +1734,39 @@ export const Avatar = ({
 }) => {
   const uid = sanitizeId(useId());
   const reduceMotion = !!useReducedMotion();
+  const hairBack = renderSlot("hair", equipped.hair, uid, reduceMotion);
   return (
     <svg viewBox="0 0 100 140" className={className} role="img" aria-label="じぶんの キャラクター">
       {/* かみは からだより後ろに描く。それ以外は SLOT_DRAW_ORDER の順で重ねる */}
-      {renderSlot("hair", equipped.hair, uid, reduceMotion)}
-      <BaseBody armPose={armPose} skinTone={skinTone} eyeStyle={eyeStyle} mouthStyle={mouthStyle} />
-      {/* 前髪だけは顔の"上"に重ねる(HairFringeのコメント参照) */}
-      {equipped.hair && (
-        <HairFringe style={equipped.hair.motif} color={equipped.hair.color} uid={uid} />
+      {hairBack && (
+        <Sway reduceMotion={reduceMotion} {...HAIR_SWAY}>
+          {hairBack}
+        </Sway>
       )}
-      {SLOT_DRAW_ORDER.filter((slot) => slot !== "hair").map((slot) => (
-        <g key={slot}>{renderSlot(slot, equipped[slot], uid, reduceMotion)}</g>
-      ))}
+      <BaseBody armPose={armPose} skinTone={skinTone} eyeStyle={eyeStyle} mouthStyle={mouthStyle} />
+      {/* 前髪だけは顔の"上"に重ねる(HairFringeのコメント参照)。後ろ髪と
+          同じ揺れ方(HAIR_SWAY)にして、位相をそろえる */}
+      {equipped.hair && (
+        <Sway reduceMotion={reduceMotion} {...HAIR_SWAY}>
+          <HairFringe style={equipped.hair.motif} color={equipped.hair.color} uid={uid} />
+        </Sway>
+      )}
+      {SLOT_DRAW_ORDER.filter((slot) => slot !== "hair").map((slot) => {
+        const node = renderSlot(slot, equipped[slot], uid, reduceMotion);
+        if (!node) return null;
+        const sway = SWAY_CONFIG[slot];
+        return (
+          <g key={slot}>
+            {sway ? (
+              <Sway reduceMotion={reduceMotion} {...sway}>
+                {node}
+              </Sway>
+            ) : (
+              node
+            )}
+          </g>
+        );
+      })}
     </svg>
   );
 };
