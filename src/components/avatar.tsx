@@ -649,9 +649,107 @@ const HAIR: Record<string, Shapes> = {
   },
 };
 
+// トップスの型。髪と同じ理由（asset_ref の motif で選ぶ。src/lib/wardrobe.ts）。
+// t3のクリップパスにも同じ関数を再利用する
+type TopStyleParts = (fill: string, stroke: string | undefined, strokeWidth: number) => ReactNode;
+
+const TOP_STYLES: Record<string, TopStyleParts> = {
+  // ティーシャツ/ボーダーカットソー: 現状踏襲のシンプルな丸角長方形
+  tee: (fill, stroke, sw) => <rect x="28" y="56" width="44" height="44" rx="14" fill={fill} stroke={stroke} strokeWidth={sw} />,
+  // パーカー/ほしぞらパーカー: 本体+えりの後ろにのぞくフード+ひも
+  hoodie: (fill, stroke, sw) => (
+    <>
+      <path d="M36 60 Q50 38 64 60 L58 66 Q50 52 42 66 Z" fill={fill} stroke={stroke} strokeWidth={sw} />
+      <rect x="28" y="56" width="44" height="44" rx="14" fill={fill} stroke={stroke} strokeWidth={sw} />
+      <line x1="47" y1="66" x2="46" y2="76" stroke={stroke ?? "#00000055"} strokeWidth={sw ? sw * 0.6 : 1} strokeLinecap="round" />
+      <line x1="53" y1="66" x2="54" y2="76" stroke={stroke ?? "#00000055"} strokeWidth={sw ? sw * 0.6 : 1} strokeLinecap="round" />
+    </>
+  ),
+  // ジャケット/めいさいブルゾン/デニムジャケット: 本体+前あきのVえり+センターの縫い目
+  jacket: (fill, stroke, sw) => (
+    <>
+      <rect x="28" y="56" width="44" height="44" rx="14" fill={fill} stroke={stroke} strokeWidth={sw} />
+      <path d="M42 58 L50 70 L58 58" fill="none" stroke={stroke ?? "#00000055"} strokeWidth={sw || 1.5} />
+      <line x1="50" y1="70" x2="50" y2="98" stroke={stroke ?? "#00000055"} strokeWidth={sw ? sw * 0.6 : 1} />
+    </>
+  ),
+  // キラキラワンピース/ワンピース: 肩からすそへ広がるシルエット(ボトムより手前に描かれる
+  // ため、足元まで隠れて一枚のドレスに見える。SLOT_DRAW_ORDER参照)
+  dress: (fill, stroke, sw) => (
+    <path d="M32 56 L68 56 L80 114 A4 4 0 0 1 76 118 L24 118 A4 4 0 0 1 20 114 Z" fill={fill} stroke={stroke} strokeWidth={sw} />
+  ),
+  // スポーツベスト/ニットベスト: 本体を細くして袖ぐりを見せる(そで無し)
+  vest: (fill, stroke, sw) => (
+    <>
+      <rect x="32" y="60" width="36" height="40" rx="12" fill={fill} stroke={stroke} strokeWidth={sw} />
+      <rect x="35" y="54" width="7" height="11" rx="3" fill={fill} stroke={stroke} strokeWidth={sw} />
+      <rect x="58" y="54" width="7" height="11" rx="3" fill={fill} stroke={stroke} strokeWidth={sw} />
+    </>
+  ),
+  // チェックシャツ: 本体+開いた大きめのえり+ボタン3つ。jacketより襟を大きく、
+  // 前を開けすぎない(ボタン留め)ことでtee/jacketとの見分けをはっきりさせる
+  shirt: (fill, stroke, sw) => (
+    <>
+      <rect x="28" y="56" width="44" height="44" rx="14" fill={fill} stroke={stroke} strokeWidth={sw} />
+      <path d="M50 56 L38 62 L46 72 L50 64 L54 72 L62 62 Z" fill={stroke ?? "#00000055"} />
+      <path d="M50 64 L46 72 L50 78 L54 72 Z" fill={fill} stroke={stroke} strokeWidth={sw ? sw * 0.6 : 1} />
+      <circle cx="50" cy="80" r="1.6" fill={stroke ?? "#00000055"} />
+      <circle cx="50" cy="87" r="1.6" fill={stroke ?? "#00000055"} />
+      <circle cx="50" cy="94" r="1.6" fill={stroke ?? "#00000055"} />
+    </>
+  ),
+  // マリンコート/ふわふわコート: すそへ向けてやや広がる丈長シルエット+ラペル
+  coat: (fill, stroke, sw) => (
+    <>
+      <path
+        d="M30 56 L70 56 L78 108 A6 6 0 0 1 72 114 L28 114 A6 6 0 0 1 22 108 Z"
+        fill={fill}
+        stroke={stroke}
+        strokeWidth={sw}
+      />
+      <path d="M42 56 L50 68 L58 56" fill="none" stroke={stroke ?? "#00000055"} strokeWidth={sw || 1.5} />
+    </>
+  ),
+  // スターケープ: 肩から末広がりに流れるマント+首元のクラスプ
+  cape: (fill, stroke, sw) => (
+    <>
+      <path
+        d="M38 56 L62 56 L92 108 A6 6 0 0 1 86 114 L14 114 A6 6 0 0 1 8 108 Z"
+        fill={fill}
+        stroke={stroke}
+        strokeWidth={sw}
+        opacity="0.95"
+      />
+      <rect x="34" y="58" width="32" height="34" rx="10" fill={fill} stroke={stroke} strokeWidth={sw} />
+      <circle cx="50" cy="58" r="3" fill={stroke ?? "#00000055"} />
+    </>
+  ),
+  // フリルブラウス: えりぐりに沿ったフリル(半円の連なり)
+  blouse: (fill, stroke, sw) => (
+    <>
+      <rect x="28" y="56" width="44" height="44" rx="14" fill={fill} stroke={stroke} strokeWidth={sw} />
+      {[36, 42.5, 49, 55.5, 62].map((x, i) => (
+        <circle key={i} cx={x} cy="57" r="4" fill={fill} stroke={stroke} strokeWidth={sw} />
+      ))}
+    </>
+  ),
+};
+
+const TopShape = ({
+  style,
+  fill,
+  stroke,
+  strokeWidth = 0,
+}: {
+  style: string | undefined;
+  fill: string;
+  stroke?: string;
+  strokeWidth?: number;
+}) => <>{(TOP_STYLES[style ?? "tee"] ?? TOP_STYLES.tee)(fill, stroke, strokeWidth)}</>;
+
 const TOP: Record<string, Shapes> = {
-  t1: (c) => <rect x="28" y="56" width="44" height="44" rx="14" fill={c} />,
-  t2: (c, uid) => {
+  t1: (c, _uid, _reduceMotion, motif) => <TopShape style={motif} fill={c} />,
+  t2: (c, uid, _reduceMotion, motif) => {
     const grad = `${uid}-t2-grad`;
     return (
       <>
@@ -661,23 +759,11 @@ const TOP: Record<string, Shapes> = {
             <stop offset="1" stopColor={c} />
           </linearGradient>
         </defs>
-        <rect
-          x="28"
-          y="56"
-          width="44"
-          height="44"
-          rx="14"
-          fill={`url(#${grad})`}
-          stroke={darken(c, 0.5)}
-          strokeWidth="2"
-        />
-        <rect x="28" y="90" width="44" height="10" rx="6" fill={darken(c, 0.3)} opacity="0.45" />
-        <rect x="28" y="68" width="44" height="5" fill="#ffffff" opacity="0.8" />
-        <rect x="28" y="80" width="44" height="5" fill="#ffffff" opacity="0.8" />
+        <TopShape style={motif} fill={`url(#${grad})`} stroke={darken(c, 0.5)} strokeWidth={2} />
       </>
     );
   },
-  t3: (c, uid) => {
+  t3: (c, uid, _reduceMotion, motif) => {
     const grad = `${uid}-t3-grad`;
     const hi = `${uid}-t3-hi`;
     const clip = `${uid}-t3-clip`;
@@ -692,47 +778,26 @@ const TOP: Record<string, Shapes> = {
             <stop offset="0" stopColor="#ffffff" stopOpacity="0.8" />
             <stop offset="1" stopColor="#ffffff" stopOpacity="0" />
           </radialGradient>
+          {/* 生地の粒・ハイライトが服の外にはみ出さないよう、選んだスタイルと
+              同じ輪郭でクリップする */}
           <clipPath id={clip}>
-            <rect x="28" y="56" width="44" height="44" rx="14" />
+            <TopShape style={motif} fill="#fff" strokeWidth={0} />
           </clipPath>
         </defs>
-        <g>
-          <rect
-            x="28"
-            y="56"
-            width="44"
-            height="44"
-            rx="14"
-            fill={`url(#${grad})`}
-            stroke={darken(c, 0.5)}
-            strokeWidth="2.4"
-          />
-          <rect
-            x="28"
-            y="56"
-            width="44"
-            height="44"
-            rx="14"
-            fill="none"
-            stroke={lighten(c, 0.4)}
-            strokeWidth="1"
-            strokeDasharray="3 3"
-            opacity="0.6"
-          />
-        </g>
+        <TopShape style={motif} fill={`url(#${grad})`} stroke={darken(c, 0.5)} strokeWidth={2.4} />
         <g clipPath={`url(#${clip})`}>
+          <ellipse cx="42" cy="62" rx="16" ry="8" fill={`url(#${hi})`} />
           <circle cx="38" cy="66" r="2.6" fill={lighten(c, 0.5)} opacity="0.55" />
           <circle cx="54" cy="80" r="2.6" fill={lighten(c, 0.5)} opacity="0.55" />
           <circle cx="64" cy="70" r="2.6" fill={lighten(c, 0.5)} opacity="0.55" />
           <circle cx="46" cy="92" r="2.6" fill={lighten(c, 0.5)} opacity="0.55" />
+          <circle cx="50" cy="64" r="2.2" fill="#fff8dc" stroke="#c9a227" strokeWidth="0.7" />
+          <circle cx="50" cy="72" r="2.2" fill="#fff8dc" stroke="#c9a227" strokeWidth="0.7" />
         </g>
-        <ellipse cx="42" cy="62" rx="16" ry="8" fill={`url(#${hi})`} />
-        <circle cx="50" cy="64" r="2.2" fill="#fff8dc" stroke="#c9a227" strokeWidth="0.7" />
-        <circle cx="50" cy="72" r="2.2" fill="#fff8dc" stroke="#c9a227" strokeWidth="0.7" />
       </>
     );
   },
-  t4: (c, uid) => {
+  t4: (c, uid, _reduceMotion, motif) => {
     const grad = `${uid}-t4-grad`;
     const sheen = `${uid}-t4-sheen`;
     return (
@@ -749,26 +814,13 @@ const TOP: Record<string, Shapes> = {
             <stop offset="1" stopColor="#ffffff" stopOpacity="0" />
           </linearGradient>
         </defs>
-        <path d="M30 58 L26 100 A10 10 0 0 0 34 116 L30 60 Z" fill={darken(c, 0.2)} opacity="0.9" />
-        <path d="M70 58 L74 100 A10 10 0 0 1 66 116 L70 60 Z" fill={darken(c, 0.2)} opacity="0.9" />
-        <rect
-          x="28"
-          y="56"
-          width="44"
-          height="44"
-          rx="14"
-          fill={`url(#${grad})`}
-          stroke={darken(c, 0.55)}
-          strokeWidth="2.4"
-        />
+        <TopShape style={motif} fill={`url(#${grad})`} stroke={darken(c, 0.55)} strokeWidth={2.4} />
         <path d="M32 64 C42 60 58 60 68 64" stroke={`url(#${sheen})`} strokeWidth="2" fill="none" />
         <circle cx="50" cy="66" r="2.4" fill="#fff4c2" stroke="#dba528" strokeWidth="0.7" />
-        <path d="M40 78 L60 78" stroke="#fff4c2" strokeWidth="2" strokeLinecap="round" />
-        <path d="M40 86 L60 86" stroke="#fff4c2" strokeWidth="2" strokeLinecap="round" />
       </>
     );
   },
-  t5: (c, uid, reduceMotion) => {
+  t5: (c, uid, reduceMotion, motif) => {
     const grad = `${uid}-t5-grad`;
     const glow = `${uid}-t5-glow`;
     return (
@@ -786,16 +838,7 @@ const TOP: Record<string, Shapes> = {
             </feMerge>
           </filter>
         </defs>
-        <rect
-          x="28"
-          y="56"
-          width="44"
-          height="44"
-          rx="14"
-          fill={`url(#${grad})`}
-          stroke={darken(c, 0.5)}
-          strokeWidth="2.4"
-        />
+        <TopShape style={motif} fill={`url(#${grad})`} stroke={darken(c, 0.5)} strokeWidth={2.4} />
         <motion.g
           animate={reduceMotion ? { opacity: 1 } : GLOW_PULSE_ANIMATE}
           transition={reduceMotion ? STATIC_TRANSITION : GLOW_PULSE_TRANSITION}
@@ -809,7 +852,7 @@ const TOP: Record<string, Shapes> = {
       </>
     );
   },
-  t6: (c, uid, reduceMotion) => {
+  t6: (c, uid, reduceMotion, motif) => {
     const grad1 = `${uid}-t6-grad1`;
     const grad2 = `${uid}-t6-grad2`;
     const grad3 = `${uid}-t6-grad3`;
@@ -834,16 +877,7 @@ const TOP: Record<string, Shapes> = {
             <feGaussianBlur stdDeviation="1.8" />
           </filter>
         </defs>
-        <rect
-          x="28"
-          y="56"
-          width="44"
-          height="44"
-          rx="14"
-          fill={`url(#${grad1})`}
-          stroke="#7a5cff"
-          strokeWidth="2.4"
-        />
+        <TopShape style={motif} fill={`url(#${grad1})`} stroke="#7a5cff" strokeWidth={2.4} />
         <ellipse cx="42" cy="62" rx="18" ry="10" fill={`url(#${grad2})`} />
         <path
           d="M50 58 L53 66 L61 66 L54 71 L57 79 L50 74 L43 79 L46 71 L39 66 L47 66 Z"
