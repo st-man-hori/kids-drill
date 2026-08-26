@@ -525,15 +525,29 @@ const FRINGE_MASK_CENTER_PART_D =
 
 const HairFringe = ({
   style,
+  variant,
   color,
   uid,
+  reduceMotion,
 }: {
   style: string | undefined;
+  // T2以降のグラデーション・星やきらめきなどの装飾を前髪レイヤーにも
+  // 出すために必要（下のコメント参照）。省略するとT1相当の無地になる
+  variant: string | undefined;
   color: string;
   uid: string;
+  reduceMotion: boolean;
 }) => {
   const maskId = `${uid}-hair-fringe-mask`;
-  const shape = (HAIR_STYLES[style ?? "fluffy"] ?? HAIR_STYLES.fluffy)(color, darken(color, 0.45), 1.8);
+  // 以前はHAIR_STYLES(見た目の輪郭だけ)しか描いておらず、T2以降の
+  // グラデーション・星やきらめきといった装飾がここに含まれていなかった。
+  // これらの装飾は頭頂付近(y2〜30ほど)にあるものが多く、髪はからだより
+  // 後ろに描く(hairBack)ため頭にほぼ隠れてしまい、「レアな髪型の星が
+  // 見えない」という実機フィードバックの原因になっていた。HAIR[variant]
+  // (hairBackと同じ、ティアの装飾込みの描画関数)をここでも呼び、前髪の
+  // マスクで前面に出す。gradient等のidがhairBack側と衝突しないよう、
+  // uidに接尾辞を足して別idにしている
+  const shape = (HAIR[variant ?? "t1"] ?? HAIR.t1)(color, `${uid}-fringe`, reduceMotion, style);
   const maskD = style === "mash" ? FRINGE_MASK_STRAIGHT_D : FRINGE_MASK_CENTER_PART_D;
   return (
     <>
@@ -1854,7 +1868,13 @@ export const Avatar = ({
           同じ揺れ方(HAIR_SWAY)にして、位相をそろえる */}
       {equipped.hair && (
         <Sway reduceMotion={reduceMotion} {...HAIR_SWAY}>
-          <HairFringe style={equipped.hair.motif} color={equipped.hair.color} uid={uid} />
+          <HairFringe
+            style={equipped.hair.motif}
+            variant={equipped.hair.variant}
+            color={equipped.hair.color}
+            uid={uid}
+            reduceMotion={reduceMotion}
+          />
         </Sway>
       )}
       {SLOT_DRAW_ORDER.filter((slot) => slot !== "hair").map((slot) => {
