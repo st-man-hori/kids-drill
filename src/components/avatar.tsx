@@ -745,27 +745,29 @@ const sleevedTorsoPath = (sleeveLen: number): string => {
     (a[1] + b[1]) / 2,
   ];
   // 左半身ぶんの頂点。右半身は x を 100-x で鏡映して作る。
-  // BaseBody側の動く袖(x17/63,y54,width20,height=sleeveLen,rx8.5)を、
-  // 静止時にすき間なく覆えるよう、肩の外側のy(53)を袖の上端(54)より上に、
-  // そでのそとがわ(x16)を袖のはば(x17-37)より外側に取って余白を持たせて
-  // いる（y方向も単調増加にして、鋭角にへこむ輪郭で膨らんで見える事故を
-  // 避けている）。えりもと(neckL/neckR)は首(BaseBodyの首はy46-58、あたま
-  // の底はy52)が隠れすぎないよう、肩より低いy56のまま据え置く
+  // BaseBody側の動く袖(x19/68,y54,width13,height=sleeveLen,rx6。実機
+  // フィードバックで「トップスが体に対して大きすぎる」と指摘され、
+  // 元は幅20だったのをここまで細くした)を、静止時にすき間なく覆えるよう、
+  // 肩の外側のy(53)を袖の上端(54)より上に、そでのそとがわ(x17)を袖の
+  // はば(x19-32)より外側に取って余白を持たせている（y方向も単調増加に
+  // して、鋭角にへこむ輪郭で膨らんで見える事故を避けている）。えりもと
+  // (neckL/neckR)は首(BaseBodyの首はy46-58、あたまの底はy52)が隠れすぎ
+  // ないよう、肩より低いy56のまま据え置く
   const points: [number, number][] = [
     [40, 56], // えりの左はし(首の下に隠れる)
     [28, 53], // 肩の外側
-    [16, 58], // 袖のそとがわ上
-    [16, capBottom - 6], // 袖のそとがわ下
-    [23, capBottom], // 袖のすそ
-    [28, capBottom + 4], // わきの下のくびれ
+    [17, 58], // 袖のそとがわ上
+    [17, capBottom - 6], // 袖のそとがわ下
+    [24, capBottom], // 袖のすそ
+    [28, capBottom + 2], // わきの下のくびれ
     [28, 100], // わき〜すそまでの胴の側面
     [32, 104], // すその角(左)
     [68, 104], // すその角(右)
     [72, 100],
-    [72, capBottom + 4],
-    [77, capBottom],
-    [84, capBottom - 6],
-    [84, 58],
+    [72, capBottom + 2],
+    [76, capBottom],
+    [83, capBottom - 6],
+    [83, 58],
     [72, 53],
     [60, 56], // えりの右はし
   ];
@@ -1701,7 +1703,7 @@ const BaseBody = ({
         {CANVAS_BBOX_REF}
         <rect x="20" y="60" width="11" height="34" rx="5.5" fill={skin} />
         {sleeveLength !== undefined && (
-          <rect x="17" y="54" width="20" height={sleeveLength} rx="8.5" fill={sleeveFill} stroke={sleeveStroke} strokeWidth={1.8} />
+          <rect x="19" y="54" width="13" height={sleeveLength} rx="6" fill={sleeveFill} stroke={sleeveStroke} strokeWidth={1.8} />
         )}
       </motion.g>
       <motion.g
@@ -1713,7 +1715,7 @@ const BaseBody = ({
         {CANVAS_BBOX_REF}
         <rect x="69" y="60" width="11" height="34" rx="5.5" fill={skin} />
         {sleeveLength !== undefined && (
-          <rect x="63" y="54" width="20" height={sleeveLength} rx="8.5" fill={sleeveFill} stroke={sleeveStroke} strokeWidth={1.8} />
+          <rect x="68" y="54" width="13" height={sleeveLength} rx="6" fill={sleeveFill} stroke={sleeveStroke} strokeWidth={1.8} />
         )}
       </motion.g>
       {/* からだ */}
