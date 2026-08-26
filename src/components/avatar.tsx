@@ -817,14 +817,21 @@ const TOP_STYLES: Record<string, TopStyleParts> = {
       <line x1="53" y1="66" x2="54" y2="76" stroke={stroke ?? "#00000055"} strokeWidth={sw ? sw * 0.6 : 1} strokeLinecap="round" />
     </>
   ),
-  // ジャケット/めいさいブルゾン/デニムジャケット: 本体+前あきのVえり+センターの縫い目
-  jacket: (fill, stroke, sw) => (
-    <>
-      <path d={sleevedTorsoPath(TOP_SLEEVE_LENGTH.jacket ?? 34)} fill={fill} stroke={stroke} strokeWidth={sw} />
-      <path d="M42 58 L50 70 L58 58" fill="none" stroke={stroke ?? "#00000055"} strokeWidth={sw || 1.5} />
-      <line x1="50" y1="70" x2="50" y2="98" stroke={stroke ?? "#00000055"} strokeWidth={sw ? sw * 0.6 : 1} />
-    </>
-  ),
+  // ジャケット/めいさいブルゾン/デニムジャケット: 本体+前あきのVえり+
+  // センターの縫い目+わきの縫い目(実機フィードバック。わきに線が入ると
+  // 一枚布ではなくパーツを縫い合わせた服らしく見える)
+  jacket: (fill, stroke, sw) => {
+    const underarmY = 54 + (TOP_SLEEVE_LENGTH.jacket ?? 34) + 2;
+    return (
+      <>
+        <path d={sleevedTorsoPath(TOP_SLEEVE_LENGTH.jacket ?? 34)} fill={fill} stroke={stroke} strokeWidth={sw} />
+        <path d="M42 58 L50 70 L58 58" fill="none" stroke={stroke ?? "#00000055"} strokeWidth={sw || 1.5} />
+        <line x1="50" y1="70" x2="50" y2="98" stroke={stroke ?? "#00000055"} strokeWidth={sw ? sw * 0.6 : 1} />
+        <line x1="32" y1={underarmY} x2="32" y2="101" stroke={stroke ?? "#00000055"} strokeWidth={sw ? sw * 0.5 : 0.8} />
+        <line x1="68" y1={underarmY} x2="68" y2="101" stroke={stroke ?? "#00000055"} strokeWidth={sw ? sw * 0.5 : 0.8} />
+      </>
+    );
+  },
   // キラキラワンピース/ワンピース: 肩からすそへ広がるシルエット(ボトムより手前に描かれる
   // ため、足元まで隠れて一枚のドレスに見える。SLOT_DRAW_ORDER参照)
   dress: (fill, stroke, sw) => (
