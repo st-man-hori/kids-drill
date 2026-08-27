@@ -1727,6 +1727,22 @@ const EYE_STYLES: Record<EyeStyle, FacePartShape> = {
       <path d="M53.5 31 L60.5 31" stroke={c} strokeWidth="2" strokeLinecap="round" />
     </>
   ),
+  // ウインク目。片目はhappyと同じ弧で閉じ、もう片目はroundと同じ
+  // ハイライト付きの丸目のまま開けておく(左右非対称で表情に個性を出す)
+  wink: (c) => (
+    <>
+      <path d="M39.5 31.5 A4 3.4 0 0 1 46.5 31.5" stroke={c} strokeWidth="2" fill="none" strokeLinecap="round" />
+      <circle cx="57" cy="30.5" r="2.6" fill={c} />
+      <circle cx="58.1" cy="29.2" r="0.9" fill="#ffffff" />
+    </>
+  ),
+  // ねこ目。外側から内側の上へ跳ね上げた線で、きゅっと上がった目じりを表す
+  cat: (c) => (
+    <>
+      <path d="M39.5 33 Q43 28 46.5 31.5" stroke={c} strokeWidth="2" fill="none" strokeLinecap="round" />
+      <path d="M60.5 33 Q57 28 53.5 31.5" stroke={c} strokeWidth="2" fill="none" strokeLinecap="round" />
+    </>
+  ),
 };
 
 const MOUTH_STYLES: Record<MouthStyle, FacePartShape> = {
@@ -1748,6 +1764,23 @@ const MOUTH_STYLES: Record<MouthStyle, FacePartShape> = {
       <path d="M44 38 Q50 45.5 56 38 Q50 42.5 44 38 Z" fill={c} />
       <path d="M46.5 39 L53.5 39" stroke="#ffffff" strokeWidth="1.6" strokeLinecap="round" />
     </>
+  ),
+  // ペロッと舌を出した口。grinと同じ開いた口の中に、小さな舌を重ねる
+  tongue: (c) => (
+    <>
+      <path d="M43 38 Q50 45.5 57 38 Q50 42.5 43 38 Z" fill={c} />
+      <path d="M46 41.5 Q50 46 54 41.5 Q50 44.5 46 41.5 Z" fill="#f28ba0" />
+    </>
+  ),
+  // ねこ口。ω(オメガ)のような2つの小さな山でできた口
+  cat: (c) => (
+    <path
+      d="M45 39 Q47 41.5 50 39 Q53 41.5 55 39"
+      stroke={c}
+      strokeWidth="2"
+      fill="none"
+      strokeLinecap="round"
+    />
   ),
 };
 
