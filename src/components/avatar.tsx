@@ -735,14 +735,20 @@ type TopStyleParts = (fill: string, stroke: string | undefined, strokeWidth: num
 // 袖の丈。BaseBody側でうでと同じmotion.gに入れて回すため、そちらで持つ
 // (このファイル内でTOP_STYLESの近くに置いているのはmotifとの対応が
 // 見つけやすいように)。ノースリーブにしたい型(vest/dress/cape)は未設定のまま
-// にして、袖を描かない
+// にして、袖を描かない。
+//
+// うで(BaseBodyのうでrectはy60-94)に対してSLEEVE_TOP_Y(59)からの丈が
+// 長すぎると、手首まで完全に袖で隠れてしまう。以前はjacket/coatがそれぞれ
+// y93/95まで達し、うでの下端(y94)をほぼ覆い尽くしていた(実機
+// フィードバック「腕が完全に隠れているのも気になる」)。手首ぶんの肌
+// (7〜8ユニットほど)が必ず見えるよう、長い丈の値を短くした
 const TOP_SLEEVE_LENGTH: Partial<Record<string, number>> = {
   tee: 20,
   blouse: 20,
   shirt: 22,
   hoodie: 26,
-  jacket: 34,
-  coat: 36,
+  jacket: 27,
+  coat: 29,
 };
 
 // 袖の手首側の幅。丈が長いほど絞る(実機フィードバック「ジャケットの袖が
@@ -751,8 +757,8 @@ const TOP_SLEEVE_LENGTH: Partial<Record<string, number>> = {
 // 幅(SLEEVE_TOP_WIDTH)は丈によらず一定にし、手首側だけ丈に応じて狭める。
 // BaseBody(動く方の袖)とsleevedTorsoPath/sleevedCoatPath(静止側の輪郭)の
 // 両方で使うため、値をここで一元管理する
-const SLEEVE_TOP_WIDTH = 14;
-const sleeveBottomWidth = (sleeveLen: number): number => Math.max(7, SLEEVE_TOP_WIDTH - sleeveLen * 0.25);
+const SLEEVE_TOP_WIDTH = 11;
+const sleeveBottomWidth = (sleeveLen: number): number => Math.max(6, SLEEVE_TOP_WIDTH - sleeveLen * 0.25);
 
 // 袖の上端y。以前は54(肩のすぐ下)にしていたが、静止側の輪郭が動く袖を
 // 覆うためにその高さまで持ち上げる必要があり、結果として肩が「いかり肩」
@@ -814,24 +820,25 @@ const taperedSleevePath = (centerX: number, sleeveLen: number): string => {
 // を静止時に覆う都合は変わっていない。肩の頂点(30,54)がそでのはば
 // (18.5〜32.5)の内側にあること、そでのそとがわの丸み・わきのくびれが
 // taperedSleevePathの台形をすき間なく包むことを実機で確認して余白を
-// 決めている。「横に広すぎる」という実機フィードバックを受けて、当初は
-// 安全側に大きく取っていたそでのそとがわの余白(x13/7)を、すき間が出ない
-// ぎりぎりまで内側(x18/13)に詰めてスリムにした
+// 決めている。「横に広すぎる」「もう少し体にぴったりなサイズに」という
+// 実機フィードバックを受けて、そでのそとがわの余白を段階的に内側へ
+// 詰めてスリムにしてきた(現在はx16/11)。すそのはば(34/66)も同様に
+// x38/62まで詰めている
 const sleevedTorsoPath = (sleeveLen: number): string => {
   const capBottom = SLEEVE_TOP_Y + sleeveLen;
   const sleeveMidY = SLEEVE_TOP_Y + sleeveLen * 0.5;
   return `
     M 30 54
-    L 18 61
-    Q 13 ${sleeveMidY} 20 ${capBottom + 1}
+    L 16 61
+    Q 11 ${sleeveMidY} 18 ${capBottom + 1}
     Q 22 ${capBottom} 30 ${capBottom}
     L 30 100
-    Q 30 104 34 104
-    L 66 104
+    Q 30 104 38 104
+    L 62 104
     Q 70 104 70 100
     L 70 ${capBottom}
-    Q 78 ${capBottom} 80 ${capBottom + 1}
-    Q 87 ${sleeveMidY} 82 61
+    Q 78 ${capBottom} 82 ${capBottom + 1}
+    Q 89 ${sleeveMidY} 84 61
     L 70 54
     Q 50 62 30 54
     Z
@@ -846,16 +853,16 @@ const sleevedCoatPath = (sleeveLen: number): string => {
   const sleeveMidY = SLEEVE_TOP_Y + sleeveLen * 0.5;
   return `
     M 30 54
-    L 18 61
-    Q 13 ${sleeveMidY} 20 ${capBottom + 1}
+    L 16 61
+    Q 11 ${sleeveMidY} 18 ${capBottom + 1}
     Q 22 ${capBottom} 30 ${capBottom}
     L 23 100
     Q 23 104 28 105
     L 72 105
     Q 77 104 77 100
     L 70 ${capBottom}
-    Q 78 ${capBottom} 80 ${capBottom + 1}
-    Q 87 ${sleeveMidY} 82 61
+    Q 78 ${capBottom} 82 ${capBottom + 1}
+    Q 89 ${sleeveMidY} 84 61
     L 70 54
     Q 50 62 30 54
     Z
