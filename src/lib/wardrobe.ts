@@ -4,20 +4,23 @@
 
 // アイテムスロット。将来 帽子・メガネ などを足す場合はここに追加する
 // （docs/game-design.md: slot_typeを足すだけでよい設計）
-export const SLOT_TYPES = ["hair", "top", "bottom", "necklace"] as const;
+export const SLOT_TYPES = ["hair", "top", "bottom", "shoes", "necklace"] as const;
 export type SlotType = (typeof SLOT_TYPES)[number];
 
 export const SLOT_LABELS: Record<SlotType, string> = {
   hair: "かみがた",
   top: "トップス",
   bottom: "ボトムス",
+  shoes: "シューズ",
   necklace: "ネックレス",
 };
 
-// アバターの重ね順（後ろ → 前）。髪はからだより後ろ、ネックレスは一番手前
+// アバターの重ね順（後ろ → 前）。髪はからだより後ろ、シューズはボトムスの裾に
+// 重なるようその直後、ネックレスは一番手前
 export const SLOT_DRAW_ORDER: readonly SlotType[] = [
   "hair",
   "bottom",
+  "shoes",
   "top",
   "necklace",
 ];

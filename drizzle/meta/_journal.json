@@ -120,6 +120,13 @@
       "when": 1787831504312,
       "tag": "0016_hair_default_motif",
       "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "7",
+      "when": 1787838700059,
+      "tag": "0017_shoe_wardrobe_items",
+      "breakpoints": true
     }
   ]
 }

@@ -70,7 +70,7 @@ DBスキーマの概念設計（Drizzle実装前のたたき台）。詳細な�
 
 ### wardrobe_items（着せ替えアイテムカタログ）
 - `id`
-- `slot_type`（hair / top / bottom / necklace。将来slot_typeを追加する場合もレコード追加のみでよい）
+- `slot_type`（hair / top / bottom / shoes / necklace。将来slot_typeを追加する場合もレコード追加のみでよい）
 - `name`
 - `asset_ref`
 - `unlock_condition_type`（total_correct / level_reached / time_attack_score など）
@@ -84,7 +84,7 @@ DBスキーマの概念設計（Drizzle実装前のたたき台）。詳細な�
 
 ### child_equipped_items（子どもが今装備しているアイテム）
 - `child_id`（fk → child_profiles）
-- `slot_type`（hair / top / bottom / necklace...）
+- `slot_type`（hair / top / bottom / shoes / necklace...）
 - `wardrobe_item_id`（fk → wardrobe_items）
 - `equipped_at`
 - UNIQUE制約: (`child_id`, `slot_type`) ← 1部位につき1アイテムしか装備できないことを保証する

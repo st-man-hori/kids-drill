@@ -1442,6 +1442,281 @@ const BOTTOM: Record<string, Shapes> = {
   },
 };
 
+type ShoeStyleParts = (fill: string, stroke: string | undefined, strokeWidth: number) => ReactNode;
+
+// あし(BaseBodyのあしrectはx33/x55, 幅12, y96-130)の足首から下に重ねる靴。
+// 左右のあしの中心(39, 61)を基準に、靴のかたちをそれぞれ左右対称に描く。
+// ブーツ系だけがy106〜114あたりから、それ以外はy123前後からy137前後の
+// 短い丈になる（ボトムスの丈と重なりすぎないよう、あしの見える範囲は残す）
+const SHOE_STYLES: Record<string, ShoeStyleParts> = {
+  // スニーカー: くるぶし丈+ソール+靴ひも
+  sneaker: (fill, stroke, sw) => (
+    <>
+      <rect x="29" y="123" width="20" height="14" rx="6" fill={fill} stroke={stroke} strokeWidth={sw} />
+      <rect x="51" y="123" width="20" height="14" rx="6" fill={fill} stroke={stroke} strokeWidth={sw} />
+      <rect x="27" y="133" width="22" height="4" rx="2" fill="#00000030" />
+      <rect x="51" y="133" width="22" height="4" rx="2" fill="#00000030" />
+      <line x1="33" y1="127" x2="45" y2="127" stroke="#ffffffaa" strokeWidth="1.3" strokeLinecap="round" />
+      <line x1="55" y1="127" x2="67" y2="127" stroke="#ffffffaa" strokeWidth="1.3" strokeLinecap="round" />
+    </>
+  ),
+  // ハイカットスニーカー: くるぶしまで覆う丈+口ゴムのカフ
+  hightop: (fill, stroke, sw) => (
+    <>
+      <rect x="30" y="114" width="18" height="23" rx="6" fill={fill} stroke={stroke} strokeWidth={sw} />
+      <rect x="52" y="114" width="18" height="23" rx="6" fill={fill} stroke={stroke} strokeWidth={sw} />
+      <rect x="30" y="114" width="18" height="6" rx="3" fill="#ffffff55" />
+      <rect x="52" y="114" width="18" height="6" rx="3" fill="#ffffff55" />
+      <rect x="28" y="133" width="22" height="4" rx="2" fill="#00000030" />
+      <rect x="50" y="133" width="22" height="4" rx="2" fill="#00000030" />
+    </>
+  ),
+  // ブーツ: すね丈+かかとのステッチライン
+  boots: (fill, stroke, sw) => (
+    <>
+      <rect x="30" y="108" width="18" height="29" rx="3" fill={fill} stroke={stroke} strokeWidth={sw} />
+      <rect x="52" y="108" width="18" height="29" rx="3" fill={fill} stroke={stroke} strokeWidth={sw} />
+      <line x1="39" y1="111" x2="39" y2="135" stroke={stroke ?? "#00000033"} strokeWidth={sw ? sw * 0.5 : 0.8} />
+      <line x1="61" y1="111" x2="61" y2="135" stroke={stroke ?? "#00000033"} strokeWidth={sw ? sw * 0.5 : 0.8} />
+    </>
+  ),
+  // ながぐつ: つま先が丸い長い丈+口の折り返し
+  rainboots: (fill, stroke, sw) => (
+    <>
+      <path
+        d="M30 106 L48 106 L48 130 A7 7 0 0 1 41 137 L37 137 A7 7 0 0 1 30 130 Z"
+        fill={fill}
+        stroke={stroke}
+        strokeWidth={sw}
+      />
+      <path
+        d="M52 106 L70 106 L70 130 A7 7 0 0 1 63 137 L59 137 A7 7 0 0 1 52 130 Z"
+        fill={fill}
+        stroke={stroke}
+        strokeWidth={sw}
+      />
+      <rect x="29" y="105" width="20" height="5" rx="2.5" fill="#ffffff55" />
+      <rect x="51" y="105" width="20" height="5" rx="2.5" fill="#ffffff55" />
+    </>
+  ),
+  // サンダル: うすいソール+ストラップ(あしの肌色がすき間から見える)
+  sandals: (fill, stroke, sw) => (
+    <>
+      <rect x="28" y="132" width="22" height="5" rx="2.5" fill={fill} stroke={stroke} strokeWidth={sw} />
+      <rect x="50" y="132" width="22" height="5" rx="2.5" fill={fill} stroke={stroke} strokeWidth={sw} />
+      <line x1="33" y1="122" x2="33" y2="132" stroke={fill} strokeWidth="3" strokeLinecap="round" />
+      <line x1="45" y1="122" x2="45" y2="132" stroke={fill} strokeWidth="3" strokeLinecap="round" />
+      <line x1="55" y1="122" x2="55" y2="132" stroke={fill} strokeWidth="3" strokeLinecap="round" />
+      <line x1="67" y1="122" x2="67" y2="132" stroke={fill} strokeWidth="3" strokeLinecap="round" />
+    </>
+  ),
+  // ストラップシューズ: 丸みのあるつま先+バックル
+  maryjane: (fill, stroke, sw) => (
+    <>
+      <rect x="29" y="124" width="20" height="13" rx="7" fill={fill} stroke={stroke} strokeWidth={sw} />
+      <rect x="51" y="124" width="20" height="13" rx="7" fill={fill} stroke={stroke} strokeWidth={sw} />
+      <path d="M31 127 Q39 123 47 127" fill="none" stroke={stroke ?? "#00000055"} strokeWidth={sw || 1.4} />
+      <path d="M53 127 Q61 123 69 127" fill="none" stroke={stroke ?? "#00000055"} strokeWidth={sw || 1.4} />
+      <circle cx="39" cy="127" r="1.6" fill="#00000040" />
+      <circle cx="61" cy="127" r="1.6" fill="#00000040" />
+    </>
+  ),
+  // バレエシューズ: ひくい丈+リボン
+  slipon: (fill, stroke, sw) => (
+    <>
+      <rect x="29" y="126" width="20" height="11" rx="7" fill={fill} stroke={stroke} strokeWidth={sw} />
+      <rect x="51" y="126" width="20" height="11" rx="7" fill={fill} stroke={stroke} strokeWidth={sw} />
+      <path d="M36 128 L39 130.5 L36 133 Z M42 128 L39 130.5 L42 133 Z" fill="#00000030" />
+      <path d="M58 128 L61 130.5 L58 133 Z M64 128 L61 130.5 L64 133 Z" fill="#00000030" />
+    </>
+  ),
+  // うんどうぐつ: スニーカー+サイドの斜めライン
+  sports: (fill, stroke, sw) => (
+    <>
+      <rect x="29" y="123" width="20" height="14" rx="6" fill={fill} stroke={stroke} strokeWidth={sw} />
+      <rect x="51" y="123" width="20" height="14" rx="6" fill={fill} stroke={stroke} strokeWidth={sw} />
+      <path d="M29 130 L49 126" stroke="#ffffffcc" strokeWidth="2.4" />
+      <path d="M51 126 L71 130" stroke="#ffffffcc" strokeWidth="2.4" />
+      <rect x="27" y="133" width="22" height="4" rx="2" fill="#00000030" />
+      <rect x="51" y="133" width="22" height="4" rx="2" fill="#00000030" />
+    </>
+  ),
+  // もこもこブーツ: すね丈+口まわりのファー(白いつぶつぶ)
+  winter: (fill, stroke, sw) => (
+    <>
+      <rect x="30" y="110" width="18" height="27" rx="5" fill={fill} stroke={stroke} strokeWidth={sw} />
+      <rect x="52" y="110" width="18" height="27" rx="5" fill={fill} stroke={stroke} strokeWidth={sw} />
+      {[33, 37, 41, 45].map((x) => (
+        <circle key={x} cx={x} cy="110" r="2.4" fill="#ffffffee" />
+      ))}
+      {[55, 59, 63, 67].map((x) => (
+        <circle key={x} cx={x} cy="110" r="2.4" fill="#ffffffee" />
+      ))}
+    </>
+  ),
+};
+
+const ShoeShape = ({
+  style,
+  fill,
+  stroke,
+  strokeWidth = 0,
+}: {
+  style: string | undefined;
+  fill: string;
+  stroke?: string;
+  strokeWidth?: number;
+}) => <>{(SHOE_STYLES[style ?? "sneaker"] ?? SHOE_STYLES.sneaker)(fill, stroke, strokeWidth)}</>;
+
+const SHOE: Record<string, Shapes> = {
+  t1: (c, _uid, _reduceMotion, motif) => (
+    <ShoeShape style={motif} fill={c} stroke={darken(c, 0.45)} strokeWidth={1.6} />
+  ),
+  t2: (c, uid, _reduceMotion, motif) => {
+    const grad = `${uid}-sh2-grad`;
+    return (
+      <>
+        <defs>
+          <linearGradient id={grad} x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stopColor={lighten(c, 0.25)} />
+            <stop offset="1" stopColor={c} />
+          </linearGradient>
+        </defs>
+        <ShoeShape style={motif} fill={`url(#${grad})`} stroke={darken(c, 0.5)} strokeWidth={1.8} />
+      </>
+    );
+  },
+  t3: (c, uid, _reduceMotion, motif) => {
+    const grad = `${uid}-sh3-grad`;
+    const hi = `${uid}-sh3-hi`;
+    const clip = `${uid}-sh3-clip`;
+    return (
+      <>
+        <defs>
+          <linearGradient id={grad} x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stopColor={lighten(c, 0.2)} />
+            <stop offset="1" stopColor={darken(c, 0.15)} />
+          </linearGradient>
+          <radialGradient id={hi} cx="0.3" cy="0.2" r="0.5">
+            <stop offset="0" stopColor="#ffffff" stopOpacity="0.7" />
+            <stop offset="1" stopColor="#ffffff" stopOpacity="0" />
+          </radialGradient>
+          {/* あしの外にはみ出さないよう、選んだスタイルと同じ輪郭でクリップする
+              (BOTTOM t3と同じ考え方) */}
+          <clipPath id={clip}>
+            <ShoeShape style={motif} fill="#fff" strokeWidth={0} />
+          </clipPath>
+        </defs>
+        <ShoeShape style={motif} fill={`url(#${grad})`} stroke={darken(c, 0.5)} strokeWidth={2} />
+        <g clipPath={`url(#${clip})`}>
+          <ellipse cx="39" cy="126" rx="8" ry="4" fill={`url(#${hi})`} />
+          <ellipse cx="61" cy="126" rx="8" ry="4" fill={`url(#${hi})`} />
+        </g>
+      </>
+    );
+  },
+  t4: (c, uid, _reduceMotion, motif) => {
+    const grad = `${uid}-sh4-grad`;
+    const sheen = `${uid}-sh4-sheen`;
+    return (
+      <>
+        <defs>
+          <linearGradient id={grad} x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stopColor={lighten(c, 0.3)} />
+            <stop offset="0.5" stopColor={c} />
+            <stop offset="1" stopColor={darken(c, 0.3)} />
+          </linearGradient>
+          <linearGradient id={sheen} x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stopColor="#ffffff" stopOpacity="0" />
+            <stop offset="0.5" stopColor="#ffffff" stopOpacity="0.8" />
+            <stop offset="1" stopColor="#ffffff" stopOpacity="0" />
+          </linearGradient>
+        </defs>
+        <ShoeShape style={motif} fill={`url(#${grad})`} stroke={darken(c, 0.55)} strokeWidth={2} />
+        <path d="M29 129 C33 126 45 126 49 129" stroke={`url(#${sheen})`} strokeWidth="1.6" fill="none" />
+        <path d="M51 129 C55 126 67 126 71 129" stroke={`url(#${sheen})`} strokeWidth="1.6" fill="none" />
+        <circle cx="39" cy="130" r="1.8" fill="#fff4c2" stroke="#dba528" strokeWidth="0.5" />
+        <circle cx="61" cy="130" r="1.8" fill="#fff4c2" stroke="#dba528" strokeWidth="0.5" />
+      </>
+    );
+  },
+  t5: (c, uid, reduceMotion, motif) => {
+    const grad = `${uid}-sh5-grad`;
+    const glow = `${uid}-sh5-glow`;
+    return (
+      <>
+        <defs>
+          <linearGradient id={grad} x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stopColor={lighten(c, 0.35)} />
+            <stop offset="1" stopColor={darken(c, 0.25)} />
+          </linearGradient>
+          <filter id={glow} x="-60%" y="-60%" width="220%" height="220%">
+            <feGaussianBlur stdDeviation="2.2" result="blur" />
+            <feMerge>
+              <feMergeNode in="blur" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+        </defs>
+        <ShoeShape style={motif} fill={`url(#${grad})`} stroke={darken(c, 0.5)} strokeWidth={2} />
+        <motion.g
+          animate={reduceMotion ? { opacity: 1 } : GLOW_PULSE_ANIMATE}
+          transition={reduceMotion ? STATIC_TRANSITION : GLOW_PULSE_TRANSITION}
+        >
+          <circle cx="45" cy="128" r="2.2" fill="#c9f0ff" filter={`url(#${glow})`} />
+          <circle cx="55" cy="128" r="2.2" fill="#c9f0ff" filter={`url(#${glow})`} opacity="0.85" />
+        </motion.g>
+      </>
+    );
+  },
+  t6: (c, uid, reduceMotion, motif) => {
+    const grad1 = `${uid}-sh6-grad1`;
+    const grad2 = `${uid}-sh6-grad2`;
+    const grad3 = `${uid}-sh6-grad3`;
+    const glow = `${uid}-sh6-glow`;
+    return (
+      <>
+        <defs>
+          <linearGradient id={grad1} x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stopColor={lighten(c, 0.4)} />
+            <stop offset="0.5" stopColor={c} />
+            <stop offset="1" stopColor={darken(c, 0.3)} />
+          </linearGradient>
+          <radialGradient id={grad2} cx="0.5" cy="0.2" r="0.6">
+            <stop offset="0" stopColor="#ffffff" stopOpacity="0.8" />
+            <stop offset="1" stopColor="#ffffff" stopOpacity="0" />
+          </radialGradient>
+          <linearGradient id={grad3} x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stopColor="#fff3b0" />
+            <stop offset="1" stopColor="#e0a83a" />
+          </linearGradient>
+          <filter id={glow} x="-80%" y="-80%" width="260%" height="260%">
+            <feGaussianBlur stdDeviation="1.6" />
+          </filter>
+        </defs>
+        <ShoeShape style={motif} fill={`url(#${grad1})`} stroke="#7a5cff" strokeWidth={2} />
+        <ellipse cx="39" cy="126" rx="8" ry="3.5" fill={`url(#${grad2})`} />
+        <ellipse cx="61" cy="126" rx="8" ry="3.5" fill={`url(#${grad2})`} />
+        {/* あしの間にちいさな星バッジ。BOTTOM t6と同じく、モチーフに関係ない
+            固定シンボルとして中央に添える */}
+        <path d={starPath(50, 129, 3.2, 1.4)} fill={`url(#${grad3})`} stroke="#c98a1f" strokeWidth="0.8" />
+        <motion.g
+          animate={reduceMotion ? { opacity: 1, y: 0 } : PARTICLE_FLOAT_ANIMATE}
+          transition={reduceMotion ? STATIC_TRANSITION : particleFloatTransition(0.2)}
+        >
+          <path d={sparklePath(27, 132, 2.2)} fill="#fff5c4" filter={`url(#${glow})`} />
+        </motion.g>
+        <motion.g
+          animate={reduceMotion ? { opacity: 1, y: 0 } : PARTICLE_FLOAT_ANIMATE}
+          transition={reduceMotion ? STATIC_TRANSITION : particleFloatTransition(0.7)}
+        >
+          <path d={sparklePath(73, 130, 2)} fill="#c9e8ff" filter={`url(#${glow})`} />
+        </motion.g>
+      </>
+    );
+  },
+};
+
 const NECKLACE: Record<string, Shapes> = {
   t1: (c, uid, _reduceMotion, motif) => (
     <>
@@ -1607,6 +1882,7 @@ const SHAPES: Record<SlotType, Record<string, Shapes>> = {
   hair: HAIR,
   top: TOP,
   bottom: BOTTOM,
+  shoes: SHOE,
   necklace: NECKLACE,
 };
 
@@ -1869,6 +2145,7 @@ const THUMB_VIEWBOX: Record<SlotType, string> = {
   hair: "18 0 64 56",
   top: "16 50 68 64",
   bottom: "16 92 68 40",
+  shoes: "20 104 60 36",
   necklace: "33 52 34 26",
 };
 
@@ -1910,8 +2187,8 @@ const swayTransition = (duration: number, delay = 0): Transition => ({
 // スロットごとの揺れ方。髪は頭頂(y≈14)、トップスは肩(y≈56)、ボトムスは
 // 腰(y≈96)を軸に、それぞれ少しずつ周期・位相をずらして揺らす。全部そろえて
 // 振ると1枚の板が回っているように見えるため、髪→服→ボトムスの順に
-// わずかに遅らせて自然さを出す。ネックレスは体に密着していて単独で
-// 揺れると不自然なため対象外（未設定＝揺らさない）
+// わずかに遅らせて自然さを出す。シューズ・ネックレスは体に密着していて
+// 単独で揺れると不自然なため対象外（未設定＝揺らさない）
 type SwayConfig = { originY: number; deg: number; duration: number; delay?: number };
 // 前髪(HairFringe)は後ろ髪と別コンポーネントだが、SLOT_DRAW_ORDERのループを
 // 通らず個別に描画しているため、SWAY_CONFIGとは別に単独の定数としても持つ
