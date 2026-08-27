@@ -914,12 +914,16 @@ const TOP_STYLES: Record<string, TopStyleParts> = {
   dress: (fill, stroke, sw) => (
     <path d="M32 56 L68 56 L80 114 A4 4 0 0 1 76 118 L24 118 A4 4 0 0 1 20 114 Z" fill={fill} stroke={stroke} strokeWidth={sw} />
   ),
-  // スポーツベスト/ニットベスト: 本体を細くして袖ぐりを見せる(そで無し)
+  // スポーツベスト/ニットベスト: 本体を細くして袖ぐりを見せる(そで無し)。
+  // かたひも(ストラップ)はまっすぐな長方形だと角ばって見え、他のトップスを
+  // なで肩に直した後だとより「いかり肩」に見えると実機フィードバックで
+  // 指摘された。えりもと側を細く・からだ側を太くした台形にして、なで肩の
+  // トップスと同じように肩から斜め下へ流れる印象にした
   vest: (fill, stroke, sw) => (
     <>
       <rect x="32" y="60" width="36" height="40" rx="12" fill={fill} stroke={stroke} strokeWidth={sw} />
-      <rect x="35" y="54" width="7" height="11" rx="3" fill={fill} stroke={stroke} strokeWidth={sw} />
-      <rect x="58" y="54" width="7" height="11" rx="3" fill={fill} stroke={stroke} strokeWidth={sw} />
+      <path d={smoothedClosedPath([[36, 53], [41, 53], [43, 63], [33, 63]])} fill={fill} stroke={stroke} strokeWidth={sw} />
+      <path d={smoothedClosedPath([[64, 53], [59, 53], [57, 63], [67, 63]])} fill={fill} stroke={stroke} strokeWidth={sw} />
     </>
   ),
   // チェックシャツ: 本体+開いた大きめのえり+ボタン3つ。jacketより襟を大きく、
