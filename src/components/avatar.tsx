@@ -745,6 +745,15 @@ const TOP_SLEEVE_LENGTH: Partial<Record<string, number>> = {
   coat: 36,
 };
 
+// 袖の手首側の幅。丈が長いほど絞る(実機フィードバック「ジャケットの袖が
+// 広すぎる」。丈いっぱい同じ幅のまま(旧実装)だと、丈の長いジャケット/
+// コートほど筒のまま伸びたような太い袖に見えてしまっていた)。上腕側の
+// 幅(SLEEVE_TOP_WIDTH)は丈によらず一定にし、手首側だけ丈に応じて狭める。
+// BaseBody(動く方の袖)とsleevedTorsoPath/sleevedCoatPath(静止側の輪郭)の
+// 両方で使うため、値をここで一元管理する
+const SLEEVE_TOP_WIDTH = 14;
+const sleeveBottomWidth = (sleeveLen: number): number => Math.max(7, SLEEVE_TOP_WIDTH - sleeveLen * 0.25);
+
 // 頂点の並び(左半身ぶん。呼び出し側がxを100-xで鏡映して右半身も含めた
 // 一周ぶんを渡す)を、各頂点を制御点にした2次ベジェの連なりでなめらかに
 // つないだ1本の閉じた輪郭にする。sleevedTorsoPathとcoatBodyPathの両方で
@@ -765,6 +774,20 @@ const smoothedClosedPath = (points: readonly (readonly [number, number])[]): str
   return `${d}Z`;
 };
 
+// BaseBody側の動く方の袖の形。上腕側(centerX±SLEEVE_TOP_WIDTH/2)は太く、
+// 手首側(centerX±sleeveBottomWidth(sleeveLen)/2)は丈に応じて細くなる
+// 台形をsmoothedClosedPathで角丸にする
+const taperedSleevePath = (centerX: number, sleeveLen: number): string => {
+  const bottomWidth = sleeveBottomWidth(sleeveLen);
+  const bottom = 54 + sleeveLen;
+  return smoothedClosedPath([
+    [centerX - SLEEVE_TOP_WIDTH / 2, 54],
+    [centerX + SLEEVE_TOP_WIDTH / 2, 54],
+    [centerX + bottomWidth / 2, bottom],
+    [centerX - bottomWidth / 2, bottom],
+  ]);
+};
+
 // そで(BaseBodyでうでと一緒に動く方の袖)とからだを別々の<rect>で重ねて
 // 描くと、それぞれの縁取り線が接するところに継ぎ目が見えてしまい「肩と
 // からだが別パーツ」に見えてしまう(実機フィードバック)。肩から袖にかけて
@@ -774,13 +797,18 @@ const smoothedClosedPath = (points: readonly (readonly [number, number])[]): str
 // この輪郭の外に出て「袖がうでについてくる」ように見える
 const sleevedTorsoPath = (sleeveLen: number): string => {
   const capBottom = 54 + sleeveLen;
+  // 手首側のそとがわx。丈が長いほどsleeveBottomWidthが狭くなるぶん、
+  // 内側(centerX寄り)に詰める。マージン8は動く方の袖(BaseBody)との
+  // すき間対策。そでを台形(taperedSleevePath)にしたことで、丸角rectの
+  // ときより角の丸め方が変わり、小さいマージンだと角の丸めの盛り上がりが
+  // わずかにはみ出して見えてしまっていた(実機フィードバックの画像で確認)
+  const sleeveOuterBottomX = 25.5 - sleeveBottomWidth(sleeveLen) / 2 - 8;
   // 左半身ぶんの頂点。右半身は x を 100-x で鏡映して作る。
-  // BaseBody側の動く袖(x19/68,y54,width13,height=sleeveLen,rx6。実機
-  // フィードバックで「トップスが体に対して大きすぎる」と指摘され、
-  // 元は幅20だったのをここまで細くした)を、静止時にすき間なく覆えるよう、
-  // 肩の外側のy(53)を袖の上端(54)より上に、そでのそとがわ(x17)を袖の
-  // はば(x19-32)より外側に取って余白を持たせている（y方向も単調増加に
-  // して、鋭角にへこむ輪郭で膨らんで見える事故を避けている）。えりもと
+  // BaseBody側の動く袖(x19/68,y54,はば上14/下はsleeveBottomWidth,
+  // height=sleeveLen)を、静止時にすき間なく覆えるよう、肩の外側のy(51)を
+  // 袖の上端(54)より上に、そでのそとがわ(x14〜sleeveOuterBottomX)を袖の
+  // はばより外側に取って余白を持たせている（y方向も単調増加にして、
+  // 鋭角にへこむ輪郭で膨らんで見える事故を避けている）。えりもと
   // (neckL/neckR)は首(BaseBodyの首はy46-58、あたまの底はy52)が隠れすぎ
   // ないよう、肩より低いy56のまま据え置く。
   //
@@ -791,20 +819,19 @@ const sleevedTorsoPath = (sleeveLen: number): string => {
   // 角も32/68→34/66まで絞って、肩は広め・胴はからだに沿う形にした
   const points: [number, number][] = [
     [40, 56], // えりの左はし(首の下に隠れる)
-    [31, 53], // 肩の外側
-    [17, 58], // 袖のそとがわ上
-    [17, capBottom - 6], // 袖のそとがわ下
-    [24, capBottom], // 袖のすそ
-    [31, capBottom + 2], // わきの下のくびれ
+    [31, 51], // 肩の外側
+    [14, 57], // 袖のそとがわ上
+    [sleeveOuterBottomX, capBottom - 9], // 袖のそとがわ下(手首側、丈に応じて絞る)
+    [31, capBottom + 6], // 袖のすそ〜わきの下のくびれ(丈が長いほどこの2点が
+    // 近づき、間に別の頂点を挟むと自己交差してしまうため1点にまとめてある)
     [31, 100], // わき〜すそまでの胴の側面
     [34, 104], // すその角(左)
     [66, 104], // すその角(右)
     [69, 100],
-    [69, capBottom + 2],
-    [76, capBottom],
-    [83, capBottom - 6],
-    [83, 58],
-    [69, 53],
+    [69, capBottom + 6],
+    [100 - sleeveOuterBottomX, capBottom - 9],
+    [86, 57],
+    [69, 51],
     [60, 56], // えりの右はし
   ];
   return smoothedClosedPath(points);
@@ -815,22 +842,22 @@ const sleevedTorsoPath = (sleeveLen: number): string => {
 // 胴だけコートらしくすそへ広がる形にしている
 const sleevedCoatPath = (sleeveLen: number): string => {
   const capBottom = 54 + sleeveLen;
+  const sleeveOuterBottomX = 25.5 - sleeveBottomWidth(sleeveLen) / 2 - 8;
   const points: [number, number][] = [
     [40, 56], // えりの左はし(首の下に隠れる)
-    [31, 53], // 肩の外側
-    [17, 58], // 袖のそとがわ上
-    [17, capBottom - 6], // 袖のそとがわ下
-    [24, capBottom], // 袖のすそ
-    [31, capBottom + 2], // わきの下のくびれ
+    [31, 51], // 肩の外側
+    [14, 57], // 袖のそとがわ上
+    [sleeveOuterBottomX, capBottom - 9], // 袖のそとがわ下(手首側、丈に応じて絞る)
+    [31, capBottom + 6], // 袖のすそ〜わきの下のくびれ(1点にまとめている理由は
+    // sleevedTorsoPathのコメント参照)
     [23, 100], // すそへ向けて広がる胴の側面
     [28, 105], // すその角(左)
     [72, 105], // すその角(右)
     [77, 100],
-    [69, capBottom + 2],
-    [76, capBottom],
-    [83, capBottom - 6],
-    [83, 58],
-    [69, 53],
+    [69, capBottom + 6],
+    [100 - sleeveOuterBottomX, capBottom - 9],
+    [86, 57],
+    [69, 51],
     [60, 56], // えりの右はし
   ];
   return smoothedClosedPath(points);
@@ -1765,7 +1792,7 @@ const BaseBody = ({
         {CANVAS_BBOX_REF}
         <rect x="20" y="60" width="11" height="34" rx="5.5" fill={skin} />
         {sleeveLength !== undefined && (
-          <rect x="19" y="54" width="13" height={sleeveLength} rx="6" fill={sleeveFill} stroke={sleeveStroke} strokeWidth={1.8} />
+          <path d={taperedSleevePath(25.5, sleeveLength)} fill={sleeveFill} stroke={sleeveStroke} strokeWidth={1.8} />
         )}
       </motion.g>
       <motion.g
@@ -1777,7 +1804,7 @@ const BaseBody = ({
         {CANVAS_BBOX_REF}
         <rect x="69" y="60" width="11" height="34" rx="5.5" fill={skin} />
         {sleeveLength !== undefined && (
-          <rect x="68" y="54" width="13" height={sleeveLength} rx="6" fill={sleeveFill} stroke={sleeveStroke} strokeWidth={1.8} />
+          <path d={taperedSleevePath(74.5, sleeveLength)} fill={sleeveFill} stroke={sleeveStroke} strokeWidth={1.8} />
         )}
       </motion.g>
       {/* からだ */}
