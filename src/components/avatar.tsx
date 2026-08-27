@@ -814,22 +814,24 @@ const taperedSleevePath = (centerX: number, sleeveLen: number): string => {
 // を静止時に覆う都合は変わっていない。肩の頂点(30,54)がそでのはば
 // (18.5〜32.5)の内側にあること、そでのそとがわの丸み・わきのくびれが
 // taperedSleevePathの台形をすき間なく包むことを実機で確認して余白を
-// 決めている
+// 決めている。「横に広すぎる」という実機フィードバックを受けて、当初は
+// 安全側に大きく取っていたそでのそとがわの余白(x13/7)を、すき間が出ない
+// ぎりぎりまで内側(x18/13)に詰めてスリムにした
 const sleevedTorsoPath = (sleeveLen: number): string => {
   const capBottom = SLEEVE_TOP_Y + sleeveLen;
   const sleeveMidY = SLEEVE_TOP_Y + sleeveLen * 0.5;
   return `
     M 30 54
-    L 13 60
-    Q 7 ${sleeveMidY} 15 ${capBottom + 1}
+    L 18 61
+    Q 13 ${sleeveMidY} 20 ${capBottom + 1}
     Q 22 ${capBottom} 30 ${capBottom}
     L 30 100
     Q 30 104 34 104
     L 66 104
     Q 70 104 70 100
     L 70 ${capBottom}
-    Q 78 ${capBottom} 85 ${capBottom + 1}
-    Q 93 ${sleeveMidY} 87 60
+    Q 78 ${capBottom} 80 ${capBottom + 1}
+    Q 87 ${sleeveMidY} 82 61
     L 70 54
     Q 50 62 30 54
     Z
@@ -844,16 +846,16 @@ const sleevedCoatPath = (sleeveLen: number): string => {
   const sleeveMidY = SLEEVE_TOP_Y + sleeveLen * 0.5;
   return `
     M 30 54
-    L 13 60
-    Q 7 ${sleeveMidY} 15 ${capBottom + 1}
+    L 18 61
+    Q 13 ${sleeveMidY} 20 ${capBottom + 1}
     Q 22 ${capBottom} 30 ${capBottom}
     L 23 100
     Q 23 104 28 105
     L 72 105
     Q 77 104 77 100
     L 70 ${capBottom}
-    Q 78 ${capBottom} 85 ${capBottom + 1}
-    Q 93 ${sleeveMidY} 87 60
+    Q 78 ${capBottom} 80 ${capBottom + 1}
+    Q 87 ${sleeveMidY} 82 61
     L 70 54
     Q 50 62 30 54
     Z
