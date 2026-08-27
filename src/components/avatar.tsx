@@ -745,6 +745,26 @@ const TOP_SLEEVE_LENGTH: Partial<Record<string, number>> = {
   coat: 36,
 };
 
+// 頂点の並び(左半身ぶん。呼び出し側がxを100-xで鏡映して右半身も含めた
+// 一周ぶんを渡す)を、各頂点を制御点にした2次ベジェの連なりでなめらかに
+// つないだ1本の閉じた輪郭にする。sleevedTorsoPathとcoatBodyPathの両方で
+// 使う共通処理
+const smoothedClosedPath = (points: readonly (readonly [number, number])[]): string => {
+  const mid = (a: readonly [number, number], b: readonly [number, number]): [number, number] => [
+    (a[0] + b[0]) / 2,
+    (a[1] + b[1]) / 2,
+  ];
+  const start = mid(points[points.length - 1]!, points[0]!);
+  let d = `M ${start[0]} ${start[1]} `;
+  for (let i = 0; i < points.length; i++) {
+    const current = points[i]!;
+    const next = points[(i + 1) % points.length]!;
+    const corner = mid(current, next);
+    d += `Q ${current[0]} ${current[1]} ${corner[0]} ${corner[1]} `;
+  }
+  return `${d}Z`;
+};
+
 // そで(BaseBodyでうでと一緒に動く方の袖)とからだを別々の<rect>で重ねて
 // 描くと、それぞれの縁取り線が接するところに継ぎ目が見えてしまい「肩と
 // からだが別パーツ」に見えてしまう(実機フィードバック)。肩から袖にかけて
@@ -754,10 +774,6 @@ const TOP_SLEEVE_LENGTH: Partial<Record<string, number>> = {
 // この輪郭の外に出て「袖がうでについてくる」ように見える
 const sleevedTorsoPath = (sleeveLen: number): string => {
   const capBottom = 54 + sleeveLen;
-  const mid = (a: readonly [number, number], b: readonly [number, number]): [number, number] => [
-    (a[0] + b[0]) / 2,
-    (a[1] + b[1]) / 2,
-  ];
   // 左半身ぶんの頂点。右半身は x を 100-x で鏡映して作る。
   // BaseBody側の動く袖(x19/68,y54,width13,height=sleeveLen,rx6。実機
   // フィードバックで「トップスが体に対して大きすぎる」と指摘され、
@@ -791,15 +807,33 @@ const sleevedTorsoPath = (sleeveLen: number): string => {
     [69, 53],
     [60, 56], // えりの右はし
   ];
-  const start = mid(points[points.length - 1]!, points[0]!);
-  let d = `M ${start[0]} ${start[1]} `;
-  for (let i = 0; i < points.length; i++) {
-    const current = points[i]!;
-    const next = points[(i + 1) % points.length]!;
-    const corner = mid(current, next);
-    d += `Q ${current[0]} ${current[1]} ${corner[0]} ${corner[1]} `;
-  }
-  return `${d}Z`;
+  return smoothedClosedPath(points);
+};
+
+// コート丈(すそへ向けて広がる)むけのそで一体化シルエット。肩〜そでの
+// 頂点はsleevedTorsoPathと同じ(そでを覆う制約があるため)値を使い、
+// 胴だけコートらしくすそへ広がる形にしている
+const sleevedCoatPath = (sleeveLen: number): string => {
+  const capBottom = 54 + sleeveLen;
+  const points: [number, number][] = [
+    [40, 56], // えりの左はし(首の下に隠れる)
+    [31, 53], // 肩の外側
+    [17, 58], // 袖のそとがわ上
+    [17, capBottom - 6], // 袖のそとがわ下
+    [24, capBottom], // 袖のすそ
+    [31, capBottom + 2], // わきの下のくびれ
+    [23, 100], // すそへ向けて広がる胴の側面
+    [28, 105], // すその角(左)
+    [72, 105], // すその角(右)
+    [77, 100],
+    [69, capBottom + 2],
+    [76, capBottom],
+    [83, capBottom - 6],
+    [83, 58],
+    [69, 53],
+    [60, 56], // えりの右はし
+  ];
+  return smoothedClosedPath(points);
 };
 
 const TOP_STYLES: Record<string, TopStyleParts> = {
@@ -863,15 +897,12 @@ const TOP_STYLES: Record<string, TopStyleParts> = {
   ),
   // マリンコート/ふわふわコート: すそへ向けてやや広がるシルエット+ラペル。
   // からだ(BaseBodyの胴体はy56-102)より少し長い程度の丈にとどめ、
-  // ドレス(足元まで隠す丈)と見分けがつくようにする
+  // ドレス(足元まで隠す丈)と見分けがつくようにする。そでとからだを
+  // ひとつづきの輪郭にした(sleevedCoatPath。他のそでありトップスと
+  // 同じ理由。実機フィードバック)
   coat: (fill, stroke, sw) => (
     <>
-      <path
-        d="M30 56 L70 56 L77 102 A5 5 0 0 1 72 107 L28 107 A5 5 0 0 1 23 102 Z"
-        fill={fill}
-        stroke={stroke}
-        strokeWidth={sw}
-      />
+      <path d={sleevedCoatPath(TOP_SLEEVE_LENGTH.coat ?? 36)} fill={fill} stroke={stroke} strokeWidth={sw} />
       <path d="M42 56 L50 68 L58 56" fill="none" stroke={stroke ?? "#00000055"} strokeWidth={sw || 1.5} />
     </>
   ),
