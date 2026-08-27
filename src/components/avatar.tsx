@@ -525,15 +525,29 @@ const FRINGE_MASK_CENTER_PART_D =
 
 const HairFringe = ({
   style,
+  variant,
   color,
   uid,
+  reduceMotion,
 }: {
   style: string | undefined;
+  // T2以降のグラデーション・星やきらめきなどの装飾を前髪レイヤーにも
+  // 出すために必要（下のコメント参照）。省略するとT1相当の無地になる
+  variant: string | undefined;
   color: string;
   uid: string;
+  reduceMotion: boolean;
 }) => {
   const maskId = `${uid}-hair-fringe-mask`;
-  const shape = (HAIR_STYLES[style ?? "fluffy"] ?? HAIR_STYLES.fluffy)(color, darken(color, 0.45), 1.8);
+  // 以前はHAIR_STYLES(見た目の輪郭だけ)しか描いておらず、T2以降の
+  // グラデーション・星やきらめきといった装飾がここに含まれていなかった。
+  // これらの装飾は頭頂付近(y2〜30ほど)にあるものが多く、髪はからだより
+  // 後ろに描く(hairBack)ため頭にほぼ隠れてしまい、「レアな髪型の星が
+  // 見えない」という実機フィードバックの原因になっていた。HAIR[variant]
+  // (hairBackと同じ、ティアの装飾込みの描画関数)をここでも呼び、前髪の
+  // マスクで前面に出す。gradient等のidがhairBack側と衝突しないよう、
+  // uidに接尾辞を足して別idにしている
+  const shape = (HAIR[variant ?? "t1"] ?? HAIR.t1)(color, `${uid}-fringe`, reduceMotion, style);
   const maskD = style === "mash" ? FRINGE_MASK_STRAIGHT_D : FRINGE_MASK_CENTER_PART_D;
   return (
     <>
@@ -721,34 +735,172 @@ type TopStyleParts = (fill: string, stroke: string | undefined, strokeWidth: num
 // 袖の丈。BaseBody側でうでと同じmotion.gに入れて回すため、そちらで持つ
 // (このファイル内でTOP_STYLESの近くに置いているのはmotifとの対応が
 // 見つけやすいように)。ノースリーブにしたい型(vest/dress/cape)は未設定のまま
-// にして、袖を描かない
+// にして、袖を描かない。
+//
+// うで(BaseBodyのうでrectはy60-94)に対してSLEEVE_TOP_Y(59)からの丈が
+// 長すぎると、手首まで完全に袖で隠れてしまう。以前はjacket/coatがそれぞれ
+// y93/95まで達し、うでの下端(y94)をほぼ覆い尽くしていた(実機
+// フィードバック「腕が完全に隠れているのも気になる」)。手首ぶんの肌
+// (7〜8ユニットほど)が必ず見えるよう、長い丈の値を短くした
 const TOP_SLEEVE_LENGTH: Partial<Record<string, number>> = {
   tee: 20,
   blouse: 20,
   shirt: 22,
   hoodie: 26,
-  jacket: 34,
-  coat: 36,
+  jacket: 27,
+  coat: 29,
+};
+
+// 袖の手首側の幅。丈が長いほど絞る(実機フィードバック「ジャケットの袖が
+// 広すぎる」。丈いっぱい同じ幅のまま(旧実装)だと、丈の長いジャケット/
+// コートほど筒のまま伸びたような太い袖に見えてしまっていた)。上腕側の
+// 幅(SLEEVE_TOP_WIDTH)は丈によらず一定にし、手首側だけ丈に応じて狭める。
+// BaseBody(動く方の袖)とsleevedTorsoPath/sleevedCoatPath(静止側の輪郭)の
+// 両方で使うため、値をここで一元管理する
+const SLEEVE_TOP_WIDTH = 11;
+const sleeveBottomWidth = (sleeveLen: number): number => Math.max(6, SLEEVE_TOP_WIDTH - sleeveLen * 0.25);
+
+// 袖の上端y。以前は54(肩のすぐ下)にしていたが、静止側の輪郭が動く袖を
+// 覆うためにその高さまで持ち上げる必要があり、結果として肩が「いかり肩」
+// (実機フィードバック「ドラゴンボールみたい」)に見えていた。うで自体の
+// 上端(BaseBodyのうでrectはy60)に近い59まで下げることで、静止側の肩の
+// ラインをなで肩ふうに大きく寝かせても動く袖をしっかり覆えるようにした
+const SLEEVE_TOP_Y = 59;
+
+// 頂点の並び(左半身ぶん。呼び出し側がxを100-xで鏡映して右半身も含めた
+// 一周ぶんを渡す)を、各頂点を制御点にした2次ベジェの連なりでなめらかに
+// つないだ1本の閉じた輪郭にする。sleevedTorsoPathとcoatBodyPathの両方で
+// 使う共通処理
+const smoothedClosedPath = (points: readonly (readonly [number, number])[]): string => {
+  const mid = (a: readonly [number, number], b: readonly [number, number]): [number, number] => [
+    (a[0] + b[0]) / 2,
+    (a[1] + b[1]) / 2,
+  ];
+  const start = mid(points[points.length - 1]!, points[0]!);
+  let d = `M ${start[0]} ${start[1]} `;
+  for (let i = 0; i < points.length; i++) {
+    const current = points[i]!;
+    const next = points[(i + 1) % points.length]!;
+    const corner = mid(current, next);
+    d += `Q ${current[0]} ${current[1]} ${corner[0]} ${corner[1]} `;
+  }
+  return `${d}Z`;
+};
+
+// BaseBody側の動く方の袖の形。上腕側(centerX±SLEEVE_TOP_WIDTH/2)は太く、
+// 手首側(centerX±sleeveBottomWidth(sleeveLen)/2)は丈に応じて細くなる
+// 台形をsmoothedClosedPathで角丸にする
+const taperedSleevePath = (centerX: number, sleeveLen: number): string => {
+  const bottomWidth = sleeveBottomWidth(sleeveLen);
+  const bottom = SLEEVE_TOP_Y + sleeveLen;
+  return smoothedClosedPath([
+    [centerX - SLEEVE_TOP_WIDTH / 2, SLEEVE_TOP_Y],
+    [centerX + SLEEVE_TOP_WIDTH / 2, SLEEVE_TOP_Y],
+    [centerX + bottomWidth / 2, bottom],
+    [centerX - bottomWidth / 2, bottom],
+  ]);
+};
+
+// そで(BaseBodyでうでと一緒に動く方の袖)とからだを別々の<rect>で重ねて
+// 描くと、それぞれの縁取り線が接するところに継ぎ目が見えてしまい「肩と
+// からだが別パーツ」に見えてしまう(実機フィードバック)。肩から袖にかけて
+// をからだと同じ1本の輪郭線で描くことで、静止時は完全に一枚の服に見える
+// ようにする。袖の丈ぶんだけ肩がふくらんだシルエットになり、BaseBody側の
+// 動く袖(同じ丈)は静止時はこの下に完全に隠れ、うでを上げたときだけ
+// この輪郭の外に出て「袖がうでについてくる」ように見える
+// 肩からそでにかけてを、なで肩の連続カーブではなく直線+丸めで構成する。
+// なで肩の傾斜をなめらかにしていくほど、Tシャツの「肩・そで・わきの
+// くびれ・まっすぐな胴」という構造が失われて一枚の丸いブロブに見えて
+// しまい、実機フィードバックで「服の形から離れ始めてる」と指摘された
+// (お手本のTシャツアイコン画像が添付された)。そこで、肩からそでの
+// そとがわへは直線(L)で角を立て、そでの丸み・わきのくびれ・すそだけ
+// 丸め(Q)にする、アイコンらしい構成に作り直した。
+//
+// そで(BaseBody側の動く方、centerX±SLEEVE_TOP_WIDTH/2、上端SLEEVE_TOP_Y)
+// を静止時に覆う都合は変わっていない。肩の頂点(30,54)がそでのはば
+// (18.5〜32.5)の内側にあること、そでのそとがわの丸み・わきのくびれが
+// taperedSleevePathの台形をすき間なく包むことを実機で確認して余白を
+// 決めている。「横に広すぎる」「もう少し体にぴったりなサイズに」という
+// 実機フィードバックを受けて、そでのそとがわの余白を段階的に内側へ
+// 詰めてスリムにしてきた(現在はx16/11)。すそのはば(34/66)も同様に
+// x38/62まで詰めている
+const sleevedTorsoPath = (sleeveLen: number): string => {
+  const capBottom = SLEEVE_TOP_Y + sleeveLen;
+  const sleeveMidY = SLEEVE_TOP_Y + sleeveLen * 0.5;
+  return `
+    M 30 54
+    L 16 61
+    Q 11 ${sleeveMidY} 18 ${capBottom + 1}
+    Q 22 ${capBottom} 30 ${capBottom}
+    L 30 100
+    Q 30 104 38 104
+    L 62 104
+    Q 70 104 70 100
+    L 70 ${capBottom}
+    Q 78 ${capBottom} 82 ${capBottom + 1}
+    Q 89 ${sleeveMidY} 84 61
+    L 70 54
+    Q 50 62 30 54
+    Z
+  `.replace(/\s+/g, " ").trim();
+};
+
+// コート丈(すそへ向けて広がる)むけのそで一体化シルエット。肩〜そでは
+// sleevedTorsoPathと同じ形を使い、わきのくびれから下だけコートらしく
+// すそへ広がる形にしている
+const sleevedCoatPath = (sleeveLen: number): string => {
+  const capBottom = SLEEVE_TOP_Y + sleeveLen;
+  const sleeveMidY = SLEEVE_TOP_Y + sleeveLen * 0.5;
+  return `
+    M 30 54
+    L 16 61
+    Q 11 ${sleeveMidY} 18 ${capBottom + 1}
+    Q 22 ${capBottom} 30 ${capBottom}
+    L 23 100
+    Q 23 104 28 105
+    L 72 105
+    Q 77 104 77 100
+    L 70 ${capBottom}
+    Q 78 ${capBottom} 82 ${capBottom + 1}
+    Q 89 ${sleeveMidY} 84 61
+    L 70 54
+    Q 50 62 30 54
+    Z
+  `.replace(/\s+/g, " ").trim();
 };
 
 const TOP_STYLES: Record<string, TopStyleParts> = {
-  // ティーシャツ/ボーダーカットソー: 現状踏襲のシンプルな丸角長方形
-  tee: (fill, stroke, sw) => <rect x="28" y="56" width="44" height="44" rx="14" fill={fill} stroke={stroke} strokeWidth={sw} />,
+  // ティーシャツ/ボーダーカットソー: そでとからだをひとつづきの輪郭にした
+  // シルエット(sleevedTorsoPath)
+  tee: (fill, stroke, sw) => (
+    <path d={sleevedTorsoPath(TOP_SLEEVE_LENGTH.tee ?? 20)} fill={fill} stroke={stroke} strokeWidth={sw} />
+  ),
   // パーカー/ほしぞらパーカー: 本体+えりの後ろにのぞくフード+ひも
   hoodie: (fill, stroke, sw) => (
     <>
       <path d="M36 60 Q50 38 64 60 L58 66 Q50 52 42 66 Z" fill={fill} stroke={stroke} strokeWidth={sw} />
-      <rect x="28" y="56" width="44" height="44" rx="14" fill={fill} stroke={stroke} strokeWidth={sw} />
+      <path d={sleevedTorsoPath(TOP_SLEEVE_LENGTH.hoodie ?? 26)} fill={fill} stroke={stroke} strokeWidth={sw} />
       <line x1="47" y1="66" x2="46" y2="76" stroke={stroke ?? "#00000055"} strokeWidth={sw ? sw * 0.6 : 1} strokeLinecap="round" />
       <line x1="53" y1="66" x2="54" y2="76" stroke={stroke ?? "#00000055"} strokeWidth={sw ? sw * 0.6 : 1} strokeLinecap="round" />
     </>
   ),
-  // ジャケット/めいさいブルゾン/デニムジャケット: 本体+前あきのVえり+センターの縫い目
+  // ジャケット/めいさいブルゾン/デニムジャケット: 本体+前あきのVえり+
+  // センターの縫い目+わきの縫い目(実機フィードバック。わきに線が入ると
+  // 一枚布ではなくパーツを縫い合わせた服らしく見える)。
+  //
+  // わき線の開始yを袖の丈(sleeveLen)から動かない値にすると、jacketの
+  // ように袖が長い(=そでの下端が低い)スタイルほど線がどんどん短く
+  // なってしまう(実機フィードバックで「脇線が全然短い」と指摘された)。
+  // x31/69はsleevedTorsoPathの胴の側面の内側で、そこよりかなり上の
+  // y68でもまだ生地の中(そでのふくらみの内側)に収まるため、袖の丈に
+  // 関係なく胴のほぼ全長を通す固定値にしている
   jacket: (fill, stroke, sw) => (
     <>
-      <rect x="28" y="56" width="44" height="44" rx="14" fill={fill} stroke={stroke} strokeWidth={sw} />
+      <path d={sleevedTorsoPath(TOP_SLEEVE_LENGTH.jacket ?? 34)} fill={fill} stroke={stroke} strokeWidth={sw} />
       <path d="M42 58 L50 70 L58 58" fill="none" stroke={stroke ?? "#00000055"} strokeWidth={sw || 1.5} />
       <line x1="50" y1="70" x2="50" y2="98" stroke={stroke ?? "#00000055"} strokeWidth={sw ? sw * 0.6 : 1} />
+      <line x1="32" y1="68" x2="32" y2="101" stroke={stroke ?? "#00000055"} strokeWidth={sw ? sw * 0.5 : 0.8} />
+      <line x1="68" y1="68" x2="68" y2="101" stroke={stroke ?? "#00000055"} strokeWidth={sw ? sw * 0.5 : 0.8} />
     </>
   ),
   // キラキラワンピース/ワンピース: 肩からすそへ広がるシルエット(ボトムより手前に描かれる
@@ -756,19 +908,23 @@ const TOP_STYLES: Record<string, TopStyleParts> = {
   dress: (fill, stroke, sw) => (
     <path d="M32 56 L68 56 L80 114 A4 4 0 0 1 76 118 L24 118 A4 4 0 0 1 20 114 Z" fill={fill} stroke={stroke} strokeWidth={sw} />
   ),
-  // スポーツベスト/ニットベスト: 本体を細くして袖ぐりを見せる(そで無し)
+  // スポーツベスト/ニットベスト: 本体を細くして袖ぐりを見せる(そで無し)。
+  // かたひも(ストラップ)はまっすぐな長方形だと角ばって見え、他のトップスを
+  // なで肩に直した後だとより「いかり肩」に見えると実機フィードバックで
+  // 指摘された。えりもと側を細く・からだ側を太くした台形にして、なで肩の
+  // トップスと同じように肩から斜め下へ流れる印象にした
   vest: (fill, stroke, sw) => (
     <>
       <rect x="32" y="60" width="36" height="40" rx="12" fill={fill} stroke={stroke} strokeWidth={sw} />
-      <rect x="35" y="54" width="7" height="11" rx="3" fill={fill} stroke={stroke} strokeWidth={sw} />
-      <rect x="58" y="54" width="7" height="11" rx="3" fill={fill} stroke={stroke} strokeWidth={sw} />
+      <path d={smoothedClosedPath([[36, 53], [41, 53], [43, 63], [33, 63]])} fill={fill} stroke={stroke} strokeWidth={sw} />
+      <path d={smoothedClosedPath([[64, 53], [59, 53], [57, 63], [67, 63]])} fill={fill} stroke={stroke} strokeWidth={sw} />
     </>
   ),
   // チェックシャツ: 本体+開いた大きめのえり+ボタン3つ。jacketより襟を大きく、
   // 前を開けすぎない(ボタン留め)ことでtee/jacketとの見分けをはっきりさせる
   shirt: (fill, stroke, sw) => (
     <>
-      <rect x="28" y="56" width="44" height="44" rx="14" fill={fill} stroke={stroke} strokeWidth={sw} />
+      <path d={sleevedTorsoPath(TOP_SLEEVE_LENGTH.shirt ?? 22)} fill={fill} stroke={stroke} strokeWidth={sw} />
       <path d="M50 56 L38 62 L46 72 L50 64 L54 72 L62 62 Z" fill={stroke ?? "#00000055"} />
       <path d="M50 64 L46 72 L50 78 L54 72 Z" fill={fill} stroke={stroke} strokeWidth={sw ? sw * 0.6 : 1} />
       <circle cx="50" cy="80" r="1.6" fill={stroke ?? "#00000055"} />
@@ -778,15 +934,12 @@ const TOP_STYLES: Record<string, TopStyleParts> = {
   ),
   // マリンコート/ふわふわコート: すそへ向けてやや広がるシルエット+ラペル。
   // からだ(BaseBodyの胴体はy56-102)より少し長い程度の丈にとどめ、
-  // ドレス(足元まで隠す丈)と見分けがつくようにする
+  // ドレス(足元まで隠す丈)と見分けがつくようにする。そでとからだを
+  // ひとつづきの輪郭にした(sleevedCoatPath。他のそでありトップスと
+  // 同じ理由。実機フィードバック)
   coat: (fill, stroke, sw) => (
     <>
-      <path
-        d="M30 56 L70 56 L77 102 A5 5 0 0 1 72 107 L28 107 A5 5 0 0 1 23 102 Z"
-        fill={fill}
-        stroke={stroke}
-        strokeWidth={sw}
-      />
+      <path d={sleevedCoatPath(TOP_SLEEVE_LENGTH.coat ?? 36)} fill={fill} stroke={stroke} strokeWidth={sw} />
       <path d="M42 56 L50 68 L58 56" fill="none" stroke={stroke ?? "#00000055"} strokeWidth={sw || 1.5} />
     </>
   ),
@@ -798,7 +951,6 @@ const TOP_STYLES: Record<string, TopStyleParts> = {
         fill={fill}
         stroke={stroke}
         strokeWidth={sw}
-        opacity="0.95"
       />
       <rect x="34" y="58" width="32" height="34" rx="10" fill={fill} stroke={stroke} strokeWidth={sw} />
       <circle cx="50" cy="58" r="3" fill={stroke ?? "#00000055"} />
@@ -807,7 +959,7 @@ const TOP_STYLES: Record<string, TopStyleParts> = {
   // フリルブラウス: えりぐりに沿ったフリル(半円の連なり)
   blouse: (fill, stroke, sw) => (
     <>
-      <rect x="28" y="56" width="44" height="44" rx="14" fill={fill} stroke={stroke} strokeWidth={sw} />
+      <path d={sleevedTorsoPath(TOP_SLEEVE_LENGTH.blouse ?? 20)} fill={fill} stroke={stroke} strokeWidth={sw} />
       {[36, 42.5, 49, 55.5, 62].map((x, i) => (
         <circle key={i} cx={x} cy="57" r="4" fill={fill} stroke={stroke} strokeWidth={sw} />
       ))}
@@ -1585,6 +1737,22 @@ const EYE_STYLES: Record<EyeStyle, FacePartShape> = {
       <path d="M53.5 31 L60.5 31" stroke={c} strokeWidth="2" strokeLinecap="round" />
     </>
   ),
+  // ウインク目。片目はhappyと同じ弧で閉じ、もう片目はroundと同じ
+  // ハイライト付きの丸目のまま開けておく(左右非対称で表情に個性を出す)
+  wink: (c) => (
+    <>
+      <path d="M39.5 31.5 A4 3.4 0 0 1 46.5 31.5" stroke={c} strokeWidth="2" fill="none" strokeLinecap="round" />
+      <circle cx="57" cy="30.5" r="2.6" fill={c} />
+      <circle cx="58.1" cy="29.2" r="0.9" fill="#ffffff" />
+    </>
+  ),
+  // ねこ目。外側から内側の上へ跳ね上げた線で、きゅっと上がった目じりを表す
+  cat: (c) => (
+    <>
+      <path d="M39.5 33 Q43 28 46.5 31.5" stroke={c} strokeWidth="2" fill="none" strokeLinecap="round" />
+      <path d="M60.5 33 Q57 28 53.5 31.5" stroke={c} strokeWidth="2" fill="none" strokeLinecap="round" />
+    </>
+  ),
 };
 
 const MOUTH_STYLES: Record<MouthStyle, FacePartShape> = {
@@ -1606,6 +1774,23 @@ const MOUTH_STYLES: Record<MouthStyle, FacePartShape> = {
       <path d="M44 38 Q50 45.5 56 38 Q50 42.5 44 38 Z" fill={c} />
       <path d="M46.5 39 L53.5 39" stroke="#ffffff" strokeWidth="1.6" strokeLinecap="round" />
     </>
+  ),
+  // ペロッと舌を出した口。grinと同じ開いた口の中に、小さな舌を重ねる
+  tongue: (c) => (
+    <>
+      <path d="M43 38 Q50 45.5 57 38 Q50 42.5 43 38 Z" fill={c} />
+      <path d="M46 41.5 Q50 46 54 41.5 Q50 44.5 46 41.5 Z" fill="#f28ba0" />
+    </>
+  ),
+  // ねこ口。ω(オメガ)のような2つの小さな山でできた口
+  cat: (c) => (
+    <path
+      d="M45 39 Q47 41.5 50 39 Q53 41.5 55 39"
+      stroke={c}
+      strokeWidth="2"
+      fill="none"
+      strokeLinecap="round"
+    />
   ),
 };
 
@@ -1649,7 +1834,7 @@ const BaseBody = ({
         {CANVAS_BBOX_REF}
         <rect x="20" y="60" width="11" height="34" rx="5.5" fill={skin} />
         {sleeveLength !== undefined && (
-          <rect x="17" y="54" width="20" height={sleeveLength} rx="8.5" fill={sleeveFill} stroke={sleeveStroke} strokeWidth={1.8} />
+          <path d={taperedSleevePath(25.5, sleeveLength)} fill={sleeveFill} stroke={sleeveStroke} strokeWidth={1.8} />
         )}
       </motion.g>
       <motion.g
@@ -1661,7 +1846,7 @@ const BaseBody = ({
         {CANVAS_BBOX_REF}
         <rect x="69" y="60" width="11" height="34" rx="5.5" fill={skin} />
         {sleeveLength !== undefined && (
-          <rect x="63" y="54" width="20" height={sleeveLength} rx="8.5" fill={sleeveFill} stroke={sleeveStroke} strokeWidth={1.8} />
+          <path d={taperedSleevePath(74.5, sleeveLength)} fill={sleeveFill} stroke={sleeveStroke} strokeWidth={1.8} />
         )}
       </motion.g>
       {/* からだ */}
@@ -1794,7 +1979,13 @@ export const Avatar = ({
           同じ揺れ方(HAIR_SWAY)にして、位相をそろえる */}
       {equipped.hair && (
         <Sway reduceMotion={reduceMotion} {...HAIR_SWAY}>
-          <HairFringe style={equipped.hair.motif} color={equipped.hair.color} uid={uid} />
+          <HairFringe
+            style={equipped.hair.motif}
+            variant={equipped.hair.variant}
+            color={equipped.hair.color}
+            uid={uid}
+            reduceMotion={reduceMotion}
+          />
         </Sway>
       )}
       {SLOT_DRAW_ORDER.filter((slot) => slot !== "hair").map((slot) => {

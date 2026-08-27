@@ -7,10 +7,10 @@
 export const SKIN_TONE_OPTIONS = ["light", "beige", "tan", "brown", "deep"] as const;
 export type SkinTone = (typeof SKIN_TONE_OPTIONS)[number];
 
-export const EYE_STYLE_OPTIONS = ["dot", "round", "happy", "star", "sleepy"] as const;
+export const EYE_STYLE_OPTIONS = ["dot", "round", "happy", "star", "sleepy", "wink", "cat"] as const;
 export type EyeStyle = (typeof EYE_STYLE_OPTIONS)[number];
 
-export const MOUTH_STYLE_OPTIONS = ["smile", "grin", "small", "surprised", "giggle"] as const;
+export const MOUTH_STYLE_OPTIONS = ["smile", "grin", "small", "surprised", "giggle", "tongue", "cat"] as const;
 export type MouthStyle = (typeof MOUTH_STYLE_OPTIONS)[number];
 
 export const DEFAULT_SKIN_TONE: SkinTone = "light";

@@ -46,6 +46,21 @@ test("hair is drawn behind the body so it frames the head", () => {
   expect(markup.indexOf("#111111")).toBeLessThan(markup.indexOf("#3f3a36"));
 });
 
+// T4〜T6の髪には星やきらめきなどの装飾があるが、髪はからだより後ろに
+// 描く(hairBack)ため頭にほぼ隠れてしまっていた（実機フィードバック:
+// 「かみがたのレアものの星が...表示されない」）。前髪レイヤー
+// (HairFringeがmaskで前面に出す部分)にも同じ装飾が含まれていること
+test("shows tier decorations (e.g. the T6 star) in the front hair layer, not only hidden behind the head", () => {
+  const { container } = render(
+    <Avatar equipped={{ hair: { variant: "t6", color: "#8a5a3a", motif: "fluffy" } }} />,
+  );
+
+  const fringeGroup = container.querySelector("g[mask]");
+  expect(fringeGroup).not.toBeNull();
+  // T6の頭頂の星デコレーション
+  expect(fringeGroup!.innerHTML).toContain("M50 2 L54 12");
+});
+
 test.each(["down", "cheer"] as const)("has two arms in the %s pose", (armPose) => {
   const { container } = render(<Avatar equipped={{}} armPose={armPose} />);
 
