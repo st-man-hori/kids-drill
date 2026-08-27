@@ -941,7 +941,6 @@ const TOP_STYLES: Record<string, TopStyleParts> = {
         fill={fill}
         stroke={stroke}
         strokeWidth={sw}
-        opacity="0.95"
       />
       <rect x="34" y="58" width="32" height="34" rx="10" fill={fill} stroke={stroke} strokeWidth={sw} />
       <circle cx="50" cy="58" r="3" fill={stroke ?? "#00000055"} />
