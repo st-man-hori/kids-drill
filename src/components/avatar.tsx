@@ -563,7 +563,7 @@ const HairFringe = ({
 // docs/game-design.md のティア別テンプレ通りに表現を広げる。未知のバリアントは
 // 各スロットの t1 にフォールバックするので、レコードを足しただけで画面が壊れない
 const HAIR: Record<string, Shapes> = {
-  t1: (c, _uid, _reduceMotion, motif) => <HairShape style={motif} fill={c} stroke={darken(c, 0.28)} strokeWidth={1.1} />,
+  t1: (c, _uid, _reduceMotion, motif) => <HairShape style={motif} fill={c} stroke={darken(c, 0.16)} strokeWidth={0.65} />,
   t2: (c, uid, _reduceMotion, motif) => {
     const grad = `${uid}-h2-grad`;
     return (
@@ -574,7 +574,7 @@ const HAIR: Record<string, Shapes> = {
             <stop offset="1" stopColor={c} />
           </linearGradient>
         </defs>
-        <HairShape style={motif} fill={`url(#${grad})`} stroke={darken(c, 0.32)} strokeWidth={1.3} />
+        <HairShape style={motif} fill={`url(#${grad})`} stroke={darken(c, 0.2)} strokeWidth={0.75} />
         {/* ハイライトの粒。どの髪型でも頭頂付近には毛があるので、この位置なら
             スタイルを問わず髪の上に乗る */}
         <circle cx="38" cy="26" r="2.2" fill={lighten(c, 0.5)} opacity="0.7" />
@@ -605,7 +605,7 @@ const HAIR: Record<string, Shapes> = {
             <HairShape style={motif} fill="#fff" strokeWidth={0} />
           </clipPath>
         </defs>
-        <HairShape style={motif} fill={`url(#${grad})`} stroke={darken(c, 0.3)} strokeWidth={1.2} />
+        <HairShape style={motif} fill={`url(#${grad})`} stroke={darken(c, 0.18)} strokeWidth={0.7} />
         <g clipPath={`url(#${clip})`}>
           <ellipse cx="42" cy="24" rx="18" ry="12" fill={`url(#${hi})`} />
           <circle cx="36" cy="30" r="2.6" fill={lighten(c, 0.45)} opacity="0.55" />
@@ -633,7 +633,7 @@ const HAIR: Record<string, Shapes> = {
             <stop offset="1" stopColor="#ffffff" stopOpacity="0" />
           </linearGradient>
         </defs>
-        <HairShape style={motif} fill={`url(#${grad})`} stroke={darken(c, 0.3)} strokeWidth={1.2} />
+        <HairShape style={motif} fill={`url(#${grad})`} stroke={darken(c, 0.18)} strokeWidth={0.7} />
         <path d="M28 30 C40 26 60 26 72 30" stroke={`url(#${sheen})`} strokeWidth="2" fill="none" />
         <circle cx="35" cy="22" r="2.4" fill="#fff4c2" stroke="#e8b93a" strokeWidth="0.6" />
         <circle cx="50" cy="18" r="2.4" fill="#fff4c2" stroke="#e8b93a" strokeWidth="0.6" />
@@ -660,7 +660,7 @@ const HAIR: Record<string, Shapes> = {
             </feMerge>
           </filter>
         </defs>
-        <HairShape style={motif} fill={`url(#${grad})`} stroke={darken(c, 0.28)} strokeWidth={1.2} />
+        <HairShape style={motif} fill={`url(#${grad})`} stroke={darken(c, 0.16)} strokeWidth={0.7} />
         <motion.g
           animate={reduceMotion ? { opacity: 1 } : GLOW_PULSE_ANIMATE}
           transition={reduceMotion ? STATIC_TRANSITION : GLOW_PULSE_TRANSITION}
@@ -697,7 +697,7 @@ const HAIR: Record<string, Shapes> = {
             <feGaussianBlur stdDeviation="1.8" />
           </filter>
         </defs>
-        <HairShape style={motif} fill={`url(#${grad1})`} stroke="#7a5cff" strokeWidth={1.2} />
+        <HairShape style={motif} fill={`url(#${grad1})`} stroke="#7a5cff" strokeWidth={0.7} />
         <ellipse cx="42" cy="20" rx="20" ry="14" fill={`url(#${grad2})`} />
         <path
           d="M50 2 L54 12 L64 12 L56 18 L59 28 L50 22 L41 28 L44 18 L36 12 L46 12 Z"
@@ -980,7 +980,7 @@ const TopShape = ({
 }) => <>{(TOP_STYLES[style ?? "tee"] ?? TOP_STYLES.tee)(fill, stroke, strokeWidth)}</>;
 
 const TOP: Record<string, Shapes> = {
-  t1: (c, _uid, _reduceMotion, motif) => <TopShape style={motif} fill={c} stroke={darken(c, 0.28)} strokeWidth={1.1} />,
+  t1: (c, _uid, _reduceMotion, motif) => <TopShape style={motif} fill={c} stroke={darken(c, 0.16)} strokeWidth={0.65} />,
   t2: (c, uid, _reduceMotion, motif) => {
     const grad = `${uid}-t2-grad`;
     return (
@@ -991,7 +991,7 @@ const TOP: Record<string, Shapes> = {
             <stop offset="1" stopColor={c} />
           </linearGradient>
         </defs>
-        <TopShape style={motif} fill={`url(#${grad})`} stroke={darken(c, 0.3)} strokeWidth={1.2} />
+        <TopShape style={motif} fill={`url(#${grad})`} stroke={darken(c, 0.18)} strokeWidth={0.7} />
       </>
     );
   },
@@ -1016,7 +1016,7 @@ const TOP: Record<string, Shapes> = {
             <TopShape style={motif} fill="#fff" strokeWidth={0} />
           </clipPath>
         </defs>
-        <TopShape style={motif} fill={`url(#${grad})`} stroke={darken(c, 0.3)} strokeWidth={1.4} />
+        <TopShape style={motif} fill={`url(#${grad})`} stroke={darken(c, 0.18)} strokeWidth={0.8} />
         <g clipPath={`url(#${clip})`}>
           <ellipse cx="42" cy="62" rx="16" ry="8" fill={`url(#${hi})`} />
           <circle cx="38" cy="66" r="2.6" fill={lighten(c, 0.5)} opacity="0.55" />
@@ -1046,7 +1046,7 @@ const TOP: Record<string, Shapes> = {
             <stop offset="1" stopColor="#ffffff" stopOpacity="0" />
           </linearGradient>
         </defs>
-        <TopShape style={motif} fill={`url(#${grad})`} stroke={darken(c, 0.32)} strokeWidth={1.4} />
+        <TopShape style={motif} fill={`url(#${grad})`} stroke={darken(c, 0.2)} strokeWidth={0.8} />
         <path d="M32 64 C42 60 58 60 68 64" stroke={`url(#${sheen})`} strokeWidth="2" fill="none" />
         <circle cx="50" cy="66" r="2.4" fill="#fff4c2" stroke="#dba528" strokeWidth="0.7" />
       </>
@@ -1070,7 +1070,7 @@ const TOP: Record<string, Shapes> = {
             </feMerge>
           </filter>
         </defs>
-        <TopShape style={motif} fill={`url(#${grad})`} stroke={darken(c, 0.3)} strokeWidth={1.4} />
+        <TopShape style={motif} fill={`url(#${grad})`} stroke={darken(c, 0.18)} strokeWidth={0.8} />
         <motion.g
           animate={reduceMotion ? { opacity: 1 } : GLOW_PULSE_ANIMATE}
           transition={reduceMotion ? STATIC_TRANSITION : GLOW_PULSE_TRANSITION}
@@ -1109,7 +1109,7 @@ const TOP: Record<string, Shapes> = {
             <feGaussianBlur stdDeviation="1.8" />
           </filter>
         </defs>
-        <TopShape style={motif} fill={`url(#${grad1})`} stroke="#7a5cff" strokeWidth={1.4} />
+        <TopShape style={motif} fill={`url(#${grad1})`} stroke="#7a5cff" strokeWidth={0.8} />
         <ellipse cx="42" cy="62" rx="18" ry="10" fill={`url(#${grad2})`} />
         <path
           d="M50 58 L53 66 L61 66 L54 71 L57 79 L50 74 L43 79 L46 71 L39 66 L47 66 Z"
@@ -1293,7 +1293,7 @@ const BottomShape = ({
 
 const BOTTOM: Record<string, Shapes> = {
   t1: (c, _uid, _reduceMotion, motif) => (
-    <BottomShape style={motif} fill={c} stroke={darken(c, 0.28)} strokeWidth={1.1} />
+    <BottomShape style={motif} fill={c} stroke={darken(c, 0.16)} strokeWidth={0.65} />
   ),
   t2: (c, uid, _reduceMotion, motif) => {
     const grad = `${uid}-b2-grad`;
@@ -1305,7 +1305,7 @@ const BOTTOM: Record<string, Shapes> = {
             <stop offset="1" stopColor={c} />
           </linearGradient>
         </defs>
-        <BottomShape style={motif} fill={`url(#${grad})`} stroke={darken(c, 0.3)} strokeWidth={1.2} />
+        <BottomShape style={motif} fill={`url(#${grad})`} stroke={darken(c, 0.18)} strokeWidth={0.7} />
       </>
     );
   },
@@ -1330,7 +1330,7 @@ const BOTTOM: Record<string, Shapes> = {
             <BottomShape style={motif} fill="#fff" strokeWidth={0} />
           </clipPath>
         </defs>
-        <BottomShape style={motif} fill={`url(#${grad})`} stroke={darken(c, 0.3)} strokeWidth={1.3} />
+        <BottomShape style={motif} fill={`url(#${grad})`} stroke={darken(c, 0.18)} strokeWidth={0.75} />
         <g clipPath={`url(#${clip})`}>
           <ellipse cx="42" cy="100" rx="14" ry="6" fill={`url(#${hi})`} />
           <path d="M20 110 L80 106" stroke={lighten(c, 0.4)} strokeWidth="6" opacity="0.18" />
@@ -1357,7 +1357,7 @@ const BOTTOM: Record<string, Shapes> = {
             <stop offset="1" stopColor="#ffffff" stopOpacity="0" />
           </linearGradient>
         </defs>
-        <BottomShape style={motif} fill={`url(#${grad})`} stroke={darken(c, 0.32)} strokeWidth={1.3} />
+        <BottomShape style={motif} fill={`url(#${grad})`} stroke={darken(c, 0.2)} strokeWidth={0.75} />
         <path d="M32 102 C42 98 58 98 68 102" stroke={`url(#${sheen})`} strokeWidth="2" fill="none" />
         <circle cx="50" cy="99.5" r="2.4" fill="#fff4c2" stroke="#dba528" strokeWidth="0.6" />
       </>
@@ -1381,7 +1381,7 @@ const BOTTOM: Record<string, Shapes> = {
             </feMerge>
           </filter>
         </defs>
-        <BottomShape style={motif} fill={`url(#${grad})`} stroke={darken(c, 0.3)} strokeWidth={1.3} />
+        <BottomShape style={motif} fill={`url(#${grad})`} stroke={darken(c, 0.18)} strokeWidth={0.75} />
         <motion.g
           animate={reduceMotion ? { opacity: 1 } : GLOW_PULSE_ANIMATE}
           transition={reduceMotion ? STATIC_TRANSITION : GLOW_PULSE_TRANSITION}
@@ -1417,7 +1417,7 @@ const BOTTOM: Record<string, Shapes> = {
             <feGaussianBlur stdDeviation="1.8" />
           </filter>
         </defs>
-        <BottomShape style={motif} fill={`url(#${grad1})`} stroke="#7a5cff" strokeWidth={1.3} />
+        <BottomShape style={motif} fill={`url(#${grad1})`} stroke="#7a5cff" strokeWidth={0.75} />
         <ellipse cx="42" cy="100" rx="16" ry="6" fill={`url(#${grad2})`} />
         <path
           d="M50 106 L52 112 L58 112 L53 116 L55 122 L50 118 L45 122 L47 116 L42 112 L48 112 Z"
@@ -1570,7 +1570,7 @@ const ShoeShape = ({
 
 const SHOE: Record<string, Shapes> = {
   t1: (c, _uid, _reduceMotion, motif) => (
-    <ShoeShape style={motif} fill={c} stroke={darken(c, 0.28)} strokeWidth={1} />
+    <ShoeShape style={motif} fill={c} stroke={darken(c, 0.16)} strokeWidth={0.6} />
   ),
   t2: (c, uid, _reduceMotion, motif) => {
     const grad = `${uid}-sh2-grad`;
@@ -1582,7 +1582,7 @@ const SHOE: Record<string, Shapes> = {
             <stop offset="1" stopColor={c} />
           </linearGradient>
         </defs>
-        <ShoeShape style={motif} fill={`url(#${grad})`} stroke={darken(c, 0.3)} strokeWidth={1.1} />
+        <ShoeShape style={motif} fill={`url(#${grad})`} stroke={darken(c, 0.18)} strokeWidth={0.65} />
       </>
     );
   },
@@ -1607,7 +1607,7 @@ const SHOE: Record<string, Shapes> = {
             <ShoeShape style={motif} fill="#fff" strokeWidth={0} />
           </clipPath>
         </defs>
-        <ShoeShape style={motif} fill={`url(#${grad})`} stroke={darken(c, 0.3)} strokeWidth={1.2} />
+        <ShoeShape style={motif} fill={`url(#${grad})`} stroke={darken(c, 0.18)} strokeWidth={0.7} />
         <g clipPath={`url(#${clip})`}>
           <ellipse cx="39" cy="126" rx="8" ry="4" fill={`url(#${hi})`} />
           <ellipse cx="61" cy="126" rx="8" ry="4" fill={`url(#${hi})`} />
@@ -1632,7 +1632,7 @@ const SHOE: Record<string, Shapes> = {
             <stop offset="1" stopColor="#ffffff" stopOpacity="0" />
           </linearGradient>
         </defs>
-        <ShoeShape style={motif} fill={`url(#${grad})`} stroke={darken(c, 0.32)} strokeWidth={1.2} />
+        <ShoeShape style={motif} fill={`url(#${grad})`} stroke={darken(c, 0.2)} strokeWidth={0.7} />
         <path d="M29 129 C33 126 45 126 49 129" stroke={`url(#${sheen})`} strokeWidth="1.6" fill="none" />
         <path d="M51 129 C55 126 67 126 71 129" stroke={`url(#${sheen})`} strokeWidth="1.6" fill="none" />
         <circle cx="39" cy="130" r="1.8" fill="#fff4c2" stroke="#dba528" strokeWidth="0.5" />
@@ -1658,7 +1658,7 @@ const SHOE: Record<string, Shapes> = {
             </feMerge>
           </filter>
         </defs>
-        <ShoeShape style={motif} fill={`url(#${grad})`} stroke={darken(c, 0.3)} strokeWidth={1.2} />
+        <ShoeShape style={motif} fill={`url(#${grad})`} stroke={darken(c, 0.18)} strokeWidth={0.7} />
         <motion.g
           animate={reduceMotion ? { opacity: 1 } : GLOW_PULSE_ANIMATE}
           transition={reduceMotion ? STATIC_TRANSITION : GLOW_PULSE_TRANSITION}
@@ -1694,7 +1694,7 @@ const SHOE: Record<string, Shapes> = {
             <feGaussianBlur stdDeviation="1.6" />
           </filter>
         </defs>
-        <ShoeShape style={motif} fill={`url(#${grad1})`} stroke="#7a5cff" strokeWidth={1.2} />
+        <ShoeShape style={motif} fill={`url(#${grad1})`} stroke="#7a5cff" strokeWidth={0.7} />
         <ellipse cx="39" cy="126" rx="8" ry="3.5" fill={`url(#${grad2})`} />
         <ellipse cx="61" cy="126" rx="8" ry="3.5" fill={`url(#${grad2})`} />
         {/* あしの間にちいさな星バッジ。BOTTOM t6と同じく、モチーフに関係ない
