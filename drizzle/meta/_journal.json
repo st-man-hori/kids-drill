@@ -134,6 +134,13 @@
       "when": 1787954336795,
       "tag": "0018_shoe_wardrobe_item_names",
       "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1787988544754,
+      "tag": "0019_tiered_wardrobe_item_names",
+      "breakpoints": true
     }
   ]
 }
