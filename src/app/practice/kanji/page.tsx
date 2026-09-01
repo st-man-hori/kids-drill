@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { eq } from "drizzle-orm";
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
@@ -15,6 +16,12 @@ import {
 } from "@/lib/kanji-quiz";
 import { getCurrentLevel, getKokugoSubjectId } from "@/lib/practice-progress";
 import { getEquippedAssets } from "@/lib/wardrobe-store";
+
+// ログイン必須かつ出題内容が利用者の学年・現在レベルで変わるページなので検索結果には出さない
+export const metadata: Metadata = {
+  title: "かんじの読みクイズ",
+  robots: { index: false, follow: false },
+};
 
 const KanjiQuizPage = async () => {
   const session = await auth();

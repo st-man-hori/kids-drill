@@ -1,9 +1,16 @@
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { TimeAttackSession } from "@/components/time-attack-session";
 import { ADD_SKILL_TYPE, type LevelConfig } from "@/lib/practice";
 import { getCurrentLevel, getMathSubjectId } from "@/lib/practice-progress";
 import { getEquippedAssets } from "@/lib/wardrobe-store";
+
+// ログイン必須かつ出題内容が利用者の現在レベルで変わるページなので検索結果には出さない
+export const metadata: Metadata = {
+  title: "タイムアタック",
+  robots: { index: false, follow: false },
+};
 
 const TimeAttackPage = async () => {
   const session = await auth();

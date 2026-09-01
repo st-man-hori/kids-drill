@@ -1,8 +1,15 @@
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { LinkButton } from "@/components/link-button";
 import { RankingBoard } from "@/components/ranking-board";
 import { getRanking } from "@/lib/ranking-store";
+
+// ログイン必須かつ内容が利用者ごとに異なるページなので検索結果には出さない
+export const metadata: Metadata = {
+  title: "ランキング",
+  robots: { index: false, follow: false },
+};
 
 const RankingPage = async () => {
   const session = await auth();

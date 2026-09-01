@@ -1,8 +1,15 @@
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { FacePicker } from "@/components/face-picker";
 import { LinkButton } from "@/components/link-button";
 import { getChildFace } from "@/lib/face-store";
+
+// ログイン必須かつ内容が利用者ごとに異なるページなので検索結果には出さない
+export const metadata: Metadata = {
+  title: "顔を選ぶ",
+  robots: { index: false, follow: false },
+};
 
 const FacePage = async () => {
   const session = await auth();

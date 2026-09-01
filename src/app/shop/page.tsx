@@ -1,9 +1,16 @@
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { LinkButton } from "@/components/link-button";
 import { WardrobeShop } from "@/components/wardrobe-shop";
 import { getWardrobe, grantUnlockedFreeItems } from "@/lib/wardrobe-store";
 import { isOwnedStatus } from "@/lib/wardrobe";
+
+// ログイン必須かつ内容が利用者ごとに異なるページなので検索結果には出さない
+export const metadata: Metadata = {
+  title: "アイテムショップ",
+  robots: { index: false, follow: false },
+};
 
 const ShopPage = async () => {
   const session = await auth();

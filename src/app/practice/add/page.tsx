@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { PracticeSession } from "@/components/practice-session";
@@ -9,6 +10,12 @@ import {
 } from "@/lib/practice";
 import { getCurrentLevel, getMathSubjectId } from "@/lib/practice-progress";
 import { getEquippedAssets } from "@/lib/wardrobe-store";
+
+// ログイン必須かつ出題内容が利用者の現在レベルで変わるページなので検索結果には出さない
+export const metadata: Metadata = {
+  title: "算数の練習",
+  robots: { index: false, follow: false },
+};
 
 const PracticeAddPage = async () => {
   const session = await auth();

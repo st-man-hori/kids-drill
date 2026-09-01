@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { eq } from "drizzle-orm";
 import { auth } from "@/auth";
@@ -10,6 +11,12 @@ import { LogoutButton } from "@/components/logout-button";
 import { LinkButton } from "@/components/link-button";
 import { GreetingAvatar } from "@/components/greeting-avatar";
 import { pickGreeting } from "@/lib/avatar-greeting";
+
+// ログイン必須かつ内容が利用者ごとに異なるページなので検索結果には出さない
+export const metadata: Metadata = {
+  title: "マイページ",
+  robots: { index: false, follow: false },
+};
 
 const MyPage = async () => {
   const session = await auth();
