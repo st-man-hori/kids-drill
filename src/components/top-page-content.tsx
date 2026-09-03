@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import Link from "next/link";
 import { LinkButton } from "@/components/link-button";
 
 // 「機能を3つ並べる」のではなく、報酬ループ（docs/game-design.md）そのものを
@@ -158,6 +159,13 @@ export const TopPageContent = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
                 </li>
                 <li>アクセス解析にCookieを使っておらず、お子さまの行動を個人として追跡しません。</li>
                 <li>タブレット・スマートフォン・パソコンに対応しています（推奨: iPad）。</li>
+                <li>
+                  詳しくは
+                  <Link href="/privacy" className="underline underline-offset-2">
+                    プライバシーポリシー
+                  </Link>
+                  をご覧ください。
+                </li>
               </ul>
             </FeatureSection>
 

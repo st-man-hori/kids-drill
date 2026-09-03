@@ -2,13 +2,13 @@ import type { MetadataRoute } from "next";
 import { SITE_URL } from "@/lib/site";
 
 // 検索エンジンにクロールさせてよいのはログイン不要で内容が完結する
-// 公開ページ（トップ・ログイン・新規登録）のみ。それ以外は未ログイン時
-// /loginへredirectするだけの画面か、ログイン後の個人向け画面なので、
+// 公開ページ（トップ・ログイン・新規登録・プライバシーポリシー）のみ。それ以外は
+// 未ログイン時/loginへredirectするだけの画面か、ログイン後の個人向け画面なので、
 // クローラーにとって意味のあるコンテンツが無い（sitemap.tsにも含めていない）
 const robots = (): MetadataRoute.Robots => ({
   rules: {
     userAgent: "*",
-    allow: ["/", "/login", "/signup"],
+    allow: ["/", "/login", "/signup", "/privacy"],
     disallow: [
       "/mypage",
       "/ranking",
