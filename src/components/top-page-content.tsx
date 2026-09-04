@@ -128,11 +128,11 @@ export const TopPageContent = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
           <>
             <FeatureSection title="対応している教科・学年">
               <div className="grid w-full gap-3 sm:grid-cols-2">
-                <FeatureCard title="算数（たしざん・ひきざん）">
-                  小学1年生から始められます。くり上がり・くり下がりの有無を軸にレベルが分かれていて、正答率に応じて自動で難易度が上下するので、レベル選びに悩む必要がありません。
+                <FeatureCard title="算数（たしざん）">
+                  小学1年生から始められます。くり上がりの有無を軸にレベルが分かれていて、正答率に応じて自動で難易度が上下するので、レベル選びに悩む必要がありません。
                 </FeatureCard>
                 <FeatureCard title="かんじの読み方クイズ">
-                  小学1〜4年生の学年別配当漢字から、まぎらわしい選択肢を交えた4択クイズを出題します。かな入力が難しい低学年でも答えられます。
+                  小学1年生の配当漢字から、まぎらわしい選択肢を交えた4択クイズを出題します。かな入力が難しい低学年でも答えられます。
                 </FeatureCard>
               </div>
             </FeatureSection>
