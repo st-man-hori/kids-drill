@@ -42,7 +42,16 @@ const PrivacyPage = () => {
 
         <Section title="運営者について">
           <p>
-            本サービスは個人（GitHub: st-man-hori）が開発・運営しています。運営組織としての住所・電話番号等は設けていません。
+            本サービスは個人（GitHub:{" "}
+            <a
+              href="https://github.com/st-man-hori"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline underline-offset-2"
+            >
+              st-man-hori
+            </a>
+            ）が開発・運営しています。運営組織としての住所・電話番号等は設けていません。
           </p>
         </Section>
 
