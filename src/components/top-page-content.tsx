@@ -158,7 +158,7 @@ export const TopPageContent = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
                   ログインに名前やメールアドレスは不要です。IDとひみつの6桁の番号だけで始められます。
                 </li>
                 <li>アクセス解析にCookieを使っておらず、お子さまの行動を個人として追跡しません。</li>
-                <li>タブレット・スマートフォン・パソコンに対応しています（推奨: iPad）。</li>
+                <li>タブレット・スマートフォン・パソコンに対応しています。</li>
                 <li>
                   詳しくは
                   <Link href="/privacy" className="underline underline-offset-2">
