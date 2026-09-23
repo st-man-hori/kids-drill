@@ -9,6 +9,7 @@ import {
   PointsBadge,
   SlotTabs,
   StatusMessage,
+  StickyControls,
 } from "@/components/wardrobe-parts";
 import { buyWardrobeItem } from "@/app/wardrobe/actions";
 import { SLOT_LABELS, type SlotType } from "@/lib/wardrobe";
@@ -171,35 +172,37 @@ export const WardrobeShop = ({
   };
 
   return (
-    <div className="flex min-h-0 w-full max-w-3xl flex-1 flex-col items-center gap-[clamp(0.5rem,2vh,1.25rem)]">
-      <PointsBadge points={pointsBalance} />
+    <div className="flex w-full max-w-3xl flex-col items-center">
+      <StickyControls>
+        <PointsBadge points={pointsBalance} />
 
-      <StatusMessage message={message} />
+        <StatusMessage message={message} />
 
-      <SlotTabs slot={slot} onSelect={setSlot} />
+        <SlotTabs slot={slot} onSelect={setSlot} />
 
-      <div
-        className="flex w-full flex-wrap justify-center gap-2"
-        role="group"
-        aria-label="ランクで しぼりこみ"
-      >
-        {TIER_FILTERS.map((tier) => (
-          <motion.button
-            key={tier.key}
-            type="button"
-            whileTap={{ scale: 0.95 }}
-            onClick={() => setTierFilter(tier.key)}
-            aria-pressed={tierFilter === tier.key}
-            className={`min-h-11 rounded-full px-4 py-2 text-sm font-bold ${
-              tierFilter === tier.key
-                ? "bg-brand text-brand-foreground shadow-sm"
-                : "border-2 border-brand/40 bg-white text-brand"
-            }`}
-          >
-            {tier.label}
-          </motion.button>
-        ))}
-      </div>
+        <div
+          className="flex w-full flex-wrap justify-center gap-2"
+          role="group"
+          aria-label="ランクで しぼりこみ"
+        >
+          {TIER_FILTERS.map((tier) => (
+            <motion.button
+              key={tier.key}
+              type="button"
+              whileTap={{ scale: 0.95 }}
+              onClick={() => setTierFilter(tier.key)}
+              aria-pressed={tierFilter === tier.key}
+              className={`min-h-11 rounded-full px-4 py-2 text-sm font-bold ${
+                tierFilter === tier.key
+                  ? "bg-brand text-brand-foreground shadow-sm"
+                  : "border-2 border-brand/40 bg-white text-brand"
+              }`}
+            >
+              {tier.label}
+            </motion.button>
+          ))}
+        </div>
+      </StickyControls>
 
       <ItemGrid
         isEmpty={slotItems.length === 0}

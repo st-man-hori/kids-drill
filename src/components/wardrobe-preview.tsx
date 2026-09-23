@@ -34,7 +34,7 @@ export const WardrobePreview = ({ catalog }: { catalog: CatalogItemView[] }) => 
   };
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col items-center gap-3 overflow-hidden px-4 py-3">
+    <div className="flex min-h-0 flex-1 flex-col items-center gap-3 overflow-y-auto px-4 py-3">
       <h1 className="text-lg font-bold text-foreground">
         きせかえ 試着プレビュー（開発用・全{catalog.length}件）
       </h1>

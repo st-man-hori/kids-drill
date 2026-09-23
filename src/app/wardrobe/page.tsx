@@ -32,8 +32,11 @@ const WardrobePage = async () => {
   const owned = wardrobe.items.filter((item) => isOwnedStatus(item.status));
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col items-center gap-[clamp(0.5rem,2vh,1.25rem)] overflow-y-auto px-6 py-[clamp(0.5rem,2vh,1rem)]">
-      <h1 className="text-[clamp(1.25rem,2.5vh+0.75rem,2rem)] font-bold text-foreground">
+    <div className="flex min-h-0 flex-1 flex-col items-center gap-[clamp(0.5rem,2vh,1.25rem)] overflow-y-auto px-6 pb-[clamp(0.5rem,2vh,1rem)]">
+      {/* 上の余白はスクロール領域(このdiv)ではなく見出しに持たせる。sticky な
+          ボタン類はスクロール領域の padding の内側で止まるため、ここに padding
+          があるとその隙間をアイテムが流れて見えてしまう */}
+      <h1 className="pt-[clamp(0.5rem,2vh,1rem)] text-[clamp(1.25rem,2.5vh+0.75rem,2rem)] font-bold text-foreground">
         きせかえ
       </h1>
 
