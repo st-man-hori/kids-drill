@@ -110,10 +110,25 @@ export const ItemGrid = ({
       {emptyMessage}
     </p>
   ) : (
-    <ul className="grid w-full min-h-0 grid-cols-2 gap-[clamp(0.375rem,1.5vw,0.75rem)] overflow-y-auto sm:grid-cols-3">
+    // 一覧そのものはスクロール領域にしない。ページ全体を1つのスクロールにし、
+    // 上に積まれた要素(アバター・タブ等)は各画面側で sticky にして残す。
+    // 一覧を入れ子のスクロール領域にしていた頃は、残りの高さしか貰えず
+    // スマホで20px程度・iPad横向きでも2行弱しか見えず、指で送るのも
+    // 難しかった（issue #12）
+    <ul className="grid w-full grid-cols-2 gap-[clamp(0.375rem,1.5vw,0.75rem)] sm:grid-cols-3">
       {children}
     </ul>
   );
+
+// きせかえ・おみせで、一覧をスクロールしても上に残しておく部分。
+// 何を着ているか・どのタブを見ているかが一覧を送った途端に見えなくなると、
+// 子どもは今どこにいるのか分からなくなる。背景を塗っておかないと、下を
+// 流れていくアイテムが透けて見える
+export const StickyControls = ({ children }: { children: React.ReactNode }) => (
+  <div className="sticky top-0 z-10 flex w-full flex-col items-center gap-[clamp(0.375rem,1.5vh,1rem)] bg-background pb-[clamp(0.375rem,1.5vh,0.75rem)]">
+    {children}
+  </div>
+);
 
 export const StatusMessage = ({ message }: { message: string | null }) => (
   <div

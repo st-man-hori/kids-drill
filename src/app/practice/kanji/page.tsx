@@ -64,7 +64,10 @@ const KanjiQuizPage = async () => {
     kanjiBankForLevel(level.config, kanjiBankForGrade(grade)),
   );
 
-  return <KanjiQuizSession questions={questions} equipped={equipped} />;
+  // 「もういちど」はrouter.refresh()でこのページを描き直して新しい問題を受け取る。
+  // 同じURLへの遷移ではClient Componentが作り直されず、解答状態（何問目か・結果）が
+  // 残って結果画面のままになるため、描画ごとに変わるkeyで作り直させる
+  return <KanjiQuizSession key={crypto.randomUUID()} questions={questions} equipped={equipped} />;
 };
 
 export default KanjiQuizPage;

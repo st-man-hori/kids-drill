@@ -24,9 +24,10 @@ import {
 // かんじは画数（KanjiLevelConfig.maxStrokeCount。docs/architecture.md
 // 「かんじよみクイズ」）を使う。
 //
-// 「もういちど」はページ遷移（router.refresh）で次のレベルの問題を
-// サーバー側から取り直す（practice-session.tsxのようにクライアント側で
-// 次の10問を生成し直す「もっとやる」拡張は持たない）
+// 「もういちど」はrouter.refreshで次のレベルの問題をサーバー側から取り直す。
+// page.tsxが描画ごとに変わるkeyを渡すので、取り直すたびに新しいインスタンスになる
+// （practice-session.tsxのようにクライアント側で次の10問を生成し直す「もっとやる」
+// 拡張は持たない）
 
 const CELEBRATION_MESSAGE: Record<CelebrationTier, string> = {
   perfect: "ぜんもん せいかい！",
@@ -78,7 +79,7 @@ export const KanjiQuizSession = ({
   const correctCount = results.filter(Boolean).length;
   const answered = selected !== null;
 
-  // 結果画面に来た時点で記録・加点する。「もういちど」はページ遷移で別インスタンスに
+  // 結果画面に来た時点で記録・加点する。「もういちど」はkeyの変更で別インスタンスに
   // なるため、このrefはStrictModeでのeffect二重発火だけを見張ればよい
   const submitted = useRef(false);
   useEffect(() => {
@@ -128,7 +129,6 @@ export const KanjiQuizSession = ({
   }, [selected, current, handleNext]);
 
   const handleRetry = () => {
-    router.push("/practice/kanji");
     router.refresh();
   };
 
